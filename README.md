@@ -62,7 +62,7 @@ $> git clone https://github.com/Colossus-Services/chart_engine.git
 ## Loading Engine JavaScript Libraries
 
 This Dart package already bundles the JavaScript libraries of each supported engine.
-When an implementation of `ChartEngine` is instantiated, the corresponding JavaScrip library is automatically loaded
+When an implementation of `ChartEngine` is instantiated, the corresponding JavaScript library is automatically loaded
 and no extra code is needed in your Dart files or HTML files.
 
 The loading processes is made by the package [amdjs.dart][amdjs.dart]. It loads

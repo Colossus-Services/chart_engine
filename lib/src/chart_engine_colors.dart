@@ -7,7 +7,7 @@ abstract class ColorGenerator {
   /// advanced implementations.
   String generateColor(String name, int index, int total);
 
-  /// Builds a Map with a color for each provided key from list [keys].
+  /// Builds a Map with a color for each provided key from parameter [keys].
   Map<C, String> buildColors<C>(List<C> keys) {
     var colors = <C, String>{};
 

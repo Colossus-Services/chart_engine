@@ -21,7 +21,7 @@ void main() async {
   series.options.fillLines = true ;
   series.options.straightLines = true ;
 
-  // Render same series using 2 engines:
+  // Render the same ChartSeries using 2 engines:
 
   var charEngine1 = ChartEngineApexCharts() ;
   await charEngine1.load() ;

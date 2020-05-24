@@ -16,7 +16,7 @@ Go to `chart_engine` directory:
 $> cd ./chart_engine
 ```
 
-Run Dart `pub get` to get dependencies  
+Run Dart `pub get` to get the dependencies:  
 
 ```shell script
 $> pub get  

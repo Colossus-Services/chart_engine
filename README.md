@@ -55,8 +55,7 @@ Get the source
 $> git clone https://github.com/Colossus-Services/chart_engine.git
 ```
 
-...and see the [examples][example], where you can easily run and tests them.
-Just follow the instructions at the README files of each example directory.
+...and see the [Web Example][example]. Just follow the README file for instructions.
 
 [example]: https://github.com/Colossus-Services/chart_engine/tree/master/example
 

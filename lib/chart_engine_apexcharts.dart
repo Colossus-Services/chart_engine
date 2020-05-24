@@ -1,7 +1,5 @@
+/// Library with ApexChart engine.
 library chart_engine_apexcharts;
 
-export 'src/chart_engine_base.dart';
-export 'src/chart_engine_series.dart';
-export 'src/chart_engine_colors.dart';
-
+export 'chart_engine.dart';
 export 'src/chart_engine_apexcharts.dart';

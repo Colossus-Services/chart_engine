@@ -1834,6 +1834,7 @@ class StandardColorGenerator extends SchemeColorGenerator {
     ]
   };
 
+  /// Constructs using default scheme 'brewer.Paired'.
   StandardColorGenerator() : super(_standard_schemes, 'brewer.Paired');
 }
 

@@ -4,6 +4,7 @@ import 'package:swiss_knife/swiss_knife.dart';
 
 import 'chart_engine_series.dart';
 
+/// The browser path for package resources.
 final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 
 /// Abstract Chart Engine definition.

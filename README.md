@@ -76,7 +76,7 @@ or injecting a tag ```<script src='lib-x.js'></script>``` as fallback.
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: https://github.com/Colossus-Services/chart_engine
+[tracker]: https://github.com/Colossus-Services/chart_engine/issues
 
 ## Colossus.Services
 

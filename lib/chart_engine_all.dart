@@ -1,4 +1,4 @@
-library chart_engine_chartjs;
+library chart_engine_all;
 
 export 'src/chart_engine_base.dart';
 export 'src/chart_engine_series.dart';

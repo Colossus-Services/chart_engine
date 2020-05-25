@@ -27,6 +27,11 @@ abstract class ChartEngine {
     }
   }
 
+  void checkRenderParameters(Element output, ChartData chartData) {
+    if (output == null) throw ArgumentError('Null output to render Chart') ;
+    if (chartData == null) throw ArgumentError('Null chartData to render Chart') ;
+  }
+
   /// Renders at [output] a [chartData], selecting the correct render method.
   bool render(Element output, ChartData chartData) {
     if (chartData == null) return false;
@@ -43,10 +48,14 @@ abstract class ChartEngine {
   }
 
   /// Renders a Line Chart:
-  bool renderLineChart(Element output, ChartSeries chartSeries);
+  bool renderLineChart(Element output, ChartSeries chartData);
 
   /// Renders a Bar Chart:
-  bool renderBarChart(Element output, ChartSet chartSet);
+  bool renderBarChart(Element output, ChartSet chartData);
+
+  /// Renders a Horizontal Bar Chart:
+  bool renderHorizontalBarChart(Element output, ChartSet chartData);
+
 }
 
 /// A ChartEngine wrapper with switchable internal engines:
@@ -135,12 +144,17 @@ class ChartEngineSwitchable extends ChartEngine {
   }
 
   @override
+  bool renderLineChart(Element output, ChartSeries chartData) {
+    return mainEngine.renderLineChart(output, chartData);
+  }
+
+  @override
   bool renderBarChart(Element output, ChartSet chartData) {
     return mainEngine.renderBarChart(output, chartData);
   }
 
   @override
-  bool renderLineChart(Element output, ChartSeries chartData) {
-    return mainEngine.renderLineChart(output, chartData);
+  bool renderHorizontalBarChart(Element output, ChartSet chartData) {
+    return mainEngine.renderHorizontalBarChart(output, chartData);
   }
 }

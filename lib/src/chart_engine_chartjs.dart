@@ -44,7 +44,7 @@ class ChartEngineChartJS extends ChartEngine {
   @override
   EventStream<LoadController> get onLoad => _loadController.onLoad;
 
-  JsObject _jsWrapper;
+  static JsObject _jsWrapper;
 
   /// Loads ChartJS (`chart.js`) and engine wrapper.
   @override
@@ -79,6 +79,7 @@ class ChartEngineChartJS extends ChartEngine {
 
   @override
   bool renderLineChart(Element output, ChartSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
     checkLoaded();
 
     var canvas = asCanvasElement(output);
@@ -110,7 +111,41 @@ class ChartEngineChartJS extends ChartEngine {
 
   @override
   bool renderBarChart(Element output, ChartSet chartSet) {
+    return _renderBarChartImpl(false, output, chartSet) ;
+  }
+
+  @override
+  bool renderHorizontalBarChart(Element output, ChartSet chartSet) {
+    return _renderBarChartImpl(true, output, chartSet) ;
+  }
+
+  bool _renderBarChartImpl(bool horizontal, Element output, ChartSet chartSet) {
+    checkRenderParameters(output, chartSet);
     checkLoaded();
-    throw UnimplementedError();
+
+    var canvas = asCanvasElement(output);
+
+    var set = chartSet.options.sortCategories
+        ? chartSet.setSorted
+        : chartSet.set;
+
+    chartSet.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSet.colors;
+
+    var renderArgs = [
+      horizontal,
+      canvas,
+      chartSet.title,
+      chartSet.xTitle,
+      chartSet.yTitle,
+      JsObject.jsify(chartSet.xLabels),
+      JsObject.jsify(set),
+      JsObject.jsify(colors),
+    ];
+
+    _jsWrapper.callMethod('renderBar', renderArgs);
+
+    return true;
   }
 }

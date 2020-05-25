@@ -1,3 +1,8 @@
+## 1.0.2
+
+- Add support to Bar Charts and Horizontal Bar Charts.
+- Add examples with Bar Charts.
+
 ## 1.0.1
 
 - Fix library name and exports.

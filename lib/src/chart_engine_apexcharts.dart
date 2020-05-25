@@ -33,7 +33,7 @@ class ChartEngineApexCharts extends ChartEngine {
   @override
   EventStream<LoadController> get onLoad => _loadController.onLoad;
 
-  JsObject _jsWrapper;
+  static JsObject _jsWrapper;
 
   /// Loads ApexCharts (`apexcharts.amd.js`) and engine wrapper.
   @override
@@ -68,6 +68,7 @@ class ChartEngineApexCharts extends ChartEngine {
 
   @override
   bool renderLineChart(Element output, ChartSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
     checkLoaded();
 
     var div = asDivElement(output);
@@ -98,8 +99,43 @@ class ChartEngineApexCharts extends ChartEngine {
   }
 
   @override
-  bool renderBarChart(Element output, ChartSet chartSet) {
-    checkLoaded();
-    throw UnimplementedError();
+  bool renderBarChart(Element output, ChartSet chartData) {
+    return _renderBarChartImpl(false, output, chartData) ;
   }
+
+  @override
+  bool renderHorizontalBarChart(Element output, ChartSet chartData) {
+    return _renderBarChartImpl(true, output, chartData) ;
+  }
+
+  bool _renderBarChartImpl(bool horizontal, Element output, ChartSet chartSet) {
+    checkRenderParameters(output, chartSet);
+    checkLoaded();
+
+    var div = asDivElement(output);
+
+    var set = chartSet.options.sortCategories
+        ? chartSet.setSorted
+        : chartSet.set;
+
+    chartSet.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSet.colors;
+
+    var renderArgs = [
+      horizontal,
+      div,
+      chartSet.title,
+      chartSet.xTitle,
+      chartSet.yTitle,
+      JsObject.jsify(chartSet.xLabels),
+      JsObject.jsify(set),
+      JsObject.jsify(colors),
+    ];
+
+    _jsWrapper.callMethod('renderBar', renderArgs);
+
+    return true;
+  }
+
 }

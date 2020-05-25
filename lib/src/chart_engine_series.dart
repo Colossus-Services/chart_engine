@@ -31,6 +31,14 @@ abstract class ChartData<C> {
   }
 }
 
+void _sorteEntries(List<MapEntry> entries) {
+  entries.sort( (a,b) {
+    var c1 = a.key as Comparable ;
+    var c2 = b.key as Comparable ;
+    return c1.compareTo(c2) ;
+  } );
+}
+
 /// Data Series, usually for Line Charts.
 class ChartSeries<X, C, Y> extends ChartData<C> {
   ChartSeriesOptions _options;
@@ -54,16 +62,17 @@ class ChartSeries<X, C, Y> extends ChartData<C> {
 
   Map<C, List<Y>> get seriesSorted {
     var l = series.entries.toList();
-    l.sort();
+    _sorteEntries(l);
     return Map.fromEntries(l).cast();
   }
+
 }
 
 /// Data Set, usually for Bar Charts.
 class ChartSet<X, C, Y> extends ChartData<C> {
   ChartSetOptions _options;
 
-  Map<C, Y> set;
+  Map<C, List<Y>> set;
 
   List<X> xLabels;
 
@@ -79,6 +88,13 @@ class ChartSet<X, C, Y> extends ChartData<C> {
 
   @override
   List<C> get categories => set.keys.toList().cast();
+
+  Map<C, Y> get setSorted {
+    var l = set.entries.toList();
+    _sorteEntries(l);
+    return Map.fromEntries(l).cast();
+  }
+
 }
 
 abstract class ChartOptions {

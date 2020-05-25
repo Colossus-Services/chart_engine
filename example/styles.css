@@ -17,3 +17,13 @@ a {
   color: dodgerblue;
   text-decoration: none;
 }
+
+.chart-container {
+  width: 2000px;
+}
+
+.chart {
+  display: inline-block;
+  width: 600px;
+}
+

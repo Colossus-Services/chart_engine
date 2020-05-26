@@ -58,7 +58,9 @@ void main() async {
 
 ## Live Example
 
-You can see [here a live example](./example/www).
+You can see [here a live example][live_example]
+
+[live_example]: https://colossus-services.github.io/chart_engine/example/www/
 
 If your prefer you can experiment with the example from the source code.
 

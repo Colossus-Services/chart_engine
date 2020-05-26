@@ -9,7 +9,7 @@ Chart generator with interchangeable chart engines, like ChartJS and ApexCharts.
 
 NOTE: You don't need to read any specific documentation of any engine to use `chart_engine`,
 since any Chart configuration needed to generate your Chart will be
-automatically handled by this package (see the [examples][example]).
+automatically handled by this package (see the [example][example]).
 
 
 ## Install
@@ -56,14 +56,22 @@ void main() async {
 
 ```
 
-## Examples
+## Live Example
+
+You can see [here a live example][live_example]
+
+[live_example]: https://colossus-services.github.io/chart_engine/example/www/
+
+If your prefer you can experiment with the example from the source code.
+
+## Example from Sources
 
 Get the source
 ```shell script
 $> git clone https://github.com/Colossus-Services/chart_engine.git
 ```
 
-...and see the [Web Example][example]. Just follow the README file for instructions.
+...and see the [Web Example][example] (just follow the README file for instructions).
 
 [example]: https://github.com/Colossus-Services/chart_engine/tree/master/example
 

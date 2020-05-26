@@ -11,6 +11,14 @@ NOTE: You don't need to read any specific documentation of any engine to use `ch
 since any Chart configuration needed to generate your Chart will be
 automatically handled by this package (see the [examples][example]).
 
+
+## Install
+
+```yaml
+dependencies:
+  chart_engine: ^1.0.3
+```
+
 ## Usage
 
 A simple example using ApexCharts (ChartsJS is commented):
@@ -41,7 +49,7 @@ void main() async {
   //var charEngine = ChartEngineChartJS() ;
   var charEngine = ChartEngineApexCharts() ;
   await charEngine.load() ;
-  charEngine.renderLineChart( querySelector('#chart-output') , series ) ;
+  charEngine.renderLineChart( querySelector('#output') , series ) ;
 
 
 }

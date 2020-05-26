@@ -1,3 +1,8 @@
+## 1.0.3
+
+- Fix ChartJS build in release mode, since AMDJS is in mimic mode.
+- change SDK requirement from 2.8+ to 2.7+. 
+
 ## 1.0.2
 
 - Add support to Bar Charts and Horizontal Bar Charts.

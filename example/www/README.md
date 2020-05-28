@@ -2,7 +2,14 @@
 
 A simple Web Example with `chart_engine`.
 
-## Running
+
+## Live Example
+
+You can see [here a live example][live_example]
+
+[live_example]: https://colossus-services.github.io/chart_engine/example/www/
+
+## Running Example from Sources
 
 Git clone the `chart_engine` project (if you don't have it yet).
 

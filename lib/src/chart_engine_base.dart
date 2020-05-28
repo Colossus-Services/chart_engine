@@ -41,7 +41,7 @@ abstract class ChartEngine {
     if (chartData is ChartSeries) {
       return renderLineChart(output, chartData);
     } else if (chartData is ChartSet) {
-      return renderBarChart(output, chartData);
+      return renderGaugeChart(output, chartData);
     }
 
     return false;
@@ -51,10 +51,13 @@ abstract class ChartEngine {
   bool renderLineChart(Element output, ChartSeries chartData);
 
   /// Renders a Bar Chart:
-  bool renderBarChart(Element output, ChartSet chartData);
+  bool renderBarChart(Element output, ChartSeries chartData);
 
   /// Renders a Horizontal Bar Chart:
-  bool renderHorizontalBarChart(Element output, ChartSet chartData);
+  bool renderHorizontalBarChart(Element output, ChartSeries chartData);
+
+  /// Renders a Horizontal Bar Chart:
+  bool renderGaugeChart(Element output, ChartSet chartData);
 
 }
 
@@ -127,7 +130,8 @@ class ChartEngineSwitchable extends ChartEngine {
   @override
   EventStream<LoadController> get onLoad => EventStream();
 
-  bool renderWithType(Type engineType, Element output, ChartData chartData) {
+  /// Renders using engine of [engineType].
+  bool renderWithEngineType(Type engineType, Element output, ChartData chartData) {
     var prevMainEngine = _mainEngine;
     setMainEngineByType(engineType);
     var ok = render(output, chartData);
@@ -135,7 +139,8 @@ class ChartEngineSwitchable extends ChartEngine {
     return ok;
   }
 
-  bool renderOfType<T>(Element output, ChartData chartData) {
+  /// Renders using engine of type [T].
+  bool renderOfEngineType<T>(Element output, ChartData chartData) {
     var prevMainEngine = _mainEngine;
     setMainEngineOfType<T>();
     var ok = render(output, chartData);
@@ -149,12 +154,18 @@ class ChartEngineSwitchable extends ChartEngine {
   }
 
   @override
-  bool renderBarChart(Element output, ChartSet chartData) {
+  bool renderBarChart(Element output, ChartSeries chartData) {
     return mainEngine.renderBarChart(output, chartData);
   }
 
   @override
-  bool renderHorizontalBarChart(Element output, ChartSet chartData) {
+  bool renderHorizontalBarChart(Element output, ChartSeries chartData) {
     return mainEngine.renderHorizontalBarChart(output, chartData);
   }
+
+  @override
+  bool renderGaugeChart(Element output, ChartSet chartData) {
+    return mainEngine.renderGaugeChart(output, chartData);
+  }
+
 }

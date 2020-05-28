@@ -1,7 +1,10 @@
 ## 1.0.3
 
+- Added support to Gauge Charts.
+- Added support to disabled colors at ColorGenerator.
 - Fix ChartJS build in release mode, since AMDJS is in mimic mode.
-- change SDK requirement from 2.8+ to 2.7+. 
+- Change SDK requirement from 2.8+ to 2.7+. 
+- amdjs: ^1.0.3
 
 ## 1.0.2
 

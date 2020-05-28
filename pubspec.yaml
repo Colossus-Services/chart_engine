@@ -11,7 +11,7 @@ dependencies:
     #path: ../swiss_knife
   dom_tools: ^1.2.9
     #path: ../dom_tools
-  amdjs: ^1.0.2
+  amdjs: ^1.0.3
     #path: ../amdjs
 
 dev_dependencies:

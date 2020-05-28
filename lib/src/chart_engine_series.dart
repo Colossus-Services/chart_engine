@@ -14,6 +14,9 @@ abstract class ChartData<C> {
   /// Colors of each category.
   Map<C, String> colors;
 
+  /// Colors of each category when disabled.
+  Map<C, String> disabledColors;
+
   /// The categories (usually X axis) of the Chart.
   List<C> get categories;
 
@@ -23,12 +26,15 @@ abstract class ChartData<C> {
   /// Set the Colors Map using a [colorGenerator].
   void setColors(ColorGenerator colorGenerator) {
     colors = colorGenerator.buildColors(List.from(categories).cast());
+    disabledColors = colorGenerator.buildDisabledColors(List.from(categories).cast());
   }
 
   /// Ensure that the Colors Map is set, using a [colorGenerator].
   void ensureColors(ColorGenerator colorGenerator) {
     colors ??= colorGenerator.buildColors(List.from(categories).cast());
+    disabledColors ??= colorGenerator.buildDisabledColors(List.from(categories).cast());
   }
+
 }
 
 void _sorteEntries(List<MapEntry> entries) {
@@ -68,15 +74,15 @@ class ChartSeries<X, C, Y> extends ChartData<C> {
 
 }
 
-/// Data Set, usually for Bar Charts.
-class ChartSet<X, C, Y> extends ChartData<C> {
+/// Data Set, usually for Gauge and Pie Charts.
+class ChartSet<X, Y> extends ChartData<X> {
   ChartSetOptions _options;
 
-  Map<C, List<Y>> set;
+  Map<X, Y> set;
 
-  List<X> xLabels;
+  List<X> get xLabels => categories ;
 
-  ChartSet(this.xLabels, this.set, {ChartSetOptions options})
+  ChartSet(this.set, {ChartSetOptions options})
       : _options = options ?? ChartSetOptions();
 
   /// The options for set data: [ChartSetOptions]
@@ -87,15 +93,16 @@ class ChartSet<X, C, Y> extends ChartData<C> {
   }
 
   @override
-  List<C> get categories => set.keys.toList().cast();
+  List<X> get categories => set.keys.toList().cast();
 
-  Map<C, Y> get setSorted {
+  Map<X, Y> get setSorted {
     var l = set.entries.toList();
     _sorteEntries(l);
     return Map.fromEntries(l).cast();
   }
 
 }
+
 
 abstract class ChartOptions {
   /// Sort Categories/Series.keys when showing them in the Chart.

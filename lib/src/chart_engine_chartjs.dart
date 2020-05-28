@@ -110,16 +110,47 @@ class ChartEngineChartJS extends ChartEngine {
   }
 
   @override
-  bool renderBarChart(Element output, ChartSet chartSet) {
-    return _renderBarChartImpl(false, output, chartSet) ;
+  bool renderBarChart(Element output, ChartSeries chartSeries) {
+    return _renderBarChartImpl(false, output, chartSeries) ;
   }
 
   @override
-  bool renderHorizontalBarChart(Element output, ChartSet chartSet) {
-    return _renderBarChartImpl(true, output, chartSet) ;
+  bool renderHorizontalBarChart(Element output, ChartSeries chartSeries) {
+    return _renderBarChartImpl(true, output, chartSeries) ;
   }
 
-  bool _renderBarChartImpl(bool horizontal, Element output, ChartSet chartSet) {
+  bool _renderBarChartImpl(bool horizontal, Element output, ChartSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var canvas = asCanvasElement(output);
+
+    var series = chartSeries.options.sortCategories
+        ? chartSeries.seriesSorted
+        : chartSeries.series ;
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var renderArgs = [
+      horizontal,
+      canvas,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(chartSeries.xLabels),
+      JsObject.jsify(series),
+      JsObject.jsify(colors),
+    ];
+
+    _jsWrapper.callMethod('renderBar', renderArgs);
+
+    return true;
+  }
+
+  @override
+  bool renderGaugeChart(Element output, ChartSet chartSet) {
     checkRenderParameters(output, chartSet);
     checkLoaded();
 
@@ -132,9 +163,9 @@ class ChartEngineChartJS extends ChartEngine {
     chartSet.ensureColors(STANDARD_COLOR_GENERATOR);
 
     var colors = chartSet.colors;
+    var disabledColors = chartSet.disabledColors;
 
     var renderArgs = [
-      horizontal,
       canvas,
       chartSet.title,
       chartSet.xTitle,
@@ -142,9 +173,10 @@ class ChartEngineChartJS extends ChartEngine {
       JsObject.jsify(chartSet.xLabels),
       JsObject.jsify(set),
       JsObject.jsify(colors),
+      JsObject.jsify(disabledColors),
     ];
 
-    _jsWrapper.callMethod('renderBar', renderArgs);
+    _jsWrapper.callMethod('renderGauge', renderArgs);
 
     return true;
   }

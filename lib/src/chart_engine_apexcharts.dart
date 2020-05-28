@@ -99,16 +99,47 @@ class ChartEngineApexCharts extends ChartEngine {
   }
 
   @override
-  bool renderBarChart(Element output, ChartSet chartData) {
+  bool renderBarChart(Element output, ChartSeries chartData) {
     return _renderBarChartImpl(false, output, chartData) ;
   }
 
   @override
-  bool renderHorizontalBarChart(Element output, ChartSet chartData) {
+  bool renderHorizontalBarChart(Element output, ChartSeries chartData) {
     return _renderBarChartImpl(true, output, chartData) ;
   }
 
-  bool _renderBarChartImpl(bool horizontal, Element output, ChartSet chartSet) {
+  bool _renderBarChartImpl(bool horizontal, Element output, ChartSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var div = asDivElement(output);
+
+    var set = chartSeries.options.sortCategories
+        ? chartSeries.seriesSorted
+        : chartSeries.series;
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var renderArgs = [
+      horizontal,
+      div,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(chartSeries.xLabels),
+      JsObject.jsify(set),
+      JsObject.jsify(colors),
+    ];
+
+    _jsWrapper.callMethod('renderBar', renderArgs);
+
+    return true;
+  }
+
+  @override
+  bool renderGaugeChart(Element output, ChartSet chartSet) {
     checkRenderParameters(output, chartSet);
     checkLoaded();
 
@@ -123,7 +154,6 @@ class ChartEngineApexCharts extends ChartEngine {
     var colors = chartSet.colors;
 
     var renderArgs = [
-      horizontal,
       div,
       chartSet.title,
       chartSet.xTitle,
@@ -133,7 +163,7 @@ class ChartEngineApexCharts extends ChartEngine {
       JsObject.jsify(colors),
     ];
 
-    _jsWrapper.callMethod('renderBar', renderArgs);
+    _jsWrapper.callMethod('renderGauge', renderArgs);
 
     return true;
   }

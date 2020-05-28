@@ -8,6 +8,7 @@ void main() async {
 
   await createLineChart();
   await createBarChart();
+  await createGaugeChart();
 
 }
 
@@ -42,7 +43,7 @@ Future createLineChart() async {
 
 Future createBarChart() async {
 
-  var set = ChartSet(
+  var series = ChartSeries(
       ['Jan','Feb','Mar'],
       {
         'A': [10,20,5] ,
@@ -51,8 +52,8 @@ Future createBarChart() async {
       }
   ) ;
 
-  set.xTitle = 'Months' ;
-  set.yTitle = 'Count' ;
+  series.xTitle = 'Months' ;
+  series.yTitle = 'Count' ;
 
   // Render the same ChartSeries using 2 engines:
 
@@ -62,15 +63,39 @@ Future createBarChart() async {
   // Simultaneous load engines:
   await Future.wait( [ charEngine1.load() , charEngine2.load() ] ) ;
 
-  set.title = 'Bar Chart Example' ;
-  charEngine1.renderBarChart( querySelector('#apexcharts-bar-output') , set ) ;
-  charEngine2.renderBarChart( querySelector('#chartjs-bar-output') , set ) ;
+  series.title = 'Bar Chart Example' ;
+  charEngine1.renderBarChart( querySelector('#apexcharts-bar-output') , series ) ;
+  charEngine2.renderBarChart( querySelector('#chartjs-bar-output') , series ) ;
 
-  set.title = 'Horizontal Bar Chart Example' ;
-  charEngine1.renderHorizontalBarChart( querySelector('#apexcharts-horizontal-bar-output') , set ) ;
-  charEngine2.renderHorizontalBarChart( querySelector('#chartjs-horizontal-bar-output') , set ) ;
-
+  series.title = 'Horizontal Bar Chart Example' ;
+  charEngine1.renderHorizontalBarChart( querySelector('#apexcharts-horizontal-bar-output') , series ) ;
+  charEngine2.renderHorizontalBarChart( querySelector('#chartjs-horizontal-bar-output') , series ) ;
 
 }
 
+
+Future createGaugeChart() async {
+
+  // Using Set: 1 value per category.
+  // For Gauge needs to be in 0% to 100% range.
+  var set = ChartSet(
+      {
+        'A': 60 ,
+        'B': 75 ,
+        'C': 50 ,
+      }
+  ) ;
+
+  set.title = 'Gauge Chart Example' ;
+
+  var charEngine1 = ChartEngineApexCharts() ;
+  var charEngine2 = ChartEngineChartJS() ;
+
+  // Simultaneous load engines:
+  await Future.wait( [ charEngine1.load() , charEngine2.load() ] ) ;
+
+  charEngine1.renderGaugeChart( querySelector('#apexcharts-gauge-output') , set ) ;
+  charEngine2.renderGaugeChart( querySelector('#chartjs-gauge-output') , set ) ;
+
+}
 

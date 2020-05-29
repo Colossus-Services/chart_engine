@@ -16,7 +16,7 @@ automatically handled by this package (see the [example][example]).
 
 ```yaml
 dependencies:
-  chart_engine: ^1.0.4
+  chart_engine: ^1.0.6
 ```
 
 ## Usage

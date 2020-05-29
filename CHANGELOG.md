@@ -1,3 +1,7 @@
+## 1.0.6
+
+- Fix version reference.
+
 ## 1.0.5
 
 - Fix Dart JS interoperability issues in build release (Dart2JS).

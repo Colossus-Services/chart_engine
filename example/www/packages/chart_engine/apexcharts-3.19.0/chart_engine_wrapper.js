@@ -85,6 +85,37 @@
     };
 
 
+    exports.renderTimeSeries = function (elem, title, xTitle, yTitle, series, colors, fillLines, straightLines) {
+        const datasets = [] ;
+        const datasetsColors = [] ;
+
+        for ( let [key, val] of  Object.entries(series) ) {
+            let color = colors[key] ;
+
+            const entry = {
+                type: fillLines ? 'area' : 'line' ,
+                name: key,
+                data: val
+            };
+
+            datasets.push( entry ) ;
+            datasetsColors.push( color ) ;
+        }
+
+        xTitle = null ;
+
+        const options = this.configure('line', title, xTitle, yTitle, null, datasets, datasetsColors, straightLines, false) ;
+
+        options['xaxis']['type'] = 'datetime' ;
+
+        const chart = new ApexCharts(elem, options);
+
+        chart.render();
+
+        return chart ;
+    };
+
+
     exports.renderBar = function (horizontal, elem, title, xTitle, yTitle, xLabels, series, colors) {
         const datasets = [] ;
         const datasetsColors = [] ;

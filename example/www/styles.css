@@ -18,8 +18,8 @@ a {
   text-decoration: none;
 }
 
-.chart-container {
-  width: 2500px;
+.chart-container, hr {
+  width: 4000px;
 }
 
 .chart {

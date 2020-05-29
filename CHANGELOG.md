@@ -1,3 +1,7 @@
+## 1.0.5
+
+- Fix Dart JS interoperability issues in build release (Dart2JS).
+
 ## 1.0.4
 
 - Added support for Time Series Charts (Line charts with DateTime X axis).

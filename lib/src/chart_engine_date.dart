@@ -34,12 +34,8 @@ abstract class DateAdapter {
     var formatStr = format != null ? '$format' : '' ;
 
     if ( formatStr.isNotEmpty ) {
-      formatStr = formatStr
-          .replaceAll('YYYY' , 'yyyy')
-          .replaceAll('Do', 'dd')
-          .replaceAll('D', 'd') ;
 
-      formatStr = formatStr.replaceAllMapped( RegExp(r'(?:\[(.*)\]|(YYYY|YY|DD|D)|(Do))'), (m) {
+      formatStr = formatStr.replaceAllMapped( RegExp(r'(?:\[(.*)\]|(YYYY|YY|DD|D)|(Do)|(SSS))'), (m) {
         if ( m[1] != null ) {
           return "'${ m[1] }'";
         }
@@ -48,6 +44,9 @@ abstract class DateAdapter {
         }
         else if ( m[3] != null ) {
           return 'dd' ;
+        }
+        else if ( m[4] != null ) {
+          return '' ;
         }
         else {
           return m[0] ;

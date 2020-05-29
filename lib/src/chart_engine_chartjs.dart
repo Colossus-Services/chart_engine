@@ -9,7 +9,6 @@ import 'chart_engine_colors.dart';
 import 'chart_engine_date.dart';
 import 'chart_engine_series.dart';
 
-
 /// ChartJS (v2.9.3) Engine.
 ///
 /// Automatically loads `chart.js` using `AMDJS`.
@@ -70,13 +69,14 @@ class ChartEngineChartJS extends ChartEngine {
     if (_jsWrapper == null) {
       throw StateError("Can't allowInterop _DateAdapter: null _jsWrapper") ;
     }
-    _jsWrapper['_DateAdapter__parse'] = allowInterop( DateAdapter.parse );
-    _jsWrapper['_DateAdapter__format'] = allowInterop( DateAdapter.format );
-    _jsWrapper['_DateAdapter__startOf'] = allowInterop( DateAdapter.startOf );
-    _jsWrapper['_DateAdapter__endOf'] = allowInterop( DateAdapter.endOf );
-    _jsWrapper['_DateAdapter__add'] = allowInterop( DateAdapter.add );
-    _jsWrapper['_DateAdapter__diff'] = allowInterop( DateAdapter.diff );
-    _jsWrapper['_DateAdapter__create'] = allowInterop( DateAdapter.create );
+
+    _jsWrapper['_DateAdapter__parse'] = ([a,b]) => DateAdapter.parse(a,b) ;
+    _jsWrapper['_DateAdapter__format'] = ([a,b]) => DateAdapter.format(a,b) ;
+    _jsWrapper['_DateAdapter__startOf'] = ([a,b,c]) => DateAdapter.startOf(a,b,c) ;
+    _jsWrapper['_DateAdapter__endOf'] = ([a,b]) => DateAdapter.endOf(a,b) ;
+    _jsWrapper['_DateAdapter__add'] = ([a,b,c]) => DateAdapter.add(a,b,c) ;
+    _jsWrapper['_DateAdapter__diff'] = ([a,b,c]) => DateAdapter.diff(a,b,c) ;
+    _jsWrapper['_DateAdapter__create'] = ([a]) => DateAdapter.create(a) ;
 
   }
 

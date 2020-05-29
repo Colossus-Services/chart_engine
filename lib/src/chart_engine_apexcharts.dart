@@ -99,6 +99,42 @@ class ChartEngineApexCharts extends ChartEngine {
   }
 
   @override
+  bool renderTimeSeriesChart(Element output, ChartTimeSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var div = asDivElement(output);
+
+    var series = chartSeries.options.sortCategories
+        ? chartSeries.seriesSorted
+        : chartSeries.series;
+
+    var timeSeries = chartSeries.seriesWithPairList(series) ;
+
+    print('renderTimeSeriesChart:') ;
+    print(timeSeries) ;
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var renderArgs = [
+      div,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(timeSeries),
+      JsObject.jsify(colors),
+      chartSeries.options.fillLines,
+      chartSeries.options.straightLines
+    ];
+
+    _jsWrapper.callMethod('renderTimeSeries', renderArgs);
+
+    return true;
+  }
+
+  @override
   bool renderBarChart(Element output, ChartSeries chartData) {
     return _renderBarChartImpl(false, output, chartData) ;
   }

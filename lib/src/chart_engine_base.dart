@@ -9,6 +9,9 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
+
+  static final String VERSION = '1.0.4' ;
+
   /// Ensures that engine and dependencies are loaded.
   Future<bool> load();
 
@@ -49,6 +52,9 @@ abstract class ChartEngine {
 
   /// Renders a Line Chart:
   bool renderLineChart(Element output, ChartSeries chartData);
+
+  /// Renders a Time Series using Line Chart:
+  bool renderTimeSeriesChart(Element output, ChartTimeSeries chartData);
 
   /// Renders a Bar Chart:
   bool renderBarChart(Element output, ChartSeries chartData);
@@ -151,6 +157,11 @@ class ChartEngineSwitchable extends ChartEngine {
   @override
   bool renderLineChart(Element output, ChartSeries chartData) {
     return mainEngine.renderLineChart(output, chartData);
+  }
+
+  @override
+  bool renderTimeSeriesChart(Element output, ChartSeries chartData) {
+    return mainEngine.renderTimeSeriesChart(output, chartData);
   }
 
   @override

@@ -74,6 +74,79 @@ class ChartSeries<X, C, Y> extends ChartData<C> {
 
 }
 
+
+/// Time Series, for Time Series Charts. Each entry should be a pair of DateTime and Value.
+class ChartTimeSeries<C> extends ChartSeries<DateTime,C,List> {
+
+  ChartTimeSeries(Map<C, List<List>> series) : super([], series);
+
+  /// Used to normalize series for engines that requires a pair as Map{x: DateTime, y: Value}.
+  Map<C, List<Map>> seriesWithPairMap( [Map<C, List<List>> series] ) {
+    series ??= series ;
+    return series.map((key, value) => MapEntry(key, toTimeSeriesListOfPairMap(value) ) ) ;
+  }
+
+  /// Used to normalize series for engines that requires a pair as List[DateTime, value].
+  Map<C, List<List>> seriesWithPairList( [Map<C, List<List>> series] ) {
+    series ??= series ;
+    return series.map((key, value) => MapEntry(key, toTimeSeriesListOfPairList(value) ) ) ;
+  }
+
+  static List toTimeSeriesListOfPairList(List<List> listOfPairs) {
+    return listOfPairs.map( _toTimeSeriesPairList ).toList() ;
+  }
+
+  static List toTimeSeriesListOfPairMap(List<List> listOfPairs) {
+    return listOfPairs.map( _toTimeSeriesPairMap ).toList() ;
+  }
+
+  static Map _toTimeSeriesPairMap(List pair) {
+    return _toTimeSeriesPairImpl(pair , (DateTime d, dynamic v) => {'x': d.millisecondsSinceEpoch , 'y': v } ) ;
+  }
+
+  static List _toTimeSeriesPairList(List pair) {
+    return _toTimeSeriesPairImpl(pair , (DateTime d, dynamic v) => [ d.millisecondsSinceEpoch , v ] ) ;
+  }
+
+  static R _toTimeSeriesPairImpl<R>(List pair, R Function(DateTime date, dynamic value) consumer ) {
+    var a = pair[0] ;
+    var b = pair[1] ;
+
+    DateTime date ;
+    var v ;
+
+    if ( a is DateTime ) {
+      date = a ;
+      v = b ;
+    }
+    else if ( b is DateTime ) {
+      date = b ;
+      v = a ;
+    }
+    else if ( a is int && b is int ) {
+      if ( a > b ) {
+        date = DateTime.fromMillisecondsSinceEpoch(a) ;
+        v = b ;
+      }
+      else {
+        date = DateTime.fromMillisecondsSinceEpoch(b) ;
+        v = a ;
+      }
+    }
+    else if ( a is String ){
+      date = DateTime.parse(a) ;
+      v = b ;
+    }
+    else if ( b is String ){
+      date = DateTime.parse(b) ;
+      v = b ;
+    }
+
+    return consumer(date, v) ;
+  }
+
+}
+
 /// Data Set, usually for Gauge and Pie Charts.
 class ChartSet<X, Y> extends ChartData<X> {
   ChartSetOptions _options;

@@ -1,3 +1,9 @@
+## 1.0.4
+
+- Added support for Time Series Charts (Line charts with DateTime X axis).
+- ChartTimeSeries to declare Time Series data.
+- Added ChartJS date adapter fallback, in case of moment not present.
+
 ## 1.0.3
 
 - Added support to Gauge Charts.

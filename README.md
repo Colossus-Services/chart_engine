@@ -16,7 +16,7 @@ automatically handled by this package (see the [example][example]).
 
 ```yaml
 dependencies:
-  chart_engine: ^1.0.3
+  chart_engine: ^1.0.4
 ```
 
 ## Usage
@@ -67,15 +67,15 @@ If your prefer you can experiment with the example from the source code.
 ## Example from Sources
 
 Get the source
-```shell script
-$> git clone https://github.com/Colossus-Services/chart_engine.git
+```
+  $> git clone https://github.com/Colossus-Services/chart_engine.git
 ```
 
 ...and see the [Web Example][example] (just follow the README file for instructions).
 
 [example]: https://github.com/Colossus-Services/chart_engine/tree/master/example
 
-## Loading Engine JavaScript Libraries
+## Loading Engines JavaScript Libraries
 
 This Dart package already bundles the JavaScript libraries of each supported engine.
 When an implementation of `ChartEngine` is instantiated, the corresponding JavaScript library is automatically loaded
@@ -86,6 +86,12 @@ the JavaScript libraries using AMD framework when an AMD implementation is prese
 or injecting a tag ```<script src='lib-x.js'></script>``` as fallback.
 
 [amdjs.dart]: https://github.com/gmpassos/amdjs.dart
+
+## ChartJS and Moment
+
+You don't need to load Moment JS library to use Time Series Charts when using ChartJS engine.
+We implement a fallback Date adapter, using Dart code interoperability,
+based in Dart DateTime and DateFormat implementations. ;-P 
 
 ## Features and bugs
 

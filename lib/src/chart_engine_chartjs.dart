@@ -6,7 +6,9 @@ import 'package:swiss_knife/swiss_knife.dart';
 
 import 'chart_engine_base.dart';
 import 'chart_engine_colors.dart';
+import 'chart_engine_date.dart';
 import 'chart_engine_series.dart';
+
 
 /// ChartJS (v2.9.3) Engine.
 ///
@@ -58,8 +60,24 @@ class ChartEngineChartJS extends ChartEngine {
 
       _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject;
 
+      _allowInterop() ;
+
       return okJS && okWrapper;
     });
+  }
+
+  static void _allowInterop() {
+    if (_jsWrapper == null) {
+      throw StateError("Can't allowInterop _DateAdapter: null _jsWrapper") ;
+    }
+    _jsWrapper['_DateAdapter__parse'] = allowInterop( DateAdapter.parse );
+    _jsWrapper['_DateAdapter__format'] = allowInterop( DateAdapter.format );
+    _jsWrapper['_DateAdapter__startOf'] = allowInterop( DateAdapter.startOf );
+    _jsWrapper['_DateAdapter__endOf'] = allowInterop( DateAdapter.endOf );
+    _jsWrapper['_DateAdapter__add'] = allowInterop( DateAdapter.add );
+    _jsWrapper['_DateAdapter__diff'] = allowInterop( DateAdapter.diff );
+    _jsWrapper['_DateAdapter__create'] = allowInterop( DateAdapter.create );
+
   }
 
   /// Ensures that DOM element to render is a canvas. If not will insert a canvas
@@ -105,6 +123,42 @@ class ChartEngineChartJS extends ChartEngine {
     ];
 
     _jsWrapper.callMethod('renderLine', renderArgs);
+
+    return true;
+  }
+
+  @override
+  bool renderTimeSeriesChart(Element output, ChartTimeSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var canvas = asCanvasElement(output);
+
+    var series = chartSeries.options.sortCategories
+        ? chartSeries.seriesSorted
+        : chartSeries.series;
+
+    var timeSeries = chartSeries.seriesWithPairMap(series) ;
+
+    print('renderTimeSeriesChart:') ;
+    print(timeSeries) ;
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var renderArgs = [
+      canvas,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(timeSeries),
+      JsObject.jsify(colors),
+      chartSeries.options.fillLines,
+      chartSeries.options.straightLines
+    ];
+
+    _jsWrapper.callMethod('renderTimeSeries', renderArgs);
 
     return true;
   }

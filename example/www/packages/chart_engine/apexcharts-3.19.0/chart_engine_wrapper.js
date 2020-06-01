@@ -8,7 +8,7 @@
 
     const ApexCharts = moduleApexCharts.default ;
 
-    exports.configure = function (type, title, xTitle, yTitle, xLabels, datasets, datasetsColors, straightLines, horizontalBar, xMin, xMax, yMin, yMax) {
+    exports.configure = function (type, title, xTitle, yTitle, xLabels, datasets, datasetsColors, straightLines, horizontalBar, xMin, xMax, yMin, yMax, timed) {
 
         const options = {
             chart: {
@@ -28,6 +28,9 @@
             colors: datasetsColors,
             stroke: {
                 curve: straightLines ? 'straight' : 'smooth',
+            },
+            legend: {
+
             }
         }
 
@@ -72,6 +75,10 @@
 
         if (yTitle != null) {
             yaxis['title']['text'] = yTitle ;
+        }
+
+        if (timed != null && timed) {
+            xaxis['type'] = 'datetime' ;
         }
 
         return options ;
@@ -121,11 +128,13 @@
             datasetsColors.push( color ) ;
         }
 
-        xTitle = null ;
+        const options = this.configure('line', title, xTitle, yTitle, null, datasets, datasetsColors, straightLines, null, null, null, null, null, true) ;
 
-        const options = this.configure('line', title, xTitle, yTitle, null, datasets, datasetsColors, straightLines) ;
-
-        options['xaxis']['type'] = 'datetime' ;
+        // Fix X axis title position to not colide with axis date ticks:
+        if (xTitle != null) {
+            options['xaxis']['title']['offsetY'] = 8;
+            options['legend']['offsetY'] = 4;
+        }
 
         const chart = new ApexCharts(elem, options);
 
@@ -205,7 +214,7 @@
     };
 
 
-    exports.renderScatter = function (elem, title, xTitle, yTitle, series, colors, yMin, yMax) {
+    exports.renderScatter = function (elem, title, xTitle, yTitle, series, colors, yMin, yMax, timed) {
         const datasets = [] ;
         const datasetsColors = [] ;
 
@@ -221,9 +230,13 @@
             datasetsColors.push( color ) ;
         }
 
-        xTitle = null ;
+        const options = this.configure('scatter', title, xTitle, yTitle, null, datasets, datasetsColors, null, null, null, null, yMin, yMax, timed) ;
 
-        const options = this.configure('scatter', title, xTitle, yTitle, null, datasets, datasetsColors, null, null, null, null, yMin, yMax) ;
+        // Fix X axis title position to not colide with axis date ticks:
+        if (xTitle != null) {
+            options['xaxis']['title']['offsetY'] = 8;
+            options['legend']['offsetY'] = 4;
+        }
 
         const chart = new ApexCharts(elem, options);
 

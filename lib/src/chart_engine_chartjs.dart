@@ -52,14 +52,15 @@ class ChartEngineChartJS extends ChartEngine {
   Future<bool> load() {
     return _loadController.load(() async {
       var jsFullPath = minified ? JS_PATH_MIN : JS_PATH;
-      var okJS = await AMDJS.require('chartjs', jsFullPath, globalJSVariableName: 'Chart');
+      var okJS = await AMDJS.require('chartjs', jsFullPath,
+          globalJSVariableName: 'Chart');
       var okWrapper = await AMDJS.require(
           JS_WRAPPER_GLOBAL_NAME, ENGINE_WRAPPER_PATH,
           globalJSVariableName: JS_WRAPPER_GLOBAL_NAME);
 
       _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject;
 
-      _allowInterop() ;
+      _allowInterop();
 
       return okJS && okWrapper;
     });
@@ -67,17 +68,17 @@ class ChartEngineChartJS extends ChartEngine {
 
   static void _allowInterop() {
     if (_jsWrapper == null) {
-      throw StateError("Can't allowInterop _DateAdapter: null _jsWrapper") ;
+      throw StateError("Can't allowInterop _DateAdapter: null _jsWrapper");
     }
 
-    _jsWrapper['_DateAdapter__parse'] = ([a,b]) => DateAdapter.parse(a,b) ;
-    _jsWrapper['_DateAdapter__format'] = ([a,b]) => DateAdapter.format(a,b) ;
-    _jsWrapper['_DateAdapter__startOf'] = ([a,b,c]) => DateAdapter.startOf(a,b,c) ;
-    _jsWrapper['_DateAdapter__endOf'] = ([a,b]) => DateAdapter.endOf(a,b) ;
-    _jsWrapper['_DateAdapter__add'] = ([a,b,c]) => DateAdapter.add(a,b,c) ;
-    _jsWrapper['_DateAdapter__diff'] = ([a,b,c]) => DateAdapter.diff(a,b,c) ;
-    _jsWrapper['_DateAdapter__create'] = ([a]) => DateAdapter.create(a) ;
-
+    _jsWrapper['_DateAdapter__parse'] = ([a, b]) => DateAdapter.parse(a, b);
+    _jsWrapper['_DateAdapter__format'] = ([a, b]) => DateAdapter.format(a, b);
+    _jsWrapper['_DateAdapter__startOf'] =
+        ([a, b, c]) => DateAdapter.startOf(a, b, c);
+    _jsWrapper['_DateAdapter__endOf'] = ([a, b]) => DateAdapter.endOf(a, b);
+    _jsWrapper['_DateAdapter__add'] = ([a, b, c]) => DateAdapter.add(a, b, c);
+    _jsWrapper['_DateAdapter__diff'] = ([a, b, c]) => DateAdapter.diff(a, b, c);
+    _jsWrapper['_DateAdapter__create'] = ([a]) => DateAdapter.create(a);
   }
 
   /// Ensures that DOM element to render is a canvas. If not will insert a canvas
@@ -138,7 +139,8 @@ class ChartEngineChartJS extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var timeSeries = chartSeries.seriesPairsAsMap(series) ;
+    var timeSeries =
+        chartSeries.seriesPairsAsMap(series: series, mapDateTimeToMillis: true);
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -162,15 +164,16 @@ class ChartEngineChartJS extends ChartEngine {
 
   @override
   bool renderBarChart(Element output, ChartSeries chartSeries) {
-    return _renderBarChartImpl(false, output, chartSeries) ;
+    return _renderBarChartImpl(false, output, chartSeries);
   }
 
   @override
   bool renderHorizontalBarChart(Element output, ChartSeries chartSeries) {
-    return _renderBarChartImpl(true, output, chartSeries) ;
+    return _renderBarChartImpl(true, output, chartSeries);
   }
 
-  bool _renderBarChartImpl(bool horizontal, Element output, ChartSeries chartSeries) {
+  bool _renderBarChartImpl(
+      bool horizontal, Element output, ChartSeries chartSeries) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
@@ -178,7 +181,7 @@ class ChartEngineChartJS extends ChartEngine {
 
     var series = chartSeries.options.sortCategories
         ? chartSeries.seriesSortedByCategory
-        : chartSeries.series ;
+        : chartSeries.series;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -207,9 +210,8 @@ class ChartEngineChartJS extends ChartEngine {
 
     var canvas = asCanvasElement(output);
 
-    var set = chartSet.options.sortCategories
-        ? chartSet.setSorted
-        : chartSet.set;
+    var set =
+        chartSet.options.sortCategories ? chartSet.setSorted : chartSet.set;
 
     chartSet.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -232,7 +234,6 @@ class ChartEngineChartJS extends ChartEngine {
     return true;
   }
 
-
   @override
   bool renderScatterChart(Element output, ChartSeriesPair chartSeries) {
     checkRenderParameters(output, chartSeries);
@@ -244,7 +245,7 @@ class ChartEngineChartJS extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var seriesPairs = chartSeries.seriesPairsAsMap(series) ;
+    var seriesPairs = chartSeries.seriesPairsAsMap(series: series);
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -264,4 +265,36 @@ class ChartEngineChartJS extends ChartEngine {
     return true;
   }
 
+  @override
+  bool renderScatterTimedChart(Element output, ChartTimeSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var canvas = asCanvasElement(output);
+
+    var series = chartSeries.options.sortCategories
+        ? chartSeries.seriesSortedByCategory
+        : chartSeries.series;
+
+    var seriesPairs =
+        chartSeries.seriesPairsAsMap(series: series, mapDateTimeToMillis: true);
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var renderArgs = [
+      canvas,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(seriesPairs),
+      JsObject.jsify(colors),
+      true
+    ];
+
+    _jsWrapper.callMethod('renderScatter', renderArgs);
+
+    return true;
+  }
 }

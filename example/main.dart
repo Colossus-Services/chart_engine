@@ -12,6 +12,7 @@ void main() async {
   await createBarChart();
 
   await createScatterChart();
+  await createScatterTimedChart();
 
   await createGaugeChart();
 
@@ -146,6 +147,34 @@ Future createScatterChart() async {
 
 }
 
+
+Future createScatterTimedChart() async {
+
+  // Declare using pair of x(DateTime) and y(value) entries.
+  var series = ChartTimeSeries(
+      {
+        'A': [ [ DateTime(2020 , 03, 30) , 10 ] , [ DateTime(2020 , 03, 31) , 20 ] , [ DateTime(2020 , 04, 01, 10) , 5 ] , [ DateTime(2020 , 04, 02, 3) , -10 ] , [ DateTime(2020 , 04, 03, 11) , 1 ] ] ,
+        'B': [ [ DateTime(2020 , 03, 30, 2) , 15 ] , [ DateTime(2020 , 03, 31, 3) , 25 ] , [ DateTime(2020 , 04, 01, 12) , 55 ] , [ DateTime(2020 , 04, 02, 14) , 30 ] , [ DateTime(2020 , 04, 03, 2) , -10 ] ] ,
+        'C': [ [ 100 , DateTime(2020 , 03, 30, 5) ] , [ DateTime(2020 , 03, 31, 4) , 130 ] , [ DateTime(2020 , 04, 01, 20) , 140 ] , [ DateTime(2020 , 04, 02, 23) , -20 ] , [ DateTime(2020 , 04, 03, 18) , -55 ] ] ,
+      }
+  ) ;
+
+  series.title = 'Scatter Timed Chart Example' ;
+  series.xTitle = 'Months' ;
+  series.yTitle = 'Count' ;
+
+  // Render the same ChartSeries using 2 engines:
+
+  var charEngine1 = ChartEngineApexCharts() ;
+  var charEngine2 = ChartEngineChartJS() ;
+
+  // Simultaneous load engines:
+  await Future.wait( [ charEngine1.load() , charEngine2.load() ] ) ;
+
+  charEngine1.renderScatterTimedChart( querySelector('#apexcharts-scatter_timed-output') , series ) ;
+  charEngine2.renderScatterTimedChart( querySelector('#chartjs-scatter_timed-output') , series ) ;
+
+}
 
 Future createGaugeChart() async {
 

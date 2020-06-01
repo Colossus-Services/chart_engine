@@ -109,7 +109,8 @@ class ChartEngineApexCharts extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var timeSeries = chartSeries.seriesPairsAsList( series: series , mapDateTimeToMillis: true ) ;
+    var timeSeries = chartSeries.seriesPairsAsList(
+        series: series, mapDateTimeToMillis: true);
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -133,15 +134,16 @@ class ChartEngineApexCharts extends ChartEngine {
 
   @override
   bool renderBarChart(Element output, ChartSeries chartData) {
-    return _renderBarChartImpl(false, output, chartData) ;
+    return _renderBarChartImpl(false, output, chartData);
   }
 
   @override
   bool renderHorizontalBarChart(Element output, ChartSeries chartData) {
-    return _renderBarChartImpl(true, output, chartData) ;
+    return _renderBarChartImpl(true, output, chartData);
   }
 
-  bool _renderBarChartImpl(bool horizontal, Element output, ChartSeries chartSeries) {
+  bool _renderBarChartImpl(
+      bool horizontal, Element output, ChartSeries chartSeries) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
@@ -178,9 +180,8 @@ class ChartEngineApexCharts extends ChartEngine {
 
     var div = asDivElement(output);
 
-    var set = chartSet.options.sortCategories
-        ? chartSet.setSorted
-        : chartSet.set;
+    var set =
+        chartSet.options.sortCategories ? chartSet.setSorted : chartSet.set;
 
     chartSet.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -212,16 +213,16 @@ class ChartEngineApexCharts extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var seriesPairs = chartSeries.seriesPairsAsList( series: series ) ;
+    var seriesPairs = chartSeries.seriesPairsAsList(series: series);
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
     var colors = chartSeries.colors;
 
-    var yAxisScale = chartSeries.yAxisScale ;
+    var yAxisScale = chartSeries.yAxisScale;
 
-    var yMin = yAxisScale.minimumNice ;
-    var yMax = yAxisScale.maximumNice ;
+    var yMin = yAxisScale.minimumNice;
+    var yMax = yAxisScale.maximumNice;
 
     var renderArgs = [
       div,
@@ -230,7 +231,8 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.yTitle,
       JsObject.jsify(seriesPairs),
       JsObject.jsify(colors),
-      yMin,yMax
+      yMin,
+      yMax
     ];
 
     _jsWrapper.callMethod('renderScatter', renderArgs);
@@ -249,16 +251,17 @@ class ChartEngineApexCharts extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var timeSeries = chartSeries.seriesPairsAsList( series: series , mapDateTimeToMillis: true ) ;
+    var timeSeries = chartSeries.seriesPairsAsList(
+        series: series, mapDateTimeToMillis: true);
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
     var colors = chartSeries.colors;
 
-    var yAxisScale = chartSeries.yAxisScale ;
+    var yAxisScale = chartSeries.yAxisScale;
 
-    var yMin = yAxisScale.minimumNice ;
-    var yMax = yAxisScale.maximumNice ;
+    var yMin = yAxisScale.minimumNice;
+    var yMax = yAxisScale.maximumNice;
 
     var renderArgs = [
       div,
@@ -267,7 +270,8 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.yTitle,
       JsObject.jsify(timeSeries),
       JsObject.jsify(colors),
-      yMin,yMax,
+      yMin,
+      yMax,
       true
     ];
 
@@ -275,5 +279,4 @@ class ChartEngineApexCharts extends ChartEngine {
 
     return true;
   }
-
 }

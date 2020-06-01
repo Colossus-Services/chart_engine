@@ -5,15 +5,15 @@ import 'package:swiss_knife/swiss_knife.dart';
 import 'chart_engine_colors.dart';
 
 void _sorteEntriesByKey(List<MapEntry> entries) {
-  entries.sort( (a,b) {
-    var c1 = a.key as Comparable ;
-    var c2 = b.key as Comparable ;
-    return c1.compareTo(c2) ;
-  } );
+  entries.sort((a, b) {
+    var c1 = a.key as Comparable;
+    var c2 = b.key as Comparable;
+    return c1.compareTo(c2);
+  });
 }
 
 /// Abstract Chart Data.
-abstract class ChartData<C,X,Y> {
+abstract class ChartData<C, X, Y> {
   /// The title of the Chart.
   String title;
 
@@ -38,50 +38,50 @@ abstract class ChartData<C,X,Y> {
   /// Set the Colors Map using a [colorGenerator].
   void setColors(ColorGenerator colorGenerator) {
     colors = colorGenerator.buildColors(List.from(categories).cast());
-    disabledColors = colorGenerator.buildDisabledColors(List.from(categories).cast());
+    disabledColors =
+        colorGenerator.buildDisabledColors(List.from(categories).cast());
   }
 
   /// Ensure that the Colors Map is set, using a [colorGenerator].
   void ensureColors(ColorGenerator colorGenerator) {
     colors ??= colorGenerator.buildColors(List.from(categories).cast());
-    disabledColors ??= colorGenerator.buildDisabledColors(List.from(categories).cast());
+    disabledColors ??=
+        colorGenerator.buildDisabledColors(List.from(categories).cast());
   }
 
-  Iterable<X> get xAxisAllValues ;
-  Iterable<Y> get yAxisAllValues ;
+  Iterable<X> get xAxisAllValues;
 
-  Scale<X> _xAxisScale ;
+  Iterable<Y> get yAxisAllValues;
+
+  Scale<X> _xAxisScale;
 
   Scale<X> get xAxisScale {
     if (_xAxisScale == null) {
-      var values = xAxisAllValues ;
-      _xAxisScale = isNumList(values) ?
-        ScaleNum<num>.from( values.cast() ) :
-        Scale.from(values)
-      ;
+      var values = xAxisAllValues;
+      _xAxisScale = isNumList(values)
+          ? ScaleNum<num>.from(values.cast())
+          : Scale.from(values);
     }
 
-    return _xAxisScale ;
+    return _xAxisScale;
   }
 
-  Scale<Y> _yAxisScale ;
+  Scale<Y> _yAxisScale;
 
   Scale<Y> get yAxisScale {
     if (_yAxisScale == null) {
-      var values = yAxisAllValues ;
-      _yAxisScale = isNumList(values) ?
-        ScaleNum<num>.from( values.cast() ) :
-        Scale.from(values)
-      ;
+      var values = yAxisAllValues;
+      _yAxisScale = isNumList(values)
+          ? ScaleNum<num>.from(values.cast())
+          : Scale.from(values);
     }
 
-    return _yAxisScale ;
+    return _yAxisScale;
   }
-
 }
 
 /// Data Series, usually for Line Charts.
-class ChartSeries<C,X,Y,P> extends ChartData<C,X,Y> {
+class ChartSeries<C, X, Y, P> extends ChartData<C, X, Y> {
   ChartSeriesOptions _options;
 
   final Map<C, List<P>> series;
@@ -108,41 +108,49 @@ class ChartSeries<C,X,Y,P> extends ChartData<C,X,Y> {
   }
 
   @override
-  Iterable<X> get xAxisAllValues => UnmodifiableListView( xLabels ) ;
+  Iterable<X> get xAxisAllValues => UnmodifiableListView(xLabels);
 
   @override
-  Iterable<Y> get yAxisAllValues => UnmodifiableListView( series.values.where((e) => e != null).expand((l) => l).cast<Y>() );
-
+  Iterable<Y> get yAxisAllValues => UnmodifiableListView(
+      series.values.where((e) => e != null).expand((l) => l).cast<Y>());
 }
 
-typedef PairMapper<R,X,Y> = R Function(X x, Y y) ;
-typedef TypeMapper<R,T> = R Function(T o) ;
+typedef PairMapper<R, X, Y> = R Function(X x, Y y);
+typedef TypeMapper<R, T> = R Function(T o);
 
 /// Pair Series, for Scatter or Timed Charts. Each entry should be a pair P of values X and Y.
-class ChartSeriesPair<C,X,Y,P> extends ChartSeries<C,X,Y,P> {
-
+class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
   /// Default X keys in Map.
-  static const List<String> _defaultXKeys = ['x', 'a', 'time', 't', 'date', 'key', 'k'] ;
-  /// Default Y keys in Map.
-  static const List<String> _defaultYKeys = ['y', 'b', 'value', 'val', 'v'] ;
+  static const List<String> _defaultXKeys = [
+    'x',
+    'a',
+    'time',
+    't',
+    'date',
+    'key',
+    'k'
+  ];
 
-  List<String> _xKeys ;
+  /// Default Y keys in Map.
+  static const List<String> _defaultYKeys = ['y', 'b', 'value', 'val', 'v'];
+
+  List<String> _xKeys;
 
   List<String> get xKeys {
-    _xKeys ??= List.from(_defaultXKeys) ;
+    _xKeys ??= List.from(_defaultXKeys);
     return _xKeys;
   }
 
   /// Possible X keys in Map.
   set xKeys(List<String> value) {
-    _xKeys = value ;
+    _xKeys = value;
   }
 
-  List<String> _yKeys ;
+  List<String> _yKeys;
 
   /// Possible Y keys in Map.
   List<String> get yKeys {
-    _yKeys ??= _defaultYKeys ;
+    _yKeys ??= _defaultYKeys;
     return _yKeys;
   }
 
@@ -153,351 +161,334 @@ class ChartSeriesPair<C,X,Y,P> extends ChartSeries<C,X,Y,P> {
   ChartSeriesPair(Map<C, List<P>> series) : super([], series);
 
   @override
-  Iterable<X> get xAxisAllValues => UnmodifiableListView( series.values.where((e) => e != null).expand((e) => e).map(getPairX) ) ;
+  Iterable<X> get xAxisAllValues => UnmodifiableListView(
+      series.values.where((e) => e != null).expand((e) => e).map(getPairX));
 
   @override
-  Iterable<Y> get yAxisAllValues => UnmodifiableListView( series.values.where((e) => e != null).expand((e) => e).map(getPairY) ) ;
+  Iterable<Y> get yAxisAllValues => UnmodifiableListView(
+      series.values.where((e) => e != null).expand((e) => e).map(getPairY));
 
   /// Copies this series swapping the XY pairs.
-  ChartSeriesPair<C,Y,X,dynamic> swapXY() {
-    var seriesSwapped = series.map((key, value) => MapEntry(key, swapListOfPairs(value) ) ) ;
+  ChartSeriesPair<C, Y, X, dynamic> swapXY() {
+    var seriesSwapped =
+        series.map((key, value) => MapEntry(key, swapListOfPairs(value)));
 
-    var  copy = ChartSeriesPair<C,Y,X,dynamic>( seriesSwapped );
+    var copy = ChartSeriesPair<C, Y, X, dynamic>(seriesSwapped);
 
-    copy.xTitle = yTitle ;
-    copy.yTitle = xTitle ;
-    copy.title = title ;
-    copy.colors = colors ;
-    copy.disabledColors = disabledColors ;
-    copy._options = _options.copy() ;
+    copy.xTitle = yTitle;
+    copy.yTitle = xTitle;
+    copy.title = title;
+    copy.colors = colors;
+    copy.disabledColors = disabledColors;
+    copy._options = _options.copy();
 
-    return copy ;
+    return copy;
   }
 
   X getPairX(P pair) {
     if (pair == null) {
-      return null ;
-    }
-    else if (pair is List) {
-      return pair[0] ;
-    }
-    else if (pair is Map) {
-      return findKeyValue(pair as Map<String,dynamic>, xKeys, true) ;
-    }
-    else if (pair is Pair) {
-      return pair.a ;
-    }
-    else if (pair is String) {
-      return pair.split(stringPairDelimiterPattern)[0] as X ;
-    }
-    else {
-      throw UnsupportedError("Can't handle pair of type ${ pair.runtimeType }: $pair") ;
+      return null;
+    } else if (pair is List) {
+      return pair[0];
+    } else if (pair is Map) {
+      return findKeyValue(pair as Map<String, dynamic>, xKeys, true);
+    } else if (pair is Pair) {
+      return pair.a;
+    } else if (pair is String) {
+      return pair.split(stringPairDelimiterPattern)[0] as X;
+    } else {
+      throw UnsupportedError(
+          "Can't handle pair of type ${pair.runtimeType}: $pair");
     }
   }
 
   Y getPairY(P pair) {
     if (pair == null) {
-      return null ;
-    }
-    else if (pair is List) {
-      return pair[1] ;
-    }
-    else if (pair is Map) {
-      return findKeyValue(pair as Map<String,dynamic>, yKeys, true) ;
-    }
-    else if (pair is Pair) {
-      return pair.b ;
-    }
-    else if (pair is String) {
-      return pair.split(stringPairDelimiterPattern)[1] as Y ;
-    }
-    else {
-      throw UnsupportedError("Can't handle pair of type ${ pair.runtimeType }: $pair") ;
+      return null;
+    } else if (pair is List) {
+      return pair[1];
+    } else if (pair is Map) {
+      return findKeyValue(pair as Map<String, dynamic>, yKeys, true);
+    } else if (pair is Pair) {
+      return pair.b;
+    } else if (pair is String) {
+      return pair.split(stringPairDelimiterPattern)[1] as Y;
+    } else {
+      throw UnsupportedError(
+          "Can't handle pair of type ${pair.runtimeType}: $pair");
     }
   }
 
   void getPairXY(P pair, List returnXY) {
     if (pair == null) {
-      return ;
-    }
-    else if (pair is List) {
-      returnXY[0] = pair[0] ;
-      returnXY[1] = pair[1] ;
-      return ;
-    }
-    else if (pair is Map) {
-      var keyX = findKeyName(pair as Map<String,dynamic>, xKeys, true);
-      var keyY = findKeyName(pair as Map<String,dynamic>, yKeys, true);
-      returnXY[0] = pair[keyX] ;
-      returnXY[1] = pair[keyY] ;
-      return ;
-    }
-    else if (pair is Pair) {
-      returnXY[0] = pair.a ;
-      returnXY[1] = pair.b ;
-      return ;
-    }
-    else if (pair is String) {
+      return;
+    } else if (pair is List) {
+      returnXY[0] = pair[0];
+      returnXY[1] = pair[1];
+      return;
+    } else if (pair is Map) {
+      var keyX = findKeyName(pair as Map<String, dynamic>, xKeys, true);
+      var keyY = findKeyName(pair as Map<String, dynamic>, yKeys, true);
+      returnXY[0] = pair[keyX];
+      returnXY[1] = pair[keyY];
+      return;
+    } else if (pair is Pair) {
+      returnXY[0] = pair.a;
+      returnXY[1] = pair.b;
+      return;
+    } else if (pair is String) {
       var parts = pair.split(stringPairDelimiterPattern);
-      returnXY[0] = parts[0] ;
-      returnXY[1] = parts[1] ;
-      return ;
-    }
-    else {
-      throw UnsupportedError("Can't handle pair of type ${ pair.runtimeType }: $pair") ;
+      returnXY[0] = parts[0];
+      returnXY[1] = parts[1];
+      return;
+    } else {
+      throw UnsupportedError(
+          "Can't handle pair of type ${pair.runtimeType}: $pair");
     }
   }
 
-
   P setPairX(P pair, X x) {
     if (pair == null) {
-      return null ;
-    }
-    else if (pair is List) {
-      pair[0] = x ;
-      return null ;
-    }
-    else if (pair is Map) {
-      var key = findKeyName(pair as Map<String,dynamic>, xKeys, true);
-      pair[key] = x ;
-      return null ;
-    }
-    else if (pair is Pair) {
-      return Pair( x , pair.b ) as P ;
-    }
-    else if (pair is String) {
-      String s = pair ;
+      return null;
+    } else if (pair is List) {
+      pair[0] = x;
+      return null;
+    } else if (pair is Map) {
+      var key = findKeyName(pair as Map<String, dynamic>, xKeys, true);
+      pair[key] = x;
+      return null;
+    } else if (pair is Pair) {
+      return Pair(x, pair.b) as P;
+    } else if (pair is String) {
+      String s = pair;
 
-      var parts = <String>[] ;
-      var delimiter = '' ;
+      var parts = <String>[];
+      var delimiter = '';
 
-      s.splitMapJoin(stringPairDelimiterPattern,
-          onNonMatch: (p) {
-            parts.add(p);
-            return '';
-          } ,
-          onMatch: (m) {
-            delimiter = m[0];
-            return '';
-          }
-      );
+      s.splitMapJoin(stringPairDelimiterPattern, onNonMatch: (p) {
+        parts.add(p);
+        return '';
+      }, onMatch: (m) {
+        delimiter = m[0];
+        return '';
+      });
 
-      return '$x$delimiter${ parts[1] }' as P ;
-    }
-    else {
-      throw UnsupportedError("Can't handle pair of type ${ pair.runtimeType }: $pair") ;
+      return '$x$delimiter${parts[1]}' as P;
+    } else {
+      throw UnsupportedError(
+          "Can't handle pair of type ${pair.runtimeType}: $pair");
     }
   }
 
   P setPairY(P pair, Y y) {
     if (pair == null) {
-      return null ;
-    }
-    else if (pair is List) {
-      pair[1] = y ;
-      return null ;
-    }
-    else if (pair is Map) {
-      var key = findKeyName(pair as Map<String,dynamic>, yKeys, true);
-      pair[key] = y ;
-      return null ;
-    }
-    else if (pair is Pair) {
-      return Pair( pair.a , y ) as P ;
-    }
-    else if (pair is String) {
-      String s = pair ;
+      return null;
+    } else if (pair is List) {
+      pair[1] = y;
+      return null;
+    } else if (pair is Map) {
+      var key = findKeyName(pair as Map<String, dynamic>, yKeys, true);
+      pair[key] = y;
+      return null;
+    } else if (pair is Pair) {
+      return Pair(pair.a, y) as P;
+    } else if (pair is String) {
+      String s = pair;
 
-      var parts = <String>[] ;
-      var delimiter = '' ;
+      var parts = <String>[];
+      var delimiter = '';
 
-      s.splitMapJoin(stringPairDelimiterPattern,
-          onNonMatch: (p) {
-            parts.add(p);
-            return '';
-          } ,
-          onMatch: (m) {
-            delimiter = m[0];
-            return '';
-          }
-      );
+      s.splitMapJoin(stringPairDelimiterPattern, onNonMatch: (p) {
+        parts.add(p);
+        return '';
+      }, onMatch: (m) {
+        delimiter = m[0];
+        return '';
+      });
 
-      return '${ parts[0] }$delimiter$y' as P ;
-    }
-    else {
-      throw UnsupportedError("Can't handle pair of type ${ pair.runtimeType }: $pair") ;
+      return '${parts[0]}$delimiter$y' as P;
+    } else {
+      throw UnsupportedError(
+          "Can't handle pair of type ${pair.runtimeType}: $pair");
     }
   }
 
   P setPairXY(P pair, X x, Y y) {
     if (pair == null) {
-      return null ;
-    }
-    else if (pair is List) {
-      pair[0] = x ;
-      pair[1] = y ;
-      return null ;
-    }
-    else if (pair is Map) {
-      var keyX = findKeyName(pair as Map<String,dynamic>, xKeys, true);
-      var keyY = findKeyName(pair as Map<String,dynamic>, yKeys, true);
-      pair[keyX] = x ;
-      pair[keyY] = y ;
-      return null ;
-    }
-    else if (pair is Pair) {
-      return Pair( x , y ) as P ;
-    }
-    else if (pair is String) {
-      String s = pair ;
+      return null;
+    } else if (pair is List) {
+      pair[0] = x;
+      pair[1] = y;
+      return null;
+    } else if (pair is Map) {
+      var keyX = findKeyName(pair as Map<String, dynamic>, xKeys, true);
+      var keyY = findKeyName(pair as Map<String, dynamic>, yKeys, true);
+      pair[keyX] = x;
+      pair[keyY] = y;
+      return null;
+    } else if (pair is Pair) {
+      return Pair(x, y) as P;
+    } else if (pair is String) {
+      String s = pair;
 
-      var delimiter = '' ;
+      var delimiter = '';
 
       s.splitMapJoin(stringPairDelimiterPattern,
-          onNonMatch: (p) => '' ,
+          onNonMatch: (p) => '',
           onMatch: (m) {
             delimiter = m[0];
             return '';
-          }
-      );
+          });
 
-      return '$x$delimiter$y' as P ;
-    }
-    else {
-      throw UnsupportedError("Can't handle pair of type ${ pair.runtimeType }: $pair") ;
+      return '$x$delimiter$y' as P;
+    } else {
+      throw UnsupportedError(
+          "Can't handle pair of type ${pair.runtimeType}: $pair");
     }
   }
 
   List swapListOfPairs(List<P> list) {
-    return list.map((p) => swapPair(p)).toList() ;
+    return list.map((p) => swapPair(p)).toList();
   }
 
   /// Swaps a Pair XY.
   dynamic swapPair(dynamic pair) {
     if (pair == null) {
-      return null ;
-    }
-    else if (pair is List) {
+      return null;
+    } else if (pair is List) {
       return swapPairAsList(pair);
-    }
-    else if (pair is Map) {
+    } else if (pair is Map) {
       return swapPairAsMap(pair);
-    }
-    else if (pair is Pair) {
+    } else if (pair is Pair) {
       return swapPairAsPair(pair);
-    }
-    else if (pair is String) {
+    } else if (pair is String) {
       return swapPairAsString(pair);
-    }
-    else {
-      throw UnsupportedError("Can't swap pair of type ${ pair.runtimeType }: $pair") ;
+    } else {
+      throw UnsupportedError(
+          "Can't swap pair of type ${pair.runtimeType}: $pair");
     }
   }
 
   /// Swaps a Pair when is a [List].
   List swapPairAsList(List pair) {
-    return [ pair[1] , pair[0] ] ;
+    return [pair[1], pair[0]];
   }
 
   /// Swaps a Pair when is a [Map].
   Map swapPairAsMap(Map pair) {
-    var x = findKeyEntry(pair, xKeys) ;
-    var y = findKeyEntry(pair, yKeys) ;
-    return { x.key : y.value , y.key : x.value } ;
+    var x = findKeyEntry(pair, xKeys);
+    var y = findKeyEntry(pair, yKeys);
+    return {x.key: y.value, y.key: x.value};
   }
 
   /// Swaps a Pair when is of type [Pair].
   Pair swapPairAsPair(Pair pair) {
-    return pair.swapAB() ;
+    return pair.swapAB();
   }
 
-  static final RegExp DEFAULT_STRING_PAIR_DELIMITER_PATTERN = RegExp(r'\s*[,;:\|]\s*');
+  static final RegExp DEFAULT_STRING_PAIR_DELIMITER_PATTERN =
+      RegExp(r'\s*[,;:\|]\s*');
 
-  RegExp _stringPairDelimiterPattern = DEFAULT_STRING_PAIR_DELIMITER_PATTERN ;
+  RegExp _stringPairDelimiterPattern = DEFAULT_STRING_PAIR_DELIMITER_PATTERN;
 
   RegExp get stringPairDelimiterPattern => _stringPairDelimiterPattern;
+
   set stringPairDelimiterPattern(RegExp value) {
-    _stringPairDelimiterPattern = value ?? DEFAULT_STRING_PAIR_DELIMITER_PATTERN ;
+    _stringPairDelimiterPattern =
+        value ?? DEFAULT_STRING_PAIR_DELIMITER_PATTERN;
   }
 
   /// Swaps a Pair when is a [String].
   String swapPairAsString(String pair) {
-    var parts = <String>[] ;
-    var delimiter = '' ;
+    var parts = <String>[];
+    var delimiter = '';
 
-    pair.splitMapJoin( stringPairDelimiterPattern ,
-        onMatch: (m) {
-          delimiter = m.group(0);
-          return '';
-        } ,
-        onNonMatch: (s) {
-          parts.add(s);
-          return '' ;
-        }
-    ) ;
+    pair.splitMapJoin(stringPairDelimiterPattern, onMatch: (m) {
+      delimiter = m.group(0);
+      return '';
+    }, onNonMatch: (s) {
+      parts.add(s);
+      return '';
+    });
 
     while (parts.length < 2) {
-      parts.add('') ;
+      parts.add('');
     }
 
-    var swap = '${ parts[1] }$delimiter${ parts[0] }';
+    var swap = '${parts[1]}$delimiter${parts[0]}';
 
-    return swap ;
+    return swap;
   }
 
   /// Used to normalize series for engines that requires a pair as List[a,b].
-  Map<C, List<List<dynamic>>> seriesPairsAsList( { Map<C, List<P>> series , TypeMapper xMapper , TypeMapper yMapper , bool mapDateTimeToMillis = false } ) {
-    series ??= this.series ;
-    mapDateTimeToMillis ??= false ;
+  Map<C, List<List<dynamic>>> seriesPairsAsList(
+      {Map<C, List<P>> series,
+      TypeMapper xMapper,
+      TypeMapper yMapper,
+      bool mapDateTimeToMillis = false}) {
+    series ??= this.series;
+    mapDateTimeToMillis ??= false;
 
     if (mapDateTimeToMillis) {
-      xMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o ;
-      yMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o ;
+      xMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o;
+      yMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o;
     }
 
-    return series.map((key, value) => MapEntry(key, toListOfPairsAsList(value, xMapper: xMapper, yMapper: yMapper) ) ) ;
+    return series.map((key, value) => MapEntry(
+        key, toListOfPairsAsList(value, xMapper: xMapper, yMapper: yMapper)));
   }
 
   /// Used to normalize series for engines that requires a pair as Map{x,y}.
-  Map<C, List<Map<String,dynamic>>> seriesPairsAsMap( { Map<C, List<P>> series , TypeMapper xMapper , TypeMapper yMapper , bool mapDateTimeToMillis = false } ) {
-    series ??= this.series ;
-    mapDateTimeToMillis ??= false ;
+  Map<C, List<Map<String, dynamic>>> seriesPairsAsMap(
+      {Map<C, List<P>> series,
+      TypeMapper xMapper,
+      TypeMapper yMapper,
+      bool mapDateTimeToMillis = false}) {
+    series ??= this.series;
+    mapDateTimeToMillis ??= false;
 
     if (mapDateTimeToMillis) {
-      xMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o ;
-      yMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o ;
+      xMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o;
+      yMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o;
     }
 
-    return series.map((key, value) => MapEntry(key, toListOfPairsAsMap(value, xMapper: xMapper, yMapper: yMapper) ) ) ;
+    return series.map((key, value) => MapEntry(
+        key, toListOfPairsAsMap(value, xMapper: xMapper, yMapper: yMapper)));
   }
 
-  List<List<dynamic>> toListOfPairsAsList(List<P> listOfPairs, { TypeMapper xMapper , TypeMapper yMapper }) {
-    return listOfPairs.map( (e) => toPairAsList(e, xMapper: xMapper, yMapper: yMapper) ).toList() ;
+  List<List<dynamic>> toListOfPairsAsList(List<P> listOfPairs,
+      {TypeMapper xMapper, TypeMapper yMapper}) {
+    return listOfPairs
+        .map((e) => toPairAsList(e, xMapper: xMapper, yMapper: yMapper))
+        .toList();
   }
 
-  List<Map<String,dynamic>> toListOfPairsAsMap(List<P> listOfPairs, { TypeMapper xMapper , TypeMapper yMapper }) {
-    return listOfPairs.map( (e) => toPairAsMap(e, xMapper: xMapper, yMapper: yMapper) ).toList().cast() ;
+  List<Map<String, dynamic>> toListOfPairsAsMap(List<P> listOfPairs,
+      {TypeMapper xMapper, TypeMapper yMapper}) {
+    return listOfPairs
+        .map((e) => toPairAsMap(e, xMapper: xMapper, yMapper: yMapper))
+        .toList()
+        .cast();
   }
 
-  List<dynamic> toPairAsList(P pair, { TypeMapper xMapper , TypeMapper yMapper }) {
+  List<dynamic> toPairAsList(P pair, {TypeMapper xMapper, TypeMapper yMapper}) {
     if (xMapper == null && yMapper == null) {
-      return toPair(pair , (X x, Y y) => [x,y] ) ;
-    }
-    else {
-      xMapper ??= (o) => o ;
-      yMapper ??= (o) => o ;
-      return toPair(pair , (X x, Y y) => [ xMapper(x) , yMapper(y) ] ) ;
+      return toPair(pair, (X x, Y y) => [x, y]);
+    } else {
+      xMapper ??= (o) => o;
+      yMapper ??= (o) => o;
+      return toPair(pair, (X x, Y y) => [xMapper(x), yMapper(y)]);
     }
   }
 
-  Map<String,dynamic> toPairAsMap(P pair, { TypeMapper xMapper , TypeMapper yMapper }) {
+  Map<String, dynamic> toPairAsMap(P pair,
+      {TypeMapper xMapper, TypeMapper yMapper}) {
     if (xMapper == null && yMapper == null) {
-      return toPair(pair, (X x, Y y) => {'x': x, 'y': y} );
-    }
-    else {
-      xMapper ??= (o) => o ;
-      yMapper ??= (o) => o ;
-      return toPair(pair, (X x, Y y) => {'x': xMapper(x), 'y': yMapper(y)} );
+      return toPair(pair, (X x, Y y) => {'x': x, 'y': y});
+    } else {
+      xMapper ??= (o) => o;
+      yMapper ??= (o) => o;
+      return toPair(pair, (X x, Y y) => {'x': xMapper(x), 'y': yMapper(y)});
     }
   }
 
@@ -510,38 +501,31 @@ class ChartSeriesPair<C,X,Y,P> extends ChartSeries<C,X,Y,P> {
     if (pair is List) {
       a = pair[0];
       b = pair[1];
-    }
-    else if (pair is Map) {
+    } else if (pair is Map) {
       a = findKeyValue(pair, ['x', 'a', 'time', 't', 'date', 'key', 'k'], true);
       b = findKeyValue(pair, ['y', 'b', 'value', 'val', 'v'], true);
-    }
-    else if (pair is Pair) {
+    } else if (pair is Pair) {
       a = pair.a;
       b = pair.b;
-    }
-    else if (pair is String) {
-
+    } else if (pair is String) {
       var split = pair.split(stringPairDelimiterPattern);
       a = split[0].trim();
       b = split[1].trim();
-    }
-    else {
+    } else {
       return null;
     }
 
-    return toPairImpl(a, b, typeWrapper) ;
+    return toPairImpl(a, b, typeWrapper);
   }
 
   /// Actual implementation of pair values.
   R toPairImpl<R>(dynamic a, dynamic b, PairMapper<R, X, Y> typeWrapper) {
-    return typeWrapper(a,b) ;
+    return typeWrapper(a, b);
   }
-
 }
 
 /// Time Series, for Time Series Charts. Each entry should be a pair of DateTime and Value.
-class ChartTimeSeries<C,Y,P> extends ChartSeriesPair<C,DateTime,Y,P> {
-
+class ChartTimeSeries<C, Y, P> extends ChartSeriesPair<C, DateTime, Y, P> {
   ChartTimeSeries(Map<C, List<P>> series) : super(series) {
     _normalizePairs();
   }
@@ -549,8 +533,7 @@ class ChartTimeSeries<C,Y,P> extends ChartSeriesPair<C,DateTime,Y,P> {
   /// Normalizes all pairs to ensure DateTime at X axis.
   /// (Called by the constructor)
   void _normalizePairs() {
-
-    var returnXY = <dynamic>[null,null] ;
+    var returnXY = <dynamic>[null, null];
 
     for (var entry in series.entries) {
       var values = entry.value;
@@ -559,54 +542,48 @@ class ChartTimeSeries<C,Y,P> extends ChartSeriesPair<C,DateTime,Y,P> {
       for (var i = 0; i < length; i++) {
         var pair = values[i];
 
-        getPairXY(pair, returnXY) ;
+        getPairXY(pair, returnXY);
 
-        dynamic x = returnXY[0] ;
-        dynamic y = returnXY[1] ;
+        dynamic x = returnXY[0];
+        dynamic y = returnXY[1];
 
-        var modified = false ;
+        var modified = false;
 
-        if ( x is String && isInt(x) ) {
-          x = parseInt(x) ;
-          modified = true ;
+        if (x is String && isInt(x)) {
+          x = parseInt(x);
+          modified = true;
         }
 
-        if ( y is String && isInt(y) ) {
-          y = parseInt(y) ;
-          modified = true ;
+        if (y is String && isInt(y)) {
+          y = parseInt(y);
+          modified = true;
         }
 
-        DateTime date ;
-        var val ;
+        DateTime date;
+        var val;
 
         if (x is DateTime) {
-          if ( !modified ) continue;
+          if (!modified) continue;
 
-          date = x ;
-          val = y ;
-        }
-        else if (y is DateTime) {
-          date = y ;
-          val = x ;
-        }
-        else if (x is int && y is int) {
-          if ( x > y ) {
-            date = DateTime.fromMillisecondsSinceEpoch(x) ;
-            val = y ;
+          date = x;
+          val = y;
+        } else if (y is DateTime) {
+          date = y;
+          val = x;
+        } else if (x is int && y is int) {
+          if (x > y) {
+            date = DateTime.fromMillisecondsSinceEpoch(x);
+            val = y;
+          } else {
+            val = x;
+            date = DateTime.fromMillisecondsSinceEpoch(y);
           }
-          else {
-            val = x ;
-            date = DateTime.fromMillisecondsSinceEpoch(y) ;
-          }
-
-        }
-        else if (x is String) {
-          date = DateTime.parse(x) ;
-          val = y ;
-        }
-        else if (y is String) {
-          val = x ;
-          date = DateTime.parse(y) ;
+        } else if (x is String) {
+          date = DateTime.parse(x);
+          val = y;
+        } else if (y is String) {
+          val = x;
+          date = DateTime.parse(y);
         }
 
         if (date != null && val != null) {
@@ -615,21 +592,18 @@ class ChartTimeSeries<C,Y,P> extends ChartSeriesPair<C,DateTime,Y,P> {
             values[i] = pair2;
           }
         }
-
       }
     }
-
   }
-
 }
 
 /// Data Set, usually for Gauge and Pie Charts.
-class ChartSet<X, Y> extends ChartData<X,X,Y> {
+class ChartSet<X, Y> extends ChartData<X, X, Y> {
   ChartSetOptions _options;
 
   Map<X, Y> set;
 
-  List<X> get xLabels => categories ;
+  List<X> get xLabels => categories;
 
   ChartSet(this.set, {ChartSetOptions options})
       : _options = options ?? ChartSetOptions();
@@ -651,13 +625,11 @@ class ChartSet<X, Y> extends ChartData<X,X,Y> {
   }
 
   @override
-  Iterable<X> get xAxisAllValues => UnmodifiableListView( set.keys ) ;
+  Iterable<X> get xAxisAllValues => UnmodifiableListView(set.keys);
 
   @override
-  Iterable<Y> get yAxisAllValues => UnmodifiableListView( set.values ) ;
-
+  Iterable<Y> get yAxisAllValues => UnmodifiableListView(set.values);
 }
-
 
 abstract class ChartOptions {
   /// Sort Categories/Series.keys when showing them in the Chart.
@@ -669,7 +641,7 @@ abstract class ChartOptions {
     _sortCategories = value ?? false;
   }
 
-  ChartOptions copy() ;
+  ChartOptions copy();
 }
 
 /// Possible options for Series Charts.
@@ -694,23 +666,21 @@ class ChartSeriesOptions extends ChartOptions {
 
   @override
   ChartSeriesOptions copy() {
-    var copy = ChartSeriesOptions() ;
+    var copy = ChartSeriesOptions();
 
-    copy._straightLines = _straightLines ;
-    copy._fillLines = _fillLines ;
-    copy._sortCategories = _sortCategories ;
+    copy._straightLines = _straightLines;
+    copy._fillLines = _fillLines;
+    copy._sortCategories = _sortCategories;
 
-    return copy ;
+    return copy;
   }
 }
 
 /// Possible options for Set Charts.
 class ChartSetOptions extends ChartOptions {
-
   @override
   ChartSetOptions copy() {
-    var copy = ChartSetOptions() ;
-    return copy ;
+    var copy = ChartSetOptions();
+    return copy;
   }
-
 }

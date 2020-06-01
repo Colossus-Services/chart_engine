@@ -1,17 +1,17 @@
 import 'package:swiss_knife/swiss_knife.dart';
 
-typedef GenerateColorFunction = String Function(String name, int index, int total);
+typedef GenerateColorFunction = String Function(
+    String name, int index, int total);
 
 /// Color generator for Charts Series/Categories.
 abstract class ColorGenerator {
-
   /// Generate a HTML color using the entry [index] and [total] elements in the
   /// Charts as reference. The [name] of the Series/Category is supplied for
   /// advanced implementations.
   String generateColor(String name, int index, int total);
 
   /// Same as [generateColor] but for disabled element.
-  String generateDisabledColor(String name, int index, int total) ;
+  String generateDisabledColor(String name, int index, int total);
 
   /// Builds a Map with a color for each provided key from parameter [keys].
   Map<C, String> buildColors<C>(List<C> keys) {
@@ -24,7 +24,8 @@ abstract class ColorGenerator {
   }
 
   /// Builds a Map with a color for each provided key from parameter [keys] using [generateColorFunction].
-  static Map<C, String> buildDColorsFromFunction<C>(List<C> keys, GenerateColorFunction generateColorFunction) {
+  static Map<C, String> buildDColorsFromFunction<C>(
+      List<C> keys, GenerateColorFunction generateColorFunction) {
     var colors = <C, String>{};
 
     var total = keys.length;
@@ -37,7 +38,6 @@ abstract class ColorGenerator {
 
     return colors;
   }
-
 }
 
 /// Color generator based in a Map of [_schemes]
@@ -61,15 +61,24 @@ class SchemeColorGenerator extends ColorGenerator {
     _mainScheme = value ?? schemeNames.first;
   }
 
-  String get defaultSchemeName => _schemes.entries.first.key.replaceFirst(RegExp(r'\d+$'), '') ;
+  String get defaultSchemeName =>
+      _schemes.entries.first.key.replaceFirst(RegExp(r'\d+$'), '');
 
-  String get defaultDisabledSchemeName => _schemes.entries.firstWhere((e) {
-    var name = e.key.toLowerCase() ;
-    return name.contains('disabled') || name.contains('grey') || name.contains('gray')  ;
-  }).key.replaceFirst(RegExp(r'\d+$'), '') ;
+  String get defaultDisabledSchemeName => _schemes.entries
+      .firstWhere((e) {
+        var name = e.key.toLowerCase();
+        return name.contains('disabled') ||
+            name.contains('grey') ||
+            name.contains('gray');
+      })
+      .key
+      .replaceFirst(RegExp(r'\d+$'), '');
 
-  List<String> getDefaultSchemeColors(int size) => getSchemeColors(defaultSchemeName, size) ;
-  List<String> getDefaultDisabledSchemeColors(int size) => getSchemeColors(defaultDisabledSchemeName, size) ;
+  List<String> getDefaultSchemeColors(int size) =>
+      getSchemeColors(defaultSchemeName, size);
+
+  List<String> getDefaultDisabledSchemeColors(int size) =>
+      getSchemeColors(defaultDisabledSchemeName, size);
 
   final Map<String, List<String>> _resolvedCache = {};
 
@@ -84,21 +93,25 @@ class SchemeColorGenerator extends ColorGenerator {
     return _getSchemeColorsCached(schemeNameDisabled, size, true);
   }
 
-  List<String> _getSchemeColorsCached(String schemeName, int size, bool disabled) {
+  List<String> _getSchemeColorsCached(
+      String schemeName, int size, bool disabled) {
     var cacheKey = '$schemeName:$size';
 
     var cached = _resolvedCache[cacheKey];
     if (cached != null) return cached;
 
     var colors = _getSchemeColorsImpl(schemeName, size, disabled);
-    colors ??= disabled ? getDefaultDisabledSchemeColors(size) : getDefaultSchemeColors(size) ;
+    colors ??= disabled
+        ? getDefaultDisabledSchemeColors(size)
+        : getDefaultSchemeColors(size);
 
     _resolvedCache[cacheKey] = colors;
 
     return colors;
   }
 
-  List<String> _getSchemeColorsImpl(String schemeName, int size, bool disabled) {
+  List<String> _getSchemeColorsImpl(
+      String schemeName, int size, bool disabled) {
     var keys = <String>[schemeName];
 
     for (var i = size; i <= 15; i++) {
@@ -130,7 +143,6 @@ class SchemeColorGenerator extends ColorGenerator {
     var color = colors[idx];
     return color;
   }
-
 }
 
 class StandardColorGenerator extends SchemeColorGenerator {
@@ -175,7 +187,6 @@ class StandardColorGenerator extends SchemeColorGenerator {
       '#252525',
       '#000000'
     ],
-
 
     'brewer.YlGn3': ['#f7fcb9', '#addd8e', '#31a354'],
     'brewer.YlGn4': ['#ffffcc', '#c2e699', '#78c679', '#238443'],

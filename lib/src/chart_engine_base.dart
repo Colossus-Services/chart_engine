@@ -9,9 +9,8 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
-
   /// `chart_engine` package version.
-  static final String VERSION = '1.0.7' ;
+  static final String VERSION = '1.0.8';
 
   /// Ensures that engine and dependencies are loaded.
   Future<bool> load();
@@ -32,8 +31,10 @@ abstract class ChartEngine {
   }
 
   void checkRenderParameters(Element output, ChartData chartData) {
-    if (output == null) throw ArgumentError('Null output to render Chart') ;
-    if (chartData == null) throw ArgumentError('Null chartData to render Chart') ;
+    if (output == null) throw ArgumentError('Null output to render Chart');
+    if (chartData == null) {
+      throw ArgumentError('Null chartData to render Chart');
+    }
   }
 
   /// Renders at [output] a [chartData], selecting the correct render method.
@@ -71,9 +72,8 @@ abstract class ChartEngine {
 
   /// Renders a Scatter Chart Timed with DateTime values in X axis:
   bool renderScatterTimedChart(Element output, ChartTimeSeries chartSeries) {
-    return false ;
+    return false;
   }
-
 }
 
 /// A ChartEngine wrapper with switchable internal engines:
@@ -146,7 +146,8 @@ class ChartEngineSwitchable extends ChartEngine {
   EventStream<LoadController> get onLoad => EventStream();
 
   /// Renders using engine of [engineType].
-  bool renderWithEngineType(Type engineType, Element output, ChartData chartData) {
+  bool renderWithEngineType(
+      Type engineType, Element output, ChartData chartData) {
     var prevMainEngine = _mainEngine;
     setMainEngineByType(engineType);
     var ok = render(output, chartData);
@@ -192,5 +193,4 @@ class ChartEngineSwitchable extends ChartEngine {
   bool renderScatterChart(Element output, ChartSeriesPair chartSeries) {
     return mainEngine.renderScatterChart(output, chartSeries);
   }
-
 }

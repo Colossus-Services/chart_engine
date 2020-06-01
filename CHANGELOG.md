@@ -1,3 +1,10 @@
+## 1.0.7
+
+- Added support to Scatter Charts.
+- ChartData: xAxisScale and yAxisScale
+- ChartSeriesPair for Scatter charts.
+- swiss_knife: ^2.5.0
+
 ## 1.0.6
 
 - Fix version reference.

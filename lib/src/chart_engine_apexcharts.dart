@@ -74,7 +74,7 @@ class ChartEngineApexCharts extends ChartEngine {
     var div = asDivElement(output);
 
     var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSorted
+        ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
@@ -106,13 +106,10 @@ class ChartEngineApexCharts extends ChartEngine {
     var div = asDivElement(output);
 
     var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSorted
+        ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var timeSeries = chartSeries.seriesWithPairList(series) ;
-
-    print('renderTimeSeriesChart:') ;
-    print(timeSeries) ;
+    var timeSeries = chartSeries.seriesPairsAsList(series) ;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -151,7 +148,7 @@ class ChartEngineApexCharts extends ChartEngine {
     var div = asDivElement(output);
 
     var set = chartSeries.options.sortCategories
-        ? chartSeries.seriesSorted
+        ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
@@ -200,6 +197,43 @@ class ChartEngineApexCharts extends ChartEngine {
     ];
 
     _jsWrapper.callMethod('renderGauge', renderArgs);
+
+    return true;
+  }
+
+  @override
+  bool renderScatterChart(Element output, ChartSeriesPair chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var div = asDivElement(output);
+
+    var series = chartSeries.options.sortCategories
+        ? chartSeries.seriesSortedByCategory
+        : chartSeries.series;
+
+    var seriesPairs = chartSeries.seriesPairsAsList(series) ;
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var yAxisScale = chartSeries.yAxisScale ;
+
+    var yMin = yAxisScale.minimumNice ;
+    var yMax = yAxisScale.maximumNice ;
+
+    var renderArgs = [
+      div,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(seriesPairs),
+      JsObject.jsify(colors),
+      yMin,yMax
+    ];
+
+    _jsWrapper.callMethod('renderScatter', renderArgs);
 
     return true;
   }

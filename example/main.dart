@@ -10,6 +10,9 @@ void main() async {
   await createTimeSeriesChart();
 
   await createBarChart();
+
+  await createScatterChart();
+
   await createGaugeChart();
 
   querySelector('#chart-version').text = '${ ChartEngine.VERSION }' ;
@@ -109,6 +112,37 @@ Future createBarChart() async {
   series.title = 'Horizontal Bar Chart Example' ;
   charEngine1.renderHorizontalBarChart( querySelector('#apexcharts-horizontal-bar-output') , series ) ;
   charEngine2.renderHorizontalBarChart( querySelector('#chartjs-horizontal-bar-output') , series ) ;
+
+}
+
+Future createScatterChart() async {
+
+  // Declare using pair of x(height:cm) and y(weight: kg) entries.
+  var series = ChartSeriesPair(
+      {
+        'A': [ [167.08, 61.25], [171.75, 66.77], [174.96, 75.11], [175.79, 88.40], [173.48, 78.86] ] ,
+        'B': [ [175.77, 50.87], [174.98, 72.38], [166.27, 52.59], [172.75, 66.85], [184.17, 90.71] ] ,
+        'C': [ [180.59, 98.12], [165.89, 58.20], [166.42, 50.33], [181.33, 78.01], [181.66, 101.91] ] ,
+      }
+  ) ;
+
+  series.title = 'Scatter Chart Example' ;
+  series.xTitle = 'Height' ;
+  series.yTitle = 'Weight' ;
+
+  // Swap X and Y values, including xTitle and yTitle.
+  var series2 = series.swapXY() ;
+
+  // Render the same ChartSeries using 2 engines:
+
+  var charEngine1 = ChartEngineApexCharts() ;
+  var charEngine2 = ChartEngineChartJS() ;
+
+  // Simultaneous load engines:
+  await Future.wait( [ charEngine1.load() , charEngine2.load() ] ) ;
+
+  charEngine1.renderScatterChart( querySelector('#apexcharts-scatter-output') , series2 ) ;
+  charEngine2.renderScatterChart( querySelector('#chartjs-scatter-output') , series2 ) ;
 
 }
 

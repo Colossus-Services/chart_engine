@@ -103,7 +103,7 @@ class ChartEngineChartJS extends ChartEngine {
     var canvas = asCanvasElement(output);
 
     var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSorted
+        ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
@@ -135,13 +135,10 @@ class ChartEngineChartJS extends ChartEngine {
     var canvas = asCanvasElement(output);
 
     var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSorted
+        ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var timeSeries = chartSeries.seriesWithPairMap(series) ;
-
-    print('renderTimeSeriesChart:') ;
-    print(timeSeries) ;
+    var timeSeries = chartSeries.seriesPairsAsMap(series) ;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -180,7 +177,7 @@ class ChartEngineChartJS extends ChartEngine {
     var canvas = asCanvasElement(output);
 
     var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSorted
+        ? chartSeries.seriesSortedByCategory
         : chartSeries.series ;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
@@ -234,4 +231,37 @@ class ChartEngineChartJS extends ChartEngine {
 
     return true;
   }
+
+
+  @override
+  bool renderScatterChart(Element output, ChartSeriesPair chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var canvas = asCanvasElement(output);
+
+    var series = chartSeries.options.sortCategories
+        ? chartSeries.seriesSortedByCategory
+        : chartSeries.series;
+
+    var seriesPairs = chartSeries.seriesPairsAsMap(series) ;
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var renderArgs = [
+      canvas,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(seriesPairs),
+      JsObject.jsify(colors)
+    ];
+
+    _jsWrapper.callMethod('renderScatter', renderArgs);
+
+    return true;
+  }
+
 }

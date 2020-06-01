@@ -11,7 +11,7 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 abstract class ChartEngine {
 
   /// `chart_engine` package version.
-  static final String VERSION = '1.0.6' ;
+  static final String VERSION = '1.0.7' ;
 
   /// Ensures that engine and dependencies are loaded.
   Future<bool> load();
@@ -65,6 +65,9 @@ abstract class ChartEngine {
 
   /// Renders a Horizontal Bar Chart:
   bool renderGaugeChart(Element output, ChartSet chartData);
+
+  /// Renders a Scatter Chart with X,Y pairs:
+  bool renderScatterChart(Element output, ChartSeriesPair chartSeries);
 
 }
 
@@ -178,6 +181,11 @@ class ChartEngineSwitchable extends ChartEngine {
   @override
   bool renderGaugeChart(Element output, ChartSet chartData) {
     return mainEngine.renderGaugeChart(output, chartData);
+  }
+
+  @override
+  bool renderScatterChart(Element output, ChartSeriesPair chartSeries) {
+    return mainEngine.renderScatterChart(output, chartSeries);
   }
 
 }

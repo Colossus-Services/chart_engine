@@ -109,7 +109,7 @@ class ChartEngineApexCharts extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var timeSeries = chartSeries.seriesPairsAsList(series) ;
+    var timeSeries = chartSeries.seriesPairsAsList( series: series , mapDateTimeToMillis: true ) ;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -212,7 +212,7 @@ class ChartEngineApexCharts extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var seriesPairs = chartSeries.seriesPairsAsList(series) ;
+    var seriesPairs = chartSeries.seriesPairsAsList( series: series ) ;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -231,6 +231,44 @@ class ChartEngineApexCharts extends ChartEngine {
       JsObject.jsify(seriesPairs),
       JsObject.jsify(colors),
       yMin,yMax
+    ];
+
+    _jsWrapper.callMethod('renderScatter', renderArgs);
+
+    return true;
+  }
+
+  @override
+  bool renderScatterTimedChart(Element output, ChartTimeSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var div = asDivElement(output);
+
+    var series = chartSeries.options.sortCategories
+        ? chartSeries.seriesSortedByCategory
+        : chartSeries.series;
+
+    var timeSeries = chartSeries.seriesPairsAsList( series: series , mapDateTimeToMillis: true ) ;
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var yAxisScale = chartSeries.yAxisScale ;
+
+    var yMin = yAxisScale.minimumNice ;
+    var yMax = yAxisScale.maximumNice ;
+
+    var renderArgs = [
+      div,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(timeSeries),
+      JsObject.jsify(colors),
+      yMin,yMax,
+      true
     ];
 
     _jsWrapper.callMethod('renderScatter', renderArgs);

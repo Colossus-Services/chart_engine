@@ -69,6 +69,11 @@ abstract class ChartEngine {
   /// Renders a Scatter Chart with X,Y pairs:
   bool renderScatterChart(Element output, ChartSeriesPair chartSeries);
 
+  /// Renders a Scatter Chart Timed with DateTime values in X axis:
+  bool renderScatterTimedChart(Element output, ChartTimeSeries chartSeries) {
+    return false ;
+  }
+
 }
 
 /// A ChartEngine wrapper with switchable internal engines:

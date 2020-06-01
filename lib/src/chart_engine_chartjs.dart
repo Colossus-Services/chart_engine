@@ -138,7 +138,7 @@ class ChartEngineChartJS extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var timeSeries = chartSeries.seriesPairsAsMap(series) ;
+    var timeSeries = chartSeries.seriesPairsAsMap( series: series , mapDateTimeToMillis: true ) ;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -244,7 +244,7 @@ class ChartEngineChartJS extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    var seriesPairs = chartSeries.seriesPairsAsMap(series) ;
+    var seriesPairs = chartSeries.seriesPairsAsMap( series: series ) ;
 
     chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
 
@@ -257,6 +257,38 @@ class ChartEngineChartJS extends ChartEngine {
       chartSeries.yTitle,
       JsObject.jsify(seriesPairs),
       JsObject.jsify(colors)
+    ];
+
+    _jsWrapper.callMethod('renderScatter', renderArgs);
+
+    return true;
+  }
+
+  @override
+  bool renderScatterTimedChart(Element output, ChartTimeSeries chartSeries) {
+    checkRenderParameters(output, chartSeries);
+    checkLoaded();
+
+    var canvas = asCanvasElement(output);
+
+    var series = chartSeries.options.sortCategories
+        ? chartSeries.seriesSortedByCategory
+        : chartSeries.series;
+
+    var seriesPairs = chartSeries.seriesPairsAsMap( series: series , mapDateTimeToMillis: true ) ;
+
+    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+
+    var colors = chartSeries.colors;
+
+    var renderArgs = [
+      canvas,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(seriesPairs),
+      JsObject.jsify(colors),
+      true
     ];
 
     _jsWrapper.callMethod('renderScatter', renderArgs);

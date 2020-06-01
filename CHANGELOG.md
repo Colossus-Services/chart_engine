@@ -1,3 +1,10 @@
+## 1.0.8
+
+- Added support to Scatter Timed Charts.
+- Fix Timed series values sent to JS: convert DateTime to millisecondsSinceEpoch.
+- ChartsJS: better Tooltip for Scatter Charts.
+- ApexCharts: Fix X axis title position issue, for timed series.
+
 ## 1.0.7
 
 - Added support to Scatter Charts.

@@ -7,12 +7,12 @@ environment:
   sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
-  swiss_knife: #^2.5.0
-    path: ../swiss_knife
-  dom_tools: #^1.2.9
-    path: ../dom_tools
-  amdjs: #^1.0.3
-    path: ../amdjs
+  swiss_knife: ^2.5.0
+    #path: ../swiss_knife
+  dom_tools: ^1.2.9
+    #path: ../dom_tools
+  amdjs: ^1.0.3
+    #path: ../amdjs
   intl: ^0.16.1
 
 dev_dependencies:

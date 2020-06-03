@@ -1,3 +1,14 @@
+## 1.0.9
+
+- Added support to stepped lines.
+- Added central text into Gauge charts.
+- Added renderAsync methods (auto load and auto refresh chart onLoad event).
+- New color generator: ColorGeneratorFromBasicPalette.
+- Optimize ChartData handling of time values.
+- Added tests.
+- Added badges to README.md
+- swiss_knife: ^2.5.2
+
 ## 1.0.8
 
 - Added support to Scatter Timed Charts.

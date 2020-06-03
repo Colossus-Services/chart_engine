@@ -1,5 +1,15 @@
 # chart_engine
 
+[![pub package](https://img.shields.io/pub/v/chart_engine.svg?logo=dart&logoColor=00b9fc)](https://pub.dartlang.org/packages/chart_engine)
+[![CI](https://img.shields.io/github/workflow/status/Colossus-Services/chart_engine/Dart%20CI/master?logo=github-actions&logoColor=white)](https://github.com/Colossus-Services/chart_engine/actions)
+[![GitHub Tag](https://img.shields.io/github/v/tag/Colossus-Services/chart_engine?logo=git&logoColor=white)](https://github.com/Colossus-Services/chart_engine/releases)
+[![New Commits](https://img.shields.io/github/commits-since/Colossus-Services/chart_engine/latest?logo=git&logoColor=white)](https://github.com/Colossus-Services/chart_engine/network)
+[![Last Commits](https://img.shields.io/github/last-commit/Colossus-Services/chart_engine?logo=git&logoColor=white)](https://github.com/Colossus-Services/chart_engine/commits/master)
+[![Pull Requests](https://img.shields.io/github/issues-pr/Colossus-Services/chart_engine?logo=github&logoColor=white)](https://github.com/Colossus-Services/chart_engine/pulls)
+[![Code size](https://img.shields.io/github/languages/code-size/Colossus-Services/chart_engine?logo=github&logoColor=white)](https://github.com/Colossus-Services/chart_engine)
+[![License](https://img.shields.io/github/license/Colossus-Services/chart_engine?logo=open-source-initiative&logoColor=green)](https://github.com/Colossus-Services/chart_engine/blob/master/LICENSE)
+
+
 Chart generator with interchangeable chart engines, like ChartJS and ApexCharts.
 
 ## Engines

@@ -77,7 +77,7 @@ class ChartEngineApexCharts extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 
@@ -112,7 +112,7 @@ class ChartEngineApexCharts extends ChartEngine {
     var timeSeries = chartSeries.seriesPairsAsList(
         series: series, mapDateTimeToMillis: true);
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 
@@ -153,7 +153,7 @@ class ChartEngineApexCharts extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 
@@ -183,7 +183,7 @@ class ChartEngineApexCharts extends ChartEngine {
     var set =
         chartSet.options.sortCategories ? chartSet.setSorted : chartSet.set;
 
-    chartSet.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSet.ensureColors(colorGenerator);
 
     var colors = chartSet.colors;
 
@@ -215,7 +215,7 @@ class ChartEngineApexCharts extends ChartEngine {
 
     var seriesPairs = chartSeries.seriesPairsAsList(series: series);
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 
@@ -254,7 +254,7 @@ class ChartEngineApexCharts extends ChartEngine {
     var timeSeries = chartSeries.seriesPairsAsList(
         series: series, mapDateTimeToMillis: true);
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 

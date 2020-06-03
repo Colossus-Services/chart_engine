@@ -1,4 +1,9 @@
+
+import 'dart:collection';
+
 import 'package:swiss_knife/swiss_knife.dart';
+
+
 
 typedef GenerateColorFunction = String Function(
     String name, int index, int total);
@@ -62,7 +67,7 @@ class SchemeColorGenerator extends ColorGenerator {
   }
 
   String get defaultSchemeName =>
-      _schemes.entries.first.key.replaceFirst(RegExp(r'\d+$'), '');
+      _schemes.entries.firstWhere((e) => !e.key.contains('disabled')).key.replaceFirst(RegExp(r'\d+$'), '');
 
   String get defaultDisabledSchemeName => _schemes.entries
       .firstWhere((e) {
@@ -112,6 +117,7 @@ class SchemeColorGenerator extends ColorGenerator {
 
   List<String> _getSchemeColorsImpl(
       String schemeName, int size, bool disabled) {
+
     var keys = <String>[schemeName];
 
     for (var i = size; i <= 15; i++) {
@@ -125,6 +131,22 @@ class SchemeColorGenerator extends ColorGenerator {
     }
 
     var colors = findKeyValue(_schemes, keys, true);
+
+    if ( colors == null ) {
+      keys = keys.map((e) => e.toLowerCase()).toList() ;
+      keys.add( keys.removeAt(0) ) ;
+
+      for ( var k in keys ) {
+        for ( var schemeK in _schemes.keys ) {
+          var schemeKLC = schemeK.toLowerCase() ;
+          if ( schemeKLC.contains(k) ) {
+            colors = _schemes[schemeK] ;
+            break;
+          }
+        }
+      }
+    }
+
     return colors;
   }
 
@@ -149,43 +171,142 @@ class StandardColorGenerator extends SchemeColorGenerator {
   /// ColorBrewer: https://github.com/axismaps/colorbrewer/
   /// Apache License 2.0: https://github.com/axismaps/colorbrewer/blob/master/LICENCE.txt
   static const Map<String, List<String>> _standard_schemes = {
+    'disabled3': [
+      'rgba(0,0,0, 0.20)',
+      'rgba(0,0,0, 0.40)',
+      'rgba(0,0,0, 0.60)',
+    ],
+
+    'disabled4': [
+      'rgba(0,0,0, 0.20)',
+      'rgba(0,0,0, 0.33)',
+      'rgba(0,0,0, 0.46)',
+      'rgba(0,0,0, 0.59)',
+    ],
+
+    'disabled5': [
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.25)',
+      'rgba(0,0,0, 0.40)',
+      'rgba(0,0,0, 0.55)',
+      'rgba(0,0,0, 0.70)',
+    ],
+
     'disabled6': [
-      '#f7f7f7',
-      '#d9d9d9',
-      '#bdbdbd',
-      '#969696',
-      '#636363',
-      '#252525'
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.22)',
+      'rgba(0,0,0, 0.34)',
+      'rgba(0,0,0, 0.46)',
+      'rgba(0,0,0, 0.58)',
+      'rgba(0,0,0, 0.70)',
     ],
+
     'disabled7': [
-      '#f7f7f7',
-      '#d9d9d9',
-      '#bdbdbd',
-      '#969696',
-      '#737373',
-      '#525252',
-      '#252525'
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.20)',
+      'rgba(0,0,0, 0.30)',
+      'rgba(0,0,0, 0.40)',
+      'rgba(0,0,0, 0.50)',
+      'rgba(0,0,0, 0.60)',
+      'rgba(0,0,0, 0.70)',
     ],
+
     'disabled8': [
-      '#ffffff',
-      '#f0f0f0',
-      '#d9d9d9',
-      '#bdbdbd',
-      '#969696',
-      '#737373',
-      '#525252',
-      '#252525'
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.18)',
+      'rgba(0,0,0, 0.26)',
+      'rgba(0,0,0, 0.34)',
+      'rgba(0,0,0, 0.42)',
+      'rgba(0,0,0, 0.50)',
+      'rgba(0,0,0, 0.58)',
+      'rgba(0,0,0, 0.66)',
     ],
+
     'disabled9': [
-      '#ffffff',
-      '#f0f0f0',
-      '#d9d9d9',
-      '#bdbdbd',
-      '#969696',
-      '#737373',
-      '#525252',
-      '#252525',
-      '#000000'
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.17)',
+      'rgba(0,0,0, 0.24)',
+      'rgba(0,0,0, 0.31)',
+      'rgba(0,0,0, 0.38)',
+      'rgba(0,0,0, 0.45)',
+      'rgba(0,0,0, 0.52)',
+      'rgba(0,0,0, 0.59)',
+      'rgba(0,0,0, 0.66)',
+    ],
+
+    'disabled10': [
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.16)',
+      'rgba(0,0,0, 0.22)',
+      'rgba(0,0,0, 0.28)',
+      'rgba(0,0,0, 0.34)',
+      'rgba(0,0,0, 0.40)',
+      'rgba(0,0,0, 0.46)',
+      'rgba(0,0,0, 0.52)',
+      'rgba(0,0,0, 0.58)',
+      'rgba(0,0,0, 0.64)',
+    ],
+
+    'disabled11': [
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.16)',
+      'rgba(0,0,0, 0.22)',
+      'rgba(0,0,0, 0.28)',
+      'rgba(0,0,0, 0.34)',
+      'rgba(0,0,0, 0.40)',
+      'rgba(0,0,0, 0.46)',
+      'rgba(0,0,0, 0.52)',
+      'rgba(0,0,0, 0.58)',
+      'rgba(0,0,0, 0.64)',
+      'rgba(0,0,0, 0.70)',
+    ],
+
+    'disabled12': [
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.15)',
+      'rgba(0,0,0, 0.20)',
+      'rgba(0,0,0, 0.25)',
+      'rgba(0,0,0, 0.30)',
+      'rgba(0,0,0, 0.35)',
+      'rgba(0,0,0, 0.40)',
+      'rgba(0,0,0, 0.45)',
+      'rgba(0,0,0, 0.50)',
+      'rgba(0,0,0, 0.55)',
+      'rgba(0,0,0, 0.60)',
+      'rgba(0,0,0, 0.65)',
+    ],
+
+    'disabled13': [
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.15)',
+      'rgba(0,0,0, 0.20)',
+      'rgba(0,0,0, 0.25)',
+      'rgba(0,0,0, 0.30)',
+      'rgba(0,0,0, 0.35)',
+      'rgba(0,0,0, 0.40)',
+      'rgba(0,0,0, 0.45)',
+      'rgba(0,0,0, 0.50)',
+      'rgba(0,0,0, 0.55)',
+      'rgba(0,0,0, 0.60)',
+      'rgba(0,0,0, 0.65)',
+      'rgba(0,0,0, 0.70)',
+    ],
+
+    'disabled14': [
+      'rgba(0,0,0, 0.10)',
+      'rgba(0,0,0, 0.14)',
+      'rgba(0,0,0, 0.18)',
+      'rgba(0,0,0, 0.22)',
+      'rgba(0,0,0, 0.26)',
+      'rgba(0,0,0, 0.30)',
+      'rgba(0,0,0, 0.34)',
+      'rgba(0,0,0, 0.38)',
+      'rgba(0,0,0, 0.42)',
+      'rgba(0,0,0, 0.46)',
+      'rgba(0,0,0, 0.50)',
+      'rgba(0,0,0, 0.54)',
+      'rgba(0,0,0, 0.58)',
+      'rgba(0,0,0, 0.62)',
     ],
 
     'brewer.YlGn3': ['#f7fcb9', '#addd8e', '#31a354'],
@@ -1936,5 +2057,320 @@ class StandardColorGenerator extends SchemeColorGenerator {
   StandardColorGenerator() : super(_standard_schemes, 'brewer.Paired');
 }
 
-/// The standard ColorGenerator.
-ColorGenerator STANDARD_COLOR_GENERATOR = StandardColorGenerator();
+/// Represents a Color in [red], [green], [blue] and [alpha] format.
+class HTMLColor implements Comparable<HTMLColor> {
+
+  /// Parses and returns a flat list [List<HTMLColor>].
+  static List<HTMLColor> toList( dynamic value ) {
+    var list = toFlatListOfStrings(value, delimiter: RegExp(r'[;|]+') ) ;
+    return list.map((e) => HTMLColor.from(e)).toList();
+  }
+
+  static final RegExp COLOR_PATTERN_RGBA = RegExp(r'^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,?\s*(\d+(?:\.\d+)?)?\s*\)') ;
+  static final RegExp COLOR_PATTERN_HEX3 = RegExp(r'^#?([0-9a-f][0-9a-f][0-9a-f])$') ;
+  static final RegExp COLOR_PATTERN_HEX6 = RegExp(r'^#?([0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f])$') ;
+
+
+  /// Red channel: 0..255
+  final int red ;
+  /// Green channel: 0..255
+  final int green ;
+  /// Blue channel: 0..255
+  final int blue ;
+  /// Alpha channel: 0..1
+  final double alpha ;
+
+  HTMLColor(this.red, this.green, this.blue, [this.alpha]);
+
+  /// Parses from a HTMLColor instance or a string:
+  ///  - #FF0000
+  ///  - rgba(255,0,0, 0.5)
+  factory HTMLColor.from(String color) {
+    if (color == null) return null ;
+    color = color.trim().toLowerCase() ;
+    if (color.isEmpty) return null ;
+
+    var matchRGBA = COLOR_PATTERN_RGBA.firstMatch(color) ;
+
+    if ( matchRGBA != null ) {
+      var r = int.parse( matchRGBA[1] ) ;
+      var g = int.parse( matchRGBA[2] ) ;
+      var b = int.parse( matchRGBA[3] ) ;
+      var a = matchRGBA[4] != null ? double.parse( matchRGBA[4] ) : null ;
+      return HTMLColor(r,g,b,a);
+    }
+
+    var matchHex3 = COLOR_PATTERN_HEX3.firstMatch(color) ;
+
+    if (matchHex3 != null) {
+      var hex = matchHex3.group(1) ;
+
+      var sR = hex.substring(0,1) ;
+      var sG = hex.substring(1,2) ;
+      var sB = hex.substring(2,3) ;
+
+      var r = int.tryParse( sR+sR , radix: 16) ;
+      var g = int.tryParse( sG+sG , radix: 16) ;
+      var b = int.tryParse( sB+sB , radix: 16) ;
+
+      return HTMLColor(r,g,b);
+    }
+
+    var matchHex6 = COLOR_PATTERN_HEX6.firstMatch(color) ;
+
+    if (matchHex6 != null) {
+      var hex = matchHex6.group(1) ;
+
+      var r = int.tryParse( hex.substring(0,2) , radix: 16) ;
+      var g = int.tryParse( hex.substring(2,4) , radix: 16) ;
+      var b = int.tryParse( hex.substring(4,6) , radix: 16) ;
+
+      return HTMLColor(r,g,b);
+    }
+
+    return null ;
+  }
+
+  /// Converts to a HTML Color string. If alpha is present uses `rgba()` format.
+  @override
+  String toString( [bool forceRGBA = false] ) {
+    var rgbaMode = ( alpha != null && alpha != 1 ) || (forceRGBA != null && forceRGBA) ;
+
+    if ( rgbaMode ) {
+      var a = alpha ?? 1 ;
+      return 'rgba{$red, $green, $blue, $a}';
+    }
+    else {
+      var sR = _toHex(red) ;
+      var sG = _toHex(green) ;
+      var sB = _toHex(blue) ;
+
+      return '#$sR$sG$sB';
+    }
+  }
+
+  String _toHex(int n) {
+    var h = n.toRadixString(16) ;
+    while (h.length < 2) {
+      h = '0'+h ;
+    }
+    return h ;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HTMLColor &&
+          runtimeType == other.runtimeType &&
+          red == other.red &&
+          green == other.green &&
+          blue == other.blue &&
+          alpha == other.alpha;
+
+  @override
+  int get hashCode =>
+      red.hashCode ^ green.hashCode ^ blue.hashCode ^ alpha.hashCode;
+
+  /// Returns a brighter color using [amount] (from 0 to 255) to increase bright.
+  HTMLColor brighter( int amount ) {
+    var space = getBrighterSpace();
+
+    var minAmount = Math.min( amount~/2 , 10 ) ;
+
+    if (space < amount) {
+      if (space < minAmount) return null ;
+      amount = space ;
+    }
+
+    return HTMLColor( _clip(red+amount) , _clip(green+amount) , _clip(blue+amount) , alpha) ;
+  }
+
+  /// Returns a darker color using [amount] (from 0 to 255) to decrease bright.
+  HTMLColor darker( int amount ) {
+    var space = getDarkerSpace();
+
+    var minAmount = Math.min( amount~/2 , 10 ) ;
+
+    if (space < amount) {
+      if (space < minAmount) return null ;
+      amount = space ;
+    }
+
+    return HTMLColor( _clip(red-amount) , _clip(green-amount) , _clip(blue-amount) , alpha) ;
+  }
+
+  /// Returns the amount of space for a brighter color.
+  int getBrighterSpace() {
+    var min = Math.minInList([red, green, blue]) ;
+    var space = 195-min ;
+    return space;
+  }
+
+  /// Returns the amount of space for a darker color.
+  int getDarkerSpace() {
+    var max = Math.maxInList([red, green, blue]) ;
+    var space = max-80 ;
+    return space;
+  }
+
+  int _clip(int n) {
+    if (n < 0) return 0 ;
+    if (n > 255) return 255 ;
+    return n ;
+  }
+
+  /// Brightness of the color.
+  int get brightness => (red+green+blue) ~/ 3 ;
+
+  /// Compares using [brightness]: from brighter to darker.
+  @override
+  int compareTo(HTMLColor other) {
+    return other.brightness.compareTo(brightness) ;
+  }
+
+  /// Returns a grey scale version of this color.
+  HTMLColor greyScale() {
+    var m = Math.mean( [red, green, blue] ).toInt() ;
+    return HTMLColor(m,m,m, alpha) ;
+  }
+
+}
+
+/// Holds a color palette ([List<HTMLColor>]).
+class ColorPalette {
+
+  List<HTMLColor> basicColors ;
+
+  ColorPalette(this.basicColors);
+
+  factory ColorPalette.from( dynamic basicColors ) {
+    return ColorPalette( HTMLColor.toList(basicColors) ) ;
+  }
+
+  /// Same as [generatePalette], but returns HTML string colors.
+  List<String> generateHTMLPalette(int size) {
+    var palette = generatePalette(size);
+    if (palette == null || palette.isEmpty) return [] ;
+    return palette.map((e) => e.toString()).toList() ;
+  }
+
+  /// Generates a new palette with specific color [size].
+  List<HTMLColor> generatePalette(int size) {
+    if (size <= basicColors.length) {
+      var palette = <HTMLColor>[] ;
+      while (palette.length < size) {
+        palette.add( basicColors[palette.length] ) ;
+      }
+      return palette ;
+    }
+
+    var blocks = LinkedHashMap<HTMLColor,List<HTMLColor>>.fromEntries( basicColors.map((e) => MapEntry(e, <HTMLColor>[]) ) ) ;
+
+    var colorsSize = blocks.length ;
+
+    var colorsPerBlock = Math.max((basicColors.length / size)-1 , 1) + 1 ;
+
+    while ( colorsSize < size ) {
+      var colorsSizeMark = colorsSize ;
+
+      for (var entry in blocks.entries) {
+        var keyColor = entry.key ;
+
+        var changeDarkAmount = keyColor.getDarkerSpace() ~/ colorsPerBlock ;
+        var changeBrightAmount = keyColor.getBrighterSpace() ~/ colorsPerBlock ;
+
+        var blockColors = entry.value ;
+
+        var init = blockColors.isEmpty ? keyColor : blockColors[0] ;
+        var end = blockColors.isEmpty ? keyColor : blockColors[blockColors.length-1] ;
+
+        var c1 = changeDarkAmount > 10 ? init.darker(changeDarkAmount) : null ;
+        var c2 = changeBrightAmount > 10 ? end.brighter(changeBrightAmount) : null ;
+
+        if (c1 != null) {
+          blockColors.insert(0, c1) ;
+          colorsSize++ ;
+          if ( colorsSize == size ) break ;
+        }
+        if (c2 != null) {
+          blockColors.add(c2) ;
+          colorsSize++ ;
+          if ( colorsSize == size ) break ;
+        }
+      }
+
+      if (colorsSize == colorsSizeMark) break ;
+    }
+
+    var blocksColors = blocks.map((key, value) => MapEntry(key , value..insert( value.length~/2 , key ) ) ).values ;
+
+    var palette = blocksColors.expand((e) => e).toList() ;
+    palette.sort();
+    return palette ;
+  }
+
+}
+
+
+/// Generates color palettes of different sizes using basic colors.
+class ColorGeneratorFromBasicPalette extends ColorGenerator {
+
+  final ColorPalette _basicPalette ;
+
+  ColorGeneratorFromBasicPalette(this._basicPalette) ;
+
+  /// The basic palette to generate other palettes of bigger sizes.
+  ColorPalette get basicPalette => _basicPalette;
+
+  /// Constructor that accepts a list of colors of a ColorPalette instance.
+  factory ColorGeneratorFromBasicPalette.from( dynamic basicColors ) {
+    if (basicColors is ColorPalette) {
+      return ColorGeneratorFromBasicPalette(basicColors) ;
+    }
+    var colorsList = HTMLColor.toList(basicColors);
+    return ColorGeneratorFromBasicPalette( ColorPalette(colorsList) ) ;
+  }
+
+  final Map<int, List<HTMLColor>> _cachedPalettes = {} ;
+
+  /// Clears the palette cache.
+  void clearCache() {
+    _cachedPalettes.clear() ;
+  }
+
+  /// Generates a [List<HTMLColor>] of [size] and cache it.
+  List<HTMLColor> getCachedPalette(int size) {
+    var palette = _cachedPalettes[size];
+    if ( palette == null ) {
+      _cachedPalettes[size] = palette = generatePalette(size) ;
+    }
+    return palette ;
+  }
+
+  /// Generates a [List<HTMLColor>] of [size]. See [getCachedPalette].
+  List<HTMLColor> generatePalette(int size) {
+    return _basicPalette.generatePalette(size) ;
+  }
+
+  /// Generates a specific color for [index] of palette fo size [total].
+  @override
+  String generateColor(String name, int index, int total) {
+    var color = _generateColorImpl(index, total) ;
+    return color.toString() ;
+  }
+
+  HTMLColor _generateColorImpl(int index, int total) {
+    var palette = getCachedPalette(total);
+    var idx = index % palette.length ;
+    return palette[idx];
+  }
+
+  /// Same as [generateColor], but for disabled color (grey scale).
+  @override
+  String generateDisabledColor(String name, int index, int total) {
+    var color = _generateColorImpl(index, total) ;
+    var colorGrey = color.greyScale() ;
+    return colorGrey.toString() ;
+  }
+
+}

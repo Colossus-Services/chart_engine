@@ -1,3 +1,9 @@
+## 1.0.10
+
+- Fix ChartEngine.VERSION
+- Fix unused import.
+- dartfmt
+
 ## 1.0.9
 
 - Added support to stepped lines.

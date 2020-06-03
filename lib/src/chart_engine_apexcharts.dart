@@ -5,7 +5,6 @@ import 'package:amdjs/amdjs.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
 import 'chart_engine_base.dart';
-import 'chart_engine_colors.dart';
 import 'chart_engine_series.dart';
 
 /// ApexCharts (v3.19.0) Engine.

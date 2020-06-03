@@ -24,12 +24,21 @@ void main() {
 
       var colorPalette = ColorPalette.from( ['#ff0000','#00ff00'] ) ;
 
-      expect(colorPalette.generateHTMLPalette(3), equals( ['#900000', '#ff0000', '#00ff00'] ));
-      expect(colorPalette.generateHTMLPalette(4), equals( ['#900000', '#ff0000', '#00ff00', '#ff7070'] ));
-      expect(colorPalette.generateHTMLPalette(5), equals( ['#900000', '#009000', '#ff0000', '#00ff00', '#ff7070'] ));
-      expect(colorPalette.generateHTMLPalette(6), equals( ['#900000', '#009000', '#ff0000', '#00ff00', '#ff7070', '#70ff70'] ));
-      expect(colorPalette.generateHTMLPalette(7), equals( ['#210000', '#900000', '#009000', '#ff0000', '#00ff00', '#ff7070', '#70ff70'] ));
-      expect(colorPalette.generateHTMLPalette(8), equals( ['#210000', '#900000', '#009000', '#ff0000', '#00ff00', '#ff7070', '#70ff70', '#ffe0e0'] ));
+      expect(colorPalette.generateHTMLPalette(3), equals( ['#ff0000', '#00ff00', '#a80000'] ));
+      expect(colorPalette.generateHTMLPalette(4), equals( ['#ff6161', '#ff0000', '#00ff00', '#a80000'] ));
+      expect(colorPalette.generateHTMLPalette(5), equals( ['#ff6161', '#ff0000', '#00ff00', '#a80000', '#00a800'] ));
+      expect(colorPalette.generateHTMLPalette(6), equals( ['#ff6161', '#61ff61', '#ff0000', '#00ff00', '#a80000', '#00a800'] ));
+      expect(colorPalette.generateHTMLPalette(7), equals( ['#ff6161', '#61ff61', '#ff0000', '#00ff00', '#a80000', '#00a800', '#510000'] ));
+      expect(colorPalette.generateHTMLPalette(8), equals( [
+        '#ffc2c2',
+        '#ff6161',
+        '#61ff61',
+        '#ff0000',
+        '#00ff00',
+        '#a80000',
+        '#00a800',
+        '#510000'
+      ] ));
 
     });
 

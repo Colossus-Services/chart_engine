@@ -201,6 +201,20 @@
                         offsetY: -25,
                         fontSize: "30px",
                         show: true
+                    },
+                    total: {
+                        show: true,
+                        label: '',
+                        color: '#000000',
+                        fontWeight: 600,
+                        formatter: function (w) {
+                            const percentUsed = w.globals.seriesTotals.reduce((a, b) => {
+                                return a + b
+                            }, 0);
+                            const percentTotal = w.globals.series.length;
+                            const centerPercent = Math.floor( percentUsed / percentTotal ) ;
+                            return centerPercent + '%'
+                        }
                     }
                 }
             }

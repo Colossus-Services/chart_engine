@@ -3489,7 +3489,7 @@ case 5:t=6
 return P.R(F.iT(),$async$bl)
 case 6:t=7
 return P.R(F.iR(),$async$bl)
-case 7:document.querySelector("#chart-version").textContent="1.0.8"
+case 7:document.querySelector("#chart-version").textContent="1.0.10"
 return P.an(null,s)}})
 return P.ao($async$bl,s)},
 fA:function(){var t=0,s=P.ap(u.z),r,q,p,o,n,m,l

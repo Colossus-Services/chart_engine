@@ -1,9 +1,6 @@
-
 import 'dart:collection';
 
 import 'package:swiss_knife/swiss_knife.dart';
-
-
 
 typedef GenerateColorFunction = String Function(
     String name, int index, int total);
@@ -66,8 +63,10 @@ class SchemeColorGenerator extends ColorGenerator {
     _mainScheme = value ?? schemeNames.first;
   }
 
-  String get defaultSchemeName =>
-      _schemes.entries.firstWhere((e) => !e.key.contains('disabled')).key.replaceFirst(RegExp(r'\d+$'), '');
+  String get defaultSchemeName => _schemes.entries
+      .firstWhere((e) => !e.key.contains('disabled'))
+      .key
+      .replaceFirst(RegExp(r'\d+$'), '');
 
   String get defaultDisabledSchemeName => _schemes.entries
       .firstWhere((e) {
@@ -117,7 +116,6 @@ class SchemeColorGenerator extends ColorGenerator {
 
   List<String> _getSchemeColorsImpl(
       String schemeName, int size, bool disabled) {
-
     var keys = <String>[schemeName];
 
     for (var i = size; i <= 15; i++) {
@@ -132,15 +130,15 @@ class SchemeColorGenerator extends ColorGenerator {
 
     var colors = findKeyValue(_schemes, keys, true);
 
-    if ( colors == null ) {
-      keys = keys.map((e) => e.toLowerCase()).toList() ;
-      keys.add( keys.removeAt(0) ) ;
+    if (colors == null) {
+      keys = keys.map((e) => e.toLowerCase()).toList();
+      keys.add(keys.removeAt(0));
 
-      for ( var k in keys ) {
-        for ( var schemeK in _schemes.keys ) {
-          var schemeKLC = schemeK.toLowerCase() ;
-          if ( schemeKLC.contains(k) ) {
-            colors = _schemes[schemeK] ;
+      for (var k in keys) {
+        for (var schemeK in _schemes.keys) {
+          var schemeKLC = schemeK.toLowerCase();
+          if (schemeKLC.contains(k)) {
+            colors = _schemes[schemeK];
             break;
           }
         }
@@ -2059,26 +2057,32 @@ class StandardColorGenerator extends SchemeColorGenerator {
 
 /// Represents a Color in [red], [green], [blue] and [alpha] format.
 class HTMLColor implements Comparable<HTMLColor> {
-
   /// Parses and returns a flat list [List<HTMLColor>].
-  static List<HTMLColor> toList( dynamic value ) {
-    var list = toFlatListOfStrings(value, delimiter: RegExp(r'[;|]+') ) ;
+  static List<HTMLColor> toList(dynamic value) {
+    var list = toFlatListOfStrings(value, delimiter: RegExp(r'[;|]+'));
     return list.map((e) => HTMLColor.from(e)).toList();
   }
 
-  static final RegExp COLOR_PATTERN_RGBA = RegExp(r'^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,?\s*(\d+(?:\.\d+)?)?\s*\)') ;
-  static final RegExp COLOR_PATTERN_HEX3 = RegExp(r'^#?([0-9a-f][0-9a-f][0-9a-f])$') ;
-  static final RegExp COLOR_PATTERN_HEX6 = RegExp(r'^#?([0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f])$') ;
+  static final RegExp COLOR_PATTERN_RGBA = RegExp(
+      r'^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,?\s*(\d+(?:\.\d+)?)?\s*\)');
 
+  static final RegExp COLOR_PATTERN_HEX3 =
+      RegExp(r'^#?([0-9a-f][0-9a-f][0-9a-f])$');
+
+  static final RegExp COLOR_PATTERN_HEX6 =
+      RegExp(r'^#?([0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f])$');
 
   /// Red channel: 0..255
-  final int red ;
+  final int red;
+
   /// Green channel: 0..255
-  final int green ;
+  final int green;
+
   /// Blue channel: 0..255
-  final int blue ;
+  final int blue;
+
   /// Alpha channel: 0..1
-  final double alpha ;
+  final double alpha;
 
   HTMLColor(this.red, this.green, this.blue, [this.alpha]);
 
@@ -2086,75 +2090,75 @@ class HTMLColor implements Comparable<HTMLColor> {
   ///  - #FF0000
   ///  - rgba(255,0,0, 0.5)
   factory HTMLColor.from(String color) {
-    if (color == null) return null ;
-    color = color.trim().toLowerCase() ;
-    if (color.isEmpty) return null ;
+    if (color == null) return null;
+    color = color.trim().toLowerCase();
+    if (color.isEmpty) return null;
 
-    var matchRGBA = COLOR_PATTERN_RGBA.firstMatch(color) ;
+    var matchRGBA = COLOR_PATTERN_RGBA.firstMatch(color);
 
-    if ( matchRGBA != null ) {
-      var r = int.parse( matchRGBA[1] ) ;
-      var g = int.parse( matchRGBA[2] ) ;
-      var b = int.parse( matchRGBA[3] ) ;
-      var a = matchRGBA[4] != null ? double.parse( matchRGBA[4] ) : null ;
-      return HTMLColor(r,g,b,a);
+    if (matchRGBA != null) {
+      var r = int.parse(matchRGBA[1]);
+      var g = int.parse(matchRGBA[2]);
+      var b = int.parse(matchRGBA[3]);
+      var a = matchRGBA[4] != null ? double.parse(matchRGBA[4]) : null;
+      return HTMLColor(r, g, b, a);
     }
 
-    var matchHex3 = COLOR_PATTERN_HEX3.firstMatch(color) ;
+    var matchHex3 = COLOR_PATTERN_HEX3.firstMatch(color);
 
     if (matchHex3 != null) {
-      var hex = matchHex3.group(1) ;
+      var hex = matchHex3.group(1);
 
-      var sR = hex.substring(0,1) ;
-      var sG = hex.substring(1,2) ;
-      var sB = hex.substring(2,3) ;
+      var sR = hex.substring(0, 1);
+      var sG = hex.substring(1, 2);
+      var sB = hex.substring(2, 3);
 
-      var r = int.tryParse( sR+sR , radix: 16) ;
-      var g = int.tryParse( sG+sG , radix: 16) ;
-      var b = int.tryParse( sB+sB , radix: 16) ;
+      var r = int.tryParse(sR + sR, radix: 16);
+      var g = int.tryParse(sG + sG, radix: 16);
+      var b = int.tryParse(sB + sB, radix: 16);
 
-      return HTMLColor(r,g,b);
+      return HTMLColor(r, g, b);
     }
 
-    var matchHex6 = COLOR_PATTERN_HEX6.firstMatch(color) ;
+    var matchHex6 = COLOR_PATTERN_HEX6.firstMatch(color);
 
     if (matchHex6 != null) {
-      var hex = matchHex6.group(1) ;
+      var hex = matchHex6.group(1);
 
-      var r = int.tryParse( hex.substring(0,2) , radix: 16) ;
-      var g = int.tryParse( hex.substring(2,4) , radix: 16) ;
-      var b = int.tryParse( hex.substring(4,6) , radix: 16) ;
+      var r = int.tryParse(hex.substring(0, 2), radix: 16);
+      var g = int.tryParse(hex.substring(2, 4), radix: 16);
+      var b = int.tryParse(hex.substring(4, 6), radix: 16);
 
-      return HTMLColor(r,g,b);
+      return HTMLColor(r, g, b);
     }
 
-    return null ;
+    return null;
   }
 
   /// Converts to a HTML Color string. If alpha is present uses `rgba()` format.
   @override
-  String toString( [bool forceRGBA = false] ) {
-    var rgbaMode = ( alpha != null && alpha != 1 ) || (forceRGBA != null && forceRGBA) ;
+  String toString([bool forceRGBA = false]) {
+    var rgbaMode =
+        (alpha != null && alpha != 1) || (forceRGBA != null && forceRGBA);
 
-    if ( rgbaMode ) {
-      var a = alpha ?? 1 ;
+    if (rgbaMode) {
+      var a = alpha ?? 1;
       return 'rgba{$red, $green, $blue, $a}';
-    }
-    else {
-      var sR = _toHex(red) ;
-      var sG = _toHex(green) ;
-      var sB = _toHex(blue) ;
+    } else {
+      var sR = _toHex(red);
+      var sG = _toHex(green);
+      var sB = _toHex(blue);
 
       return '#$sR$sG$sB';
     }
   }
 
   String _toHex(int n) {
-    var h = n.toRadixString(16) ;
+    var h = n.toRadixString(16);
     while (h.length < 2) {
-      h = '0'+h ;
+      h = '0' + h;
     }
-    return h ;
+    return h;
   }
 
   @override
@@ -2172,205 +2176,208 @@ class HTMLColor implements Comparable<HTMLColor> {
       red.hashCode ^ green.hashCode ^ blue.hashCode ^ alpha.hashCode;
 
   /// Returns a brighter color using [amount] (from 0 to 255) to increase bright.
-  HTMLColor brighter( int amount ) {
+  HTMLColor brighter(int amount) {
     var space = getBrighterSpace();
 
-    var minAmount = Math.min( amount~/2 , 10 ) ;
+    var minAmount = Math.min(amount ~/ 2, 10);
 
     if (space < amount) {
-      if (space < minAmount) return null ;
-      amount = space ;
+      if (space < minAmount) return null;
+      amount = space;
     }
 
-    return HTMLColor( _clip(red+amount) , _clip(green+amount) , _clip(blue+amount) , alpha) ;
+    return HTMLColor(_clip(red + amount), _clip(green + amount),
+        _clip(blue + amount), alpha);
   }
 
   /// Returns a darker color using [amount] (from 0 to 255) to decrease bright.
-  HTMLColor darker( int amount ) {
+  HTMLColor darker(int amount) {
     var space = getDarkerSpace();
 
-    var minAmount = Math.min( amount~/2 , 10 ) ;
+    var minAmount = Math.min(amount ~/ 2, 10);
 
     if (space < amount) {
-      if (space < minAmount) return null ;
-      amount = space ;
+      if (space < minAmount) return null;
+      amount = space;
     }
 
-    return HTMLColor( _clip(red-amount) , _clip(green-amount) , _clip(blue-amount) , alpha) ;
+    return HTMLColor(_clip(red - amount), _clip(green - amount),
+        _clip(blue - amount), alpha);
   }
 
   /// Returns the amount of space for a brighter color.
   int getBrighterSpace() {
-    var min = Math.minInList([red, green, blue]) ;
-    var space = 195-min ;
+    var min = Math.minInList([red, green, blue]);
+    var space = 195 - min;
     return space;
   }
 
   /// Returns the amount of space for a darker color.
   int getDarkerSpace() {
-    var max = Math.maxInList([red, green, blue]) ;
-    var space = max-80 ;
+    var max = Math.maxInList([red, green, blue]);
+    var space = max - 80;
     return space;
   }
 
   int _clip(int n) {
-    if (n < 0) return 0 ;
-    if (n > 255) return 255 ;
-    return n ;
+    if (n < 0) return 0;
+    if (n > 255) return 255;
+    return n;
   }
 
   /// Brightness of the color.
-  int get brightness => (red+green+blue) ~/ 3 ;
+  int get brightness => (red + green + blue) ~/ 3;
 
   /// Compares using [brightness]: from brighter to darker.
   @override
   int compareTo(HTMLColor other) {
-    return other.brightness.compareTo(brightness) ;
+    return other.brightness.compareTo(brightness);
   }
 
   /// Returns a grey scale version of this color.
   HTMLColor greyScale() {
-    var m = Math.mean( [red, green, blue] ).toInt() ;
-    return HTMLColor(m,m,m, alpha) ;
+    var m = Math.mean([red, green, blue]).toInt();
+    return HTMLColor(m, m, m, alpha);
   }
-
 }
 
 /// Holds a color palette ([List<HTMLColor>]).
 class ColorPalette {
-
-  List<HTMLColor> basicColors ;
+  List<HTMLColor> basicColors;
 
   ColorPalette(this.basicColors);
 
-  factory ColorPalette.from( dynamic basicColors ) {
-    return ColorPalette( HTMLColor.toList(basicColors) ) ;
+  factory ColorPalette.from(dynamic basicColors) {
+    return ColorPalette(HTMLColor.toList(basicColors));
   }
 
   /// Same as [generatePalette], but returns HTML string colors.
   List<String> generateHTMLPalette(int size) {
     var palette = generatePalette(size);
-    if (palette == null || palette.isEmpty) return [] ;
-    return palette.map((e) => e.toString()).toList() ;
+    if (palette == null || palette.isEmpty) return [];
+    return palette.map((e) => e.toString()).toList();
   }
 
   /// Generates a new palette with specific color [size].
   List<HTMLColor> generatePalette(int size) {
     if (size <= basicColors.length) {
-      var palette = <HTMLColor>[] ;
+      var palette = <HTMLColor>[];
       while (palette.length < size) {
-        palette.add( basicColors[palette.length] ) ;
+        palette.add(basicColors[palette.length]);
       }
-      return palette ;
+      return palette;
     }
 
-    var blocks = LinkedHashMap<HTMLColor,List<HTMLColor>>.fromEntries( basicColors.map((e) => MapEntry(e, <HTMLColor>[]) ) ) ;
+    var blocks = LinkedHashMap<HTMLColor, List<HTMLColor>>.fromEntries(
+        basicColors.map((e) => MapEntry(e, <HTMLColor>[])));
 
-    var colorsSize = blocks.length ;
+    var colorsSize = blocks.length;
 
-    var colorsPerBlock = Math.max((basicColors.length / size)-1 , 1) + 1 ;
+    var colorsPerBlock = Math.max((basicColors.length / size) - 1, 1) + 1;
 
-    while ( colorsSize < size ) {
-      var colorsSizeMark = colorsSize ;
+    while (colorsSize < size) {
+      var colorsSizeMark = colorsSize;
 
       for (var entry in blocks.entries) {
-        var keyColor = entry.key ;
+        var keyColor = entry.key;
 
-        var changeDarkAmount = keyColor.getDarkerSpace() ~/ colorsPerBlock ;
-        var changeBrightAmount = keyColor.getBrighterSpace() ~/ colorsPerBlock ;
+        var changeDarkAmount = keyColor.getDarkerSpace() ~/ colorsPerBlock;
+        var changeBrightAmount = keyColor.getBrighterSpace() ~/ colorsPerBlock;
 
-        var blockColors = entry.value ;
+        var blockColors = entry.value;
 
-        var init = blockColors.isEmpty ? keyColor : blockColors[0] ;
-        var end = blockColors.isEmpty ? keyColor : blockColors[blockColors.length-1] ;
+        var init = blockColors.isEmpty ? keyColor : blockColors[0];
+        var end = blockColors.isEmpty
+            ? keyColor
+            : blockColors[blockColors.length - 1];
 
-        var c1 = changeDarkAmount > 10 ? init.darker(changeDarkAmount) : null ;
-        var c2 = changeBrightAmount > 10 ? end.brighter(changeBrightAmount) : null ;
+        var c1 = changeDarkAmount > 10 ? init.darker(changeDarkAmount) : null;
+        var c2 =
+            changeBrightAmount > 10 ? end.brighter(changeBrightAmount) : null;
 
         if (c1 != null) {
-          blockColors.insert(0, c1) ;
-          colorsSize++ ;
-          if ( colorsSize == size ) break ;
+          blockColors.insert(0, c1);
+          colorsSize++;
+          if (colorsSize == size) break;
         }
         if (c2 != null) {
-          blockColors.add(c2) ;
-          colorsSize++ ;
-          if ( colorsSize == size ) break ;
+          blockColors.add(c2);
+          colorsSize++;
+          if (colorsSize == size) break;
         }
       }
 
-      if (colorsSize == colorsSizeMark) break ;
+      if (colorsSize == colorsSizeMark) break;
     }
 
-    var blocksColors = blocks.map((key, value) => MapEntry(key , value..insert( value.length~/2 , key ) ) ).values ;
+    var blocksColors = blocks
+        .map((key, value) =>
+            MapEntry(key, value..insert(value.length ~/ 2, key)))
+        .values;
 
-    var palette = blocksColors.expand((e) => e).toList() ;
+    var palette = blocksColors.expand((e) => e).toList();
     palette.sort();
-    return palette ;
+    return palette;
   }
-
 }
-
 
 /// Generates color palettes of different sizes using basic colors.
 class ColorGeneratorFromBasicPalette extends ColorGenerator {
+  final ColorPalette _basicPalette;
 
-  final ColorPalette _basicPalette ;
-
-  ColorGeneratorFromBasicPalette(this._basicPalette) ;
+  ColorGeneratorFromBasicPalette(this._basicPalette);
 
   /// The basic palette to generate other palettes of bigger sizes.
   ColorPalette get basicPalette => _basicPalette;
 
   /// Constructor that accepts a list of colors of a ColorPalette instance.
-  factory ColorGeneratorFromBasicPalette.from( dynamic basicColors ) {
+  factory ColorGeneratorFromBasicPalette.from(dynamic basicColors) {
     if (basicColors is ColorPalette) {
-      return ColorGeneratorFromBasicPalette(basicColors) ;
+      return ColorGeneratorFromBasicPalette(basicColors);
     }
     var colorsList = HTMLColor.toList(basicColors);
-    return ColorGeneratorFromBasicPalette( ColorPalette(colorsList) ) ;
+    return ColorGeneratorFromBasicPalette(ColorPalette(colorsList));
   }
 
-  final Map<int, List<HTMLColor>> _cachedPalettes = {} ;
+  final Map<int, List<HTMLColor>> _cachedPalettes = {};
 
   /// Clears the palette cache.
   void clearCache() {
-    _cachedPalettes.clear() ;
+    _cachedPalettes.clear();
   }
 
   /// Generates a [List<HTMLColor>] of [size] and cache it.
   List<HTMLColor> getCachedPalette(int size) {
     var palette = _cachedPalettes[size];
-    if ( palette == null ) {
-      _cachedPalettes[size] = palette = generatePalette(size) ;
+    if (palette == null) {
+      _cachedPalettes[size] = palette = generatePalette(size);
     }
-    return palette ;
+    return palette;
   }
 
   /// Generates a [List<HTMLColor>] of [size]. See [getCachedPalette].
   List<HTMLColor> generatePalette(int size) {
-    return _basicPalette.generatePalette(size) ;
+    return _basicPalette.generatePalette(size);
   }
 
   /// Generates a specific color for [index] of palette fo size [total].
   @override
   String generateColor(String name, int index, int total) {
-    var color = _generateColorImpl(index, total) ;
-    return color.toString() ;
+    var color = _generateColorImpl(index, total);
+    return color.toString();
   }
 
   HTMLColor _generateColorImpl(int index, int total) {
     var palette = getCachedPalette(total);
-    var idx = index % palette.length ;
+    var idx = index % palette.length;
     return palette[idx];
   }
 
   /// Same as [generateColor], but for disabled color (grey scale).
   @override
   String generateDisabledColor(String name, int index, int total) {
-    var color = _generateColorImpl(index, total) ;
-    var colorGrey = color.greyScale() ;
-    return colorGrey.toString() ;
+    var color = _generateColorImpl(index, total);
+    var colorGrey = color.greyScale();
+    return colorGrey.toString();
   }
-
 }

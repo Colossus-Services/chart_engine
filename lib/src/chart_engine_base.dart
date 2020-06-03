@@ -2,9 +2,8 @@ import 'dart:html';
 
 import 'package:swiss_knife/swiss_knife.dart';
 
-import 'chart_engine_series.dart';
 import 'chart_engine_colors.dart';
-
+import 'chart_engine_series.dart';
 
 /// The browser path for package resources.
 final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
@@ -12,7 +11,7 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
   /// `chart_engine` package version.
-  static final String VERSION = '1.0.8';
+  static final String VERSION = '1.0.10';
 
   /// Ensures that engine and dependencies are loaded.
   Future<bool> load();
@@ -47,11 +46,9 @@ abstract class ChartEngine {
 
     if (chartData is ChartTimeSeries) {
       return renderTimeSeriesChart(output, chartData);
-    }
-    else if (chartData is ChartSeriesPair) {
-      return renderScatterChart(output, chartData) ;
-    }
-    else if (chartData is ChartSeries) {
+    } else if (chartData is ChartSeriesPair) {
+      return renderScatterChart(output, chartData);
+    } else if (chartData is ChartSeries) {
       return renderLineChart(output, chartData);
     } else if (chartData is ChartSet) {
       return renderGaugeChart(output, chartData);
@@ -65,7 +62,7 @@ abstract class ChartEngine {
   /// The color generator for [ChartData] that doesn't set its own colors.
   ColorGenerator get colorGenerator => _colorGenerator;
 
-  G getColorGeneratorAs<G extends ColorGenerator>() => _colorGenerator ;
+  G getColorGeneratorAs<G extends ColorGenerator>() => _colorGenerator;
 
   set colorGenerator(ColorGenerator value) {
     _colorGenerator = value ?? StandardColorGenerator();
@@ -95,59 +92,64 @@ abstract class ChartEngine {
   }
 
   Future _ensureLoaded() async {
-    if ( !isLoaded ) {
-      await load() ;
+    if (!isLoaded) {
+      await load();
     }
   }
 
   /// Same as [render], but [async].
   Future<bool> renderAsync(Element output, ChartData chartData) async {
     await _ensureLoaded();
-    return render(output, chartData) ;
+    return render(output, chartData);
   }
 
   /// Same as [renderLineChart], but [async].
-  Future<bool> renderLineChartAsync(Element output, ChartSeries chartData) async {
+  Future<bool> renderLineChartAsync(
+      Element output, ChartSeries chartData) async {
     await _ensureLoaded();
-    return renderLineChart(output, chartData) ;
+    return renderLineChart(output, chartData);
   }
 
   /// Same as [renderTimeSeriesChart], but [async].
-  Future<bool> renderTimeSeriesChartAsync(Element output, ChartTimeSeries chartData) async {
+  Future<bool> renderTimeSeriesChartAsync(
+      Element output, ChartTimeSeries chartData) async {
     await _ensureLoaded();
-    return renderTimeSeriesChart(output, chartData) ;
+    return renderTimeSeriesChart(output, chartData);
   }
 
   /// Same as [renderBarChart], but [async].
-  Future<bool> renderBarChartAsync(Element output, ChartSeries chartData) async {
+  Future<bool> renderBarChartAsync(
+      Element output, ChartSeries chartData) async {
     await _ensureLoaded();
-    return renderBarChart(output, chartData) ;
+    return renderBarChart(output, chartData);
   }
 
   /// Same as [renderHorizontalBarChart], but [async].
-  Future<bool> renderHorizontalBarChartAsync(Element output, ChartSeries chartData) async {
+  Future<bool> renderHorizontalBarChartAsync(
+      Element output, ChartSeries chartData) async {
     await _ensureLoaded();
-    return renderHorizontalBarChart(output, chartData) ;
+    return renderHorizontalBarChart(output, chartData);
   }
 
   /// Same as [renderGaugeChart], but [async].
   Future<bool> renderGaugeChartAsync(Element output, ChartSet chartData) async {
     await _ensureLoaded();
-    return renderGaugeChart(output, chartData) ;
+    return renderGaugeChart(output, chartData);
   }
 
   /// Same as [renderScatterChart], but [async].
-  Future<bool> renderScatterChartAsync(Element output, ChartSeriesPair chartSeries) async {
+  Future<bool> renderScatterChartAsync(
+      Element output, ChartSeriesPair chartSeries) async {
     await _ensureLoaded();
-    return renderScatterChart(output, chartSeries) ;
+    return renderScatterChart(output, chartSeries);
   }
 
   /// Same as [renderScatterTimedChart], but [async].
-  Future<bool> renderScatterTimedChartAsync(Element output, ChartTimeSeries chartSeries) async {
+  Future<bool> renderScatterTimedChartAsync(
+      Element output, ChartTimeSeries chartSeries) async {
     await _ensureLoaded();
-    return renderScatterTimedChart(output, chartSeries) ;
+    return renderScatterTimedChart(output, chartSeries);
   }
-
 }
 
 /// A ChartEngine wrapper with switchable internal engines:

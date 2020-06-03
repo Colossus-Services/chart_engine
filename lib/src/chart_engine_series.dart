@@ -14,6 +14,92 @@ void _sorteEntriesByKey(List<MapEntry> entries) {
 
 /// Abstract Chart Data.
 abstract class ChartData<C, X, Y> {
+
+  /// Returns [true] if [value] is a UNIX epoch integer.
+  ///
+  /// [inMilliseconds] consider epoch in milliseconds.
+  static bool isValueInUnixEpochRange(int value, [bool inMilliseconds]) {
+    inMilliseconds ??= true ;
+
+    if (inMilliseconds) {
+      return value > 946692000000 && value < 32503690800000 ;
+    }
+    else {
+      return value > 946692000 && value < 32503690800 ;
+    }
+  }
+
+  /// Returns [true] if [value] is a UNIX epoch [int] or a [DateTime].
+  static bool isTimeValue(dynamic value) {
+    return ( value is int && isValueInUnixEpochRange(value) ) || value is DateTime ;
+  }
+
+  /// Returns [true] if [value] is a valid value for the charts.
+  static bool isValidValue(dynamic value) {
+    return value is num || isTimeValue(value) ;
+  }
+
+  /// Returns [true] if [list] is a [List] of paris.
+  static bool isListOfPairs(Iterable list) {
+    if (list == null || list.isEmpty) return null ;
+    return listMatchesAll(list, (e) => e is List && e.length == 2 && listMatchesAll(e, isValidValue)) ;
+  }
+
+  /// Returns [true] if [list] is a [List] of time pairs (X: DateTime, Y: value).
+  static bool isListOfTimedPairs(Iterable list) {
+    if (list == null || list.isEmpty) return null ;
+    return listMatchesAll(list, (e) => e is List && e.length == 2 && isTimeValue(e[0]) && e[1] is num ) ;
+  }
+
+  /// Returns [true] if [list] elements are valid values.
+  static bool isListOfValidValues(Iterable list) {
+    if (list == null || list.isEmpty) return null ;
+    return listMatchesAll(list, (e) => e is List && listMatchesAll(e, isValidValue)) ;
+  }
+
+  /// Returns [true] if [map] is valid for [ChartSet].
+  static bool matchesSet(Map map) {
+    return listMatchesAll(map.values, (e) => e is num) ;
+  }
+
+  /// Returns [true] if [map] is valid for [ChartSeries].
+  static bool matchesSeries(Map map) {
+    return listMatchesAll(map.values, (values) => isListOfValidValues(values) ) ;
+  }
+
+  /// Returns [true] if [map] is valid for [ChartTimeSeries].
+  static bool matchesTimeSeries(Map map) {
+    return listMatchesAll(map.values, (values) => isListOfTimedPairs(values) ) ;
+  }
+
+  /// Returns [true] if [map] is valid for [ChartSeriesPair].
+  static bool matchesSeriesPair(Map map) {
+    return listMatchesAll(map.values, (values) => isListOfPairs(values) ) ;
+  }
+
+  /// Returns [true] if [map] is valid for a [ChartData] implementation.
+  static bool matchesChartData(Map map) {
+    return matchesSet(map) || matchesSeries(map) || matchesSeriesPair(map) || matchesTimeSeries(map) ;
+  }
+
+  static ChartData from(Map map) {
+    if ( matchesSet(map) ) {
+      return ChartSet(map) ;
+    }
+    else if ( matchesTimeSeries(map) ) {
+      return ChartTimeSeries(map) ;
+    }
+    else if ( matchesSeriesPair(map) ) {
+      return ChartSeriesPair(map) ;
+    }
+    else if ( matchesSeries(map) ) {
+      return ChartSeries([],map) ;
+    }
+    else {
+      return null;
+    }
+  }
+
   /// The title of the Chart.
   String title;
 
@@ -78,6 +164,10 @@ abstract class ChartData<C, X, Y> {
 
     return _yAxisScale;
   }
+
+  bool get isEmpty ;
+  bool get isNotEmpty => !isEmpty ;
+
 }
 
 /// Data Series, usually for Line Charts.
@@ -90,6 +180,9 @@ class ChartSeries<C, X, Y, P> extends ChartData<C, X, Y> {
 
   ChartSeries(this.xLabels, this.series, {ChartSeriesOptions options})
       : _options = options ?? ChartSeriesOptions();
+
+  @override
+  bool get isEmpty => series.isEmpty ;
 
   /// The options for series data: [ChartSeriesOptions]
   ChartSeriesOptions get options => _options;
@@ -247,79 +340,18 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
     }
   }
 
-  P setPairX(P pair, X x) {
-    if (pair == null) {
-      return null;
-    } else if (pair is List) {
-      pair[0] = x;
-      return null;
-    } else if (pair is Map) {
-      var key = findKeyName(pair as Map<String, dynamic>, xKeys, true);
-      pair[key] = x;
-      return null;
-    } else if (pair is Pair) {
-      return Pair(x, pair.b) as P;
-    } else if (pair is String) {
-      String s = pair;
-
-      var parts = <String>[];
-      var delimiter = '';
-
-      s.splitMapJoin(stringPairDelimiterPattern, onNonMatch: (p) {
-        parts.add(p);
-        return '';
-      }, onMatch: (m) {
-        delimiter = m[0];
-        return '';
-      });
-
-      return '$x$delimiter${parts[1]}' as P;
-    } else {
-      throw UnsupportedError(
-          "Can't handle pair of type ${pair.runtimeType}: $pair");
-    }
-  }
-
-  P setPairY(P pair, Y y) {
-    if (pair == null) {
-      return null;
-    } else if (pair is List) {
-      pair[1] = y;
-      return null;
-    } else if (pair is Map) {
-      var key = findKeyName(pair as Map<String, dynamic>, yKeys, true);
-      pair[key] = y;
-      return null;
-    } else if (pair is Pair) {
-      return Pair(pair.a, y) as P;
-    } else if (pair is String) {
-      String s = pair;
-
-      var parts = <String>[];
-      var delimiter = '';
-
-      s.splitMapJoin(stringPairDelimiterPattern, onNonMatch: (p) {
-        parts.add(p);
-        return '';
-      }, onMatch: (m) {
-        delimiter = m[0];
-        return '';
-      });
-
-      return '${parts[0]}$delimiter$y' as P;
-    } else {
-      throw UnsupportedError(
-          "Can't handle pair of type ${pair.runtimeType}: $pair");
-    }
-  }
-
   P setPairXY(P pair, X x, Y y) {
     if (pair == null) {
       return null;
     } else if (pair is List) {
-      pair[0] = x;
-      pair[1] = y;
-      return null;
+      if ( x.runtimeType == y.runtimeType ) {
+        pair[0] = x;
+        pair[1] = y;
+        return null ;
+      }
+      else {
+        return [x,y] as P ;
+      }
     } else if (pair is Map) {
       var keyX = findKeyName(pair as Map<String, dynamic>, xKeys, true);
       var keyY = findKeyName(pair as Map<String, dynamic>, yKeys, true);
@@ -525,8 +557,8 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
 }
 
 /// Time Series, for Time Series Charts. Each entry should be a pair of DateTime and Value.
-class ChartTimeSeries<C, Y, P> extends ChartSeriesPair<C, DateTime, Y, P> {
-  ChartTimeSeries(Map<C, List<P>> series) : super(series) {
+class ChartTimeSeries<C, Y> extends ChartSeriesPair<C, DateTime, Y, dynamic> {
+  ChartTimeSeries(Map<C, List<dynamic>> series) : super( series.map((key, value) => MapEntry<C,List>(key, value)) ) {
     _normalizePairs();
   }
 
@@ -535,8 +567,12 @@ class ChartTimeSeries<C, Y, P> extends ChartSeriesPair<C, DateTime, Y, P> {
   void _normalizePairs() {
     var returnXY = <dynamic>[null, null];
 
-    for (var entry in series.entries) {
-      var values = entry.value;
+    var keys = List.from(series.keys) ;
+
+    for (var key in keys) {
+      var values = List<dynamic>.from( series[key] ) ;
+      series[key] = values ;
+
       var length = values.length;
 
       for (var i = 0; i < length; i++) {
@@ -570,7 +606,7 @@ class ChartTimeSeries<C, Y, P> extends ChartSeriesPair<C, DateTime, Y, P> {
         } else if (y is DateTime) {
           date = y;
           val = x;
-        } else if (x is int && y is int) {
+        } else if ( (x is int && y is num) || (x is num && y is int) ) {
           if (x > y) {
             date = DateTime.fromMillisecondsSinceEpoch(x);
             val = y;
@@ -593,8 +629,18 @@ class ChartTimeSeries<C, Y, P> extends ChartSeriesPair<C, DateTime, Y, P> {
           }
         }
       }
+
+      if ( !ChartData.isListOfTimedPairs(values) ) {
+        ChartData.isListOfTimedPairs(values);
+        throw StateError("Can't normalize timed pairs");
+      }
     }
+
+
+
+
   }
+
 }
 
 /// Data Set, usually for Gauge and Pie Charts.
@@ -607,6 +653,9 @@ class ChartSet<X, Y> extends ChartData<X, X, Y> {
 
   ChartSet(this.set, {ChartSetOptions options})
       : _options = options ?? ChartSetOptions();
+
+  @override
+  bool get isEmpty => set.isEmpty ;
 
   /// The options for set data: [ChartSetOptions]
   ChartSetOptions get options => _options;
@@ -629,6 +678,11 @@ class ChartSet<X, Y> extends ChartData<X, X, Y> {
 
   @override
   Iterable<Y> get yAxisAllValues => UnmodifiableListView(set.values);
+
+  ChartSeries get asChartSeries {
+    return ChartSeries([], set.map((key, value) => MapEntry(key, [value])) ) ;
+  }
+
 }
 
 abstract class ChartOptions {
@@ -646,6 +700,16 @@ abstract class ChartOptions {
 
 /// Possible options for Series Charts.
 class ChartSeriesOptions extends ChartOptions {
+
+  /// Draw stepped lines.
+  bool _steppedLines = false;
+
+  bool get steppedLines => _steppedLines;
+
+  set steppedLines(bool value) {
+    _steppedLines = value ?? false ;
+  }
+
   /// Draw straight lines instead of smooth lines.
   bool _straightLines = false;
 

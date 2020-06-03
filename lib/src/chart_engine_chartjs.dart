@@ -5,7 +5,6 @@ import 'package:amdjs/amdjs.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
 import 'chart_engine_base.dart';
-import 'chart_engine_colors.dart';
 import 'chart_engine_date.dart';
 import 'chart_engine_series.dart';
 
@@ -107,7 +106,7 @@ class ChartEngineChartJS extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 
@@ -120,7 +119,8 @@ class ChartEngineChartJS extends ChartEngine {
       JsObject.jsify(series),
       JsObject.jsify(colors),
       chartSeries.options.fillLines,
-      chartSeries.options.straightLines
+      chartSeries.options.straightLines,
+      chartSeries.options.steppedLines
     ];
 
     _jsWrapper.callMethod('renderLine', renderArgs);
@@ -142,7 +142,7 @@ class ChartEngineChartJS extends ChartEngine {
     var timeSeries =
         chartSeries.seriesPairsAsMap(series: series, mapDateTimeToMillis: true);
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 
@@ -154,7 +154,8 @@ class ChartEngineChartJS extends ChartEngine {
       JsObject.jsify(timeSeries),
       JsObject.jsify(colors),
       chartSeries.options.fillLines,
-      chartSeries.options.straightLines
+      chartSeries.options.straightLines,
+      chartSeries.options.steppedLines
     ];
 
     _jsWrapper.callMethod('renderTimeSeries', renderArgs);
@@ -183,7 +184,7 @@ class ChartEngineChartJS extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 
@@ -213,7 +214,7 @@ class ChartEngineChartJS extends ChartEngine {
     var set =
         chartSet.options.sortCategories ? chartSet.setSorted : chartSet.set;
 
-    chartSet.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSet.ensureColors(colorGenerator);
 
     var colors = chartSet.colors;
     var disabledColors = chartSet.disabledColors;
@@ -247,7 +248,7 @@ class ChartEngineChartJS extends ChartEngine {
 
     var seriesPairs = chartSeries.seriesPairsAsMap(series: series);
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 
@@ -279,7 +280,7 @@ class ChartEngineChartJS extends ChartEngine {
     var seriesPairs =
         chartSeries.seriesPairsAsMap(series: series, mapDateTimeToMillis: true);
 
-    chartSeries.ensureColors(STANDARD_COLOR_GENERATOR);
+    chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
 

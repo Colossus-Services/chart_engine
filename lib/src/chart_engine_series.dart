@@ -630,11 +630,6 @@ class ChartTimeSeries<C, Y> extends ChartSeriesPair<C, DateTime, Y, dynamic> {
           }
         }
       }
-
-      if (!ChartData.isListOfTimedPairs(values)) {
-        ChartData.isListOfTimedPairs(values);
-        throw StateError("Can't normalize timed pairs");
-      }
     }
   }
 }

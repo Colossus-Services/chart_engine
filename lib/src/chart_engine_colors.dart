@@ -2154,11 +2154,7 @@ class HTMLColor implements Comparable<HTMLColor> {
   }
 
   String _toHex(int n) {
-    var h = n.toRadixString(16);
-    while (h.length < 2) {
-      h = '0' + h;
-    }
-    return h;
+    return n.toRadixString(16).padLeft(2, '0');
   }
 
   @override
@@ -2319,6 +2315,30 @@ class ColorPalette {
     palette.sort();
     return palette;
   }
+
+  String asHTML(
+      {int colorWidth, int colorHeight, int colorMargin, bool inlineBlock}) {
+    colorWidth ??= colorHeight;
+    colorHeight ??= colorWidth;
+
+    colorWidth ??= 20;
+    colorHeight ??= colorWidth;
+
+    colorMargin ??= 5;
+
+    inlineBlock ??= false;
+
+    var styleDisplay = inlineBlock ? 'display: inline-block ;' : '';
+
+    var html = '<div style="$styleDisplay">';
+    for (var color in basicColors) {
+      html +=
+          '<div style="display: inline-block ; background-color: ${color.toString()} ; margin: ${colorMargin}px ; width: ${colorWidth}px ; height: ${colorHeight}px"></div>';
+    }
+    html += '</div>';
+
+    return html;
+  }
 }
 
 /// Generates color palettes of different sizes using basic colors.
@@ -2378,6 +2398,7 @@ class ColorGeneratorFromBasicPalette extends ColorGenerator {
   String generateDisabledColor(String name, int index, int total) {
     var color = _generateColorImpl(index, total);
     var colorGrey = color.greyScale();
-    return colorGrey.toString();
+    var colorGrey2 = colorGrey.brighter(32) ?? colorGrey;
+    return colorGrey2.toString();
   }
 }

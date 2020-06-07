@@ -1,3 +1,8 @@
+## 1.0.11
+
+- ColorPalette.asHTML(...).
+- dartfmt.
+
 ## 1.0.10
 
 - Fix ChartEngine.VERSION

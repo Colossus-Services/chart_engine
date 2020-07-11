@@ -38,10 +38,10 @@ class ChartEngineApexCharts extends ChartEngine {
   @override
   Future<bool> load() {
     return _loadController.load(() async {
-      var okJS = await AMDJS.require('ApexCharts', JS_PATH,
+      var okJS = await AMDJS.require('ApexCharts', jsFullPath: JS_PATH,
           globalJSVariableName: 'ApexCharts');
       var okWrapper = await AMDJS.require(
-          JS_WRAPPER_GLOBAL_NAME, ENGINE_WRAPPER_PATH,
+          JS_WRAPPER_GLOBAL_NAME, jsFullPath: ENGINE_WRAPPER_PATH,
           globalJSVariableName: JS_WRAPPER_GLOBAL_NAME);
 
       _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject;
@@ -104,12 +104,9 @@ class ChartEngineApexCharts extends ChartEngine {
 
     var div = asDivElement(output);
 
-    var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSortedByCategory
-        : chartSeries.series;
-
-    var timeSeries = chartSeries.seriesPairsAsList(
-        series: series, mapDateTimeToMillis: true);
+    var timeSeries = chartSeries.seriesAsPairsOfList(
+        sortSeriesByCategory: chartSeries.options.sortCategories,
+        mapDateTimeToMillis: true);
 
     chartSeries.ensureColors(colorGenerator);
 
@@ -208,11 +205,8 @@ class ChartEngineApexCharts extends ChartEngine {
 
     var div = asDivElement(output);
 
-    var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSortedByCategory
-        : chartSeries.series;
-
-    var seriesPairs = chartSeries.seriesPairsAsList(series: series);
+    var seriesPairs = chartSeries.seriesAsPairsOfList(
+        sortSeriesByCategory: chartSeries.options.sortCategories);
 
     chartSeries.ensureColors(colorGenerator);
 
@@ -246,12 +240,9 @@ class ChartEngineApexCharts extends ChartEngine {
 
     var div = asDivElement(output);
 
-    var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSortedByCategory
-        : chartSeries.series;
-
-    var timeSeries = chartSeries.seriesPairsAsList(
-        series: series, mapDateTimeToMillis: true);
+    var timeSeries = chartSeries.seriesAsPairsOfList(
+        sortSeriesByCategory: chartSeries.options.sortCategories,
+        mapDateTimeToMillis: true);
 
     chartSeries.ensureColors(colorGenerator);
 

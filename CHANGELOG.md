@@ -1,3 +1,17 @@
+## 1.1.0
+
+- Fix ChartJS gauge chart: center percentage text was drawing over hint.
+- Moved color palette generator to project `color_palette_generator`.
+- Added testes for `ChartSeries`.
+- swiss_knife: ^2.5.4
+- dom_tools: ^1.3.2
+- amdjs: ^1.0.4
+
+## 1.0.11
+
+- ColorPalette.asHTML(...).
+- dartfmt.
+
 ## 1.0.10
 
 - Fix ChartEngine.VERSION

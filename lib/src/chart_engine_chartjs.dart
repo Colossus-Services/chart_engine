@@ -51,10 +51,10 @@ class ChartEngineChartJS extends ChartEngine {
   Future<bool> load() {
     return _loadController.load(() async {
       var jsFullPath = minified ? JS_PATH_MIN : JS_PATH;
-      var okJS = await AMDJS.require('chartjs', jsFullPath,
+      var okJS = await AMDJS.require('chartjs', jsFullPath: jsFullPath,
           globalJSVariableName: 'Chart');
       var okWrapper = await AMDJS.require(
-          JS_WRAPPER_GLOBAL_NAME, ENGINE_WRAPPER_PATH,
+          JS_WRAPPER_GLOBAL_NAME, jsFullPath: ENGINE_WRAPPER_PATH,
           globalJSVariableName: JS_WRAPPER_GLOBAL_NAME);
 
       _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject;
@@ -135,12 +135,9 @@ class ChartEngineChartJS extends ChartEngine {
 
     var canvas = asCanvasElement(output);
 
-    var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSortedByCategory
-        : chartSeries.series;
-
-    var timeSeries =
-        chartSeries.seriesPairsAsMap(series: series, mapDateTimeToMillis: true);
+    var timeSeries = chartSeries.seriesAsPairsOfMap(
+        sortSeriesByCategory: chartSeries.options.sortCategories,
+        mapDateTimeToMillis: true);
 
     chartSeries.ensureColors(colorGenerator);
 
@@ -242,11 +239,8 @@ class ChartEngineChartJS extends ChartEngine {
 
     var canvas = asCanvasElement(output);
 
-    var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSortedByCategory
-        : chartSeries.series;
-
-    var seriesPairs = chartSeries.seriesPairsAsMap(series: series);
+    var seriesPairs = chartSeries.seriesAsPairsOfMap(
+        sortSeriesByCategory: chartSeries.options.sortCategories);
 
     chartSeries.ensureColors(colorGenerator);
 
@@ -273,12 +267,9 @@ class ChartEngineChartJS extends ChartEngine {
 
     var canvas = asCanvasElement(output);
 
-    var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSortedByCategory
-        : chartSeries.series;
-
-    var seriesPairs =
-        chartSeries.seriesPairsAsMap(series: series, mapDateTimeToMillis: true);
+    var seriesPairs = chartSeries.seriesAsPairsOfMap(
+        sortSeriesByCategory: chartSeries.options.sortCategories,
+        mapDateTimeToMillis: true);
 
     chartSeries.ensureColors(colorGenerator);
 

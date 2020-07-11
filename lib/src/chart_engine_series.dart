@@ -1,8 +1,7 @@
 import 'dart:collection';
 
+import 'package:color_palette_generator/color_palette_generator.dart';
 import 'package:swiss_knife/swiss_knife.dart';
-
-import 'chart_engine_colors.dart';
 
 void _sorteEntriesByKey(List<MapEntry> entries) {
   entries.sort((a, b) {
@@ -452,6 +451,13 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
     return swap;
   }
 
+  /// Returns [series] as pairs of [List].
+  Map<C, List<List<dynamic>>> seriesAsPairsOfList( {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true} ) {
+    sortSeriesByCategory ??= false ;
+    var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
+    return seriesPairsAsList( series: series, mapDateTimeToMillis: mapDateTimeToMillis ) ;
+  }
+
   /// Used to normalize series for engines that requires a pair as List[a,b].
   Map<C, List<List<dynamic>>> seriesPairsAsList(
       {Map<C, List<P>> series,
@@ -468,6 +474,13 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
 
     return series.map((key, value) => MapEntry(
         key, toListOfPairsAsList(value, xMapper: xMapper, yMapper: yMapper)));
+  }
+
+  /// Returns [series] as pairs of [Map].
+  Map<C, List<Map<String, dynamic>>> seriesAsPairsOfMap( {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true } ) {
+    sortSeriesByCategory ??= false ;
+    var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
+    return seriesPairsAsMap( series: series, mapDateTimeToMillis: mapDateTimeToMillis ) ;
   }
 
   /// Used to normalize series for engines that requires a pair as Map{x,y}.
@@ -629,11 +642,6 @@ class ChartTimeSeries<C, Y> extends ChartSeriesPair<C, DateTime, Y, dynamic> {
             values[i] = pair2;
           }
         }
-      }
-
-      if (!ChartData.isListOfTimedPairs(values)) {
-        ChartData.isListOfTimedPairs(values);
-        throw StateError("Can't normalize timed pairs");
       }
     }
   }

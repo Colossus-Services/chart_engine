@@ -1,8 +1,8 @@
 import 'dart:html';
 
+import 'package:color_palette_generator/color_palette_generator.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
-import 'chart_engine_colors.dart';
 import 'chart_engine_series.dart';
 
 /// The browser path for package resources.

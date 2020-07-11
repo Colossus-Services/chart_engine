@@ -8,6 +8,7 @@
 [![Pull Requests](https://img.shields.io/github/issues-pr/Colossus-Services/chart_engine?logo=github&logoColor=white)](https://github.com/Colossus-Services/chart_engine/pulls)
 [![Code size](https://img.shields.io/github/languages/code-size/Colossus-Services/chart_engine?logo=github&logoColor=white)](https://github.com/Colossus-Services/chart_engine)
 [![License](https://img.shields.io/github/license/Colossus-Services/chart_engine?logo=open-source-initiative&logoColor=green)](https://github.com/Colossus-Services/chart_engine/blob/master/LICENSE)
+[![Live Example](https://img.shields.io/badge/live-example-brightgreen)][live_example]
 
 
 Chart generator with interchangeable chart engines, like ChartJS and ApexCharts.
@@ -26,7 +27,7 @@ automatically handled by this package (see the [example][example]).
 
 ```yaml
 dependencies:
-  chart_engine: ^1.0.8
+  chart_engine: ^1.0.10
 ```
 
 ## Usage

@@ -11,7 +11,7 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
   /// `chart_engine` package version.
-  static final String VERSION = '1.1.1';
+  static final String VERSION = '1.1.3';
 
   /// Ensures that engine and dependencies are loaded.
   Future<bool> load();

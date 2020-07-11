@@ -1,3 +1,8 @@
+## 1.1.3
+
+- Fix ChartEngine.VERSION self reference.
+- Added test to check if ChartEngine.VERSION is the same of pubspec. 
+
 ## 1.1.2
 
 - dom_tools: ^1.3.3

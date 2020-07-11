@@ -452,10 +452,12 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
   }
 
   /// Returns [series] as pairs of [List].
-  Map<C, List<List<dynamic>>> seriesAsPairsOfList( {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true} ) {
-    sortSeriesByCategory ??= false ;
+  Map<C, List<List<dynamic>>> seriesAsPairsOfList(
+      {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true}) {
+    sortSeriesByCategory ??= false;
     var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
-    return seriesPairsAsList( series: series, mapDateTimeToMillis: mapDateTimeToMillis ) ;
+    return seriesPairsAsList(
+        series: series, mapDateTimeToMillis: mapDateTimeToMillis);
   }
 
   /// Used to normalize series for engines that requires a pair as List[a,b].
@@ -477,10 +479,12 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
   }
 
   /// Returns [series] as pairs of [Map].
-  Map<C, List<Map<String, dynamic>>> seriesAsPairsOfMap( {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true } ) {
-    sortSeriesByCategory ??= false ;
+  Map<C, List<Map<String, dynamic>>> seriesAsPairsOfMap(
+      {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true}) {
+    sortSeriesByCategory ??= false;
     var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
-    return seriesPairsAsMap( series: series, mapDateTimeToMillis: mapDateTimeToMillis ) ;
+    return seriesPairsAsMap(
+        series: series, mapDateTimeToMillis: mapDateTimeToMillis);
   }
 
   /// Used to normalize series for engines that requires a pair as Map{x,y}.

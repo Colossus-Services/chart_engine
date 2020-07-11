@@ -51,10 +51,10 @@ class ChartEngineChartJS extends ChartEngine {
   Future<bool> load() {
     return _loadController.load(() async {
       var jsFullPath = minified ? JS_PATH_MIN : JS_PATH;
-      var okJS = await AMDJS.require('chartjs', jsFullPath: jsFullPath,
-          globalJSVariableName: 'Chart');
-      var okWrapper = await AMDJS.require(
-          JS_WRAPPER_GLOBAL_NAME, jsFullPath: ENGINE_WRAPPER_PATH,
+      var okJS = await AMDJS.require('chartjs',
+          jsFullPath: jsFullPath, globalJSVariableName: 'Chart');
+      var okWrapper = await AMDJS.require(JS_WRAPPER_GLOBAL_NAME,
+          jsFullPath: ENGINE_WRAPPER_PATH,
           globalJSVariableName: JS_WRAPPER_GLOBAL_NAME);
 
       _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject;

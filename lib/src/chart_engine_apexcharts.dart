@@ -38,10 +38,10 @@ class ChartEngineApexCharts extends ChartEngine {
   @override
   Future<bool> load() {
     return _loadController.load(() async {
-      var okJS = await AMDJS.require('ApexCharts', jsFullPath: JS_PATH,
-          globalJSVariableName: 'ApexCharts');
-      var okWrapper = await AMDJS.require(
-          JS_WRAPPER_GLOBAL_NAME, jsFullPath: ENGINE_WRAPPER_PATH,
+      var okJS = await AMDJS.require('ApexCharts',
+          jsFullPath: JS_PATH, globalJSVariableName: 'ApexCharts');
+      var okWrapper = await AMDJS.require(JS_WRAPPER_GLOBAL_NAME,
+          jsFullPath: ENGINE_WRAPPER_PATH,
           globalJSVariableName: JS_WRAPPER_GLOBAL_NAME);
 
       _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject;

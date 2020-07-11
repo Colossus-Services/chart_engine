@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 
 void main() {
-  group('ColorPalette', () {
+  group('ChartEngine.VERSION', () {
     setUp(() {});
 
     test('Check Version', () async {

@@ -17,3 +17,10 @@ git add example/www/*
 git commit -m "Update live web example"
 git push
 
+rm -rf .dart_tool
+rm -rf example/www
+rm -rf doc
+
+git checkout master
+
+pub get

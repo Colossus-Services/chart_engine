@@ -3583,7 +3583,7 @@ case 5:t=6
 return P.T(F.j1(),$async$bp)
 case 6:t=7
 return P.T(F.j_(),$async$bp)
-case 7:document.querySelector("#chart-version").textContent="1.0.10"
+case 7:document.querySelector("#chart-version").textContent="1.1.1"
 return P.aj(null,s)}})
 return P.ak($async$bp,s)},
 fG:function(){var t=0,s=P.al(u.z),r,q,p,o,n,m,l

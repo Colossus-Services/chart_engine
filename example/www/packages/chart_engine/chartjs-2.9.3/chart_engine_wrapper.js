@@ -296,7 +296,7 @@
 
         config['plugins'] = [{
             id: 'my-plugin',
-            afterDraw: function (chart, option) {
+            beforeDraw: function (chart, option) {
                 const theCenterText = centerPercent+'%';
                 const canvasBounds = canvas.getBoundingClientRect();
                 const fontSz = Math.floor( canvasBounds.height * 0.15 ) ;

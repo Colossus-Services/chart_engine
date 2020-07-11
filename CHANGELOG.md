@@ -1,3 +1,9 @@
+## 1.1.2
+
+- dom_tools: ^1.3.3
+- amdjs: ^1.0.5
+- dartfmt
+
 ## 1.1.1
 
 - Fix VERSION self reference. 

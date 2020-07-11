@@ -1,3 +1,14 @@
+## 1.1.3
+
+- Fix ChartEngine.VERSION self reference.
+- Added test to check if ChartEngine.VERSION is the same of pubspec. 
+
+## 1.1.2
+
+- dom_tools: ^1.3.3
+- amdjs: ^1.0.5
+- dartfmt
+
 ## 1.1.1
 
 - Fix VERSION self reference. 

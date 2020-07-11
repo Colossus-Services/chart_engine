@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Fix VERSION self reference. 
+
 ## 1.1.0
 
 - Fix ChartJS gauge chart: center percentage text was drawing over hint.

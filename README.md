@@ -22,14 +22,6 @@ NOTE: You don't need to read any specific documentation of any engine to use `ch
 since any Chart configuration needed to generate your Chart will be
 automatically handled by this package (see the [example][example]).
 
-
-## Install
-
-```yaml
-dependencies:
-  chart_engine: ^1.0.10
-```
-
 ## Usage
 
 A simple example using ApexCharts (ChartsJS is commented):

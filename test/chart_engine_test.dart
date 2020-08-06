@@ -12,33 +12,35 @@ void main() {
     setUp(() {});
 
     test('Check Version', () async {
-      var projectDirectory = Directory.current ;
+      var projectDirectory = Directory.current;
 
-      print(projectDirectory) ;
+      print(projectDirectory);
 
-      var pubspecFile = File( path.join(projectDirectory.path , 'pubspec.yaml') ) ;
+      var pubspecFile = File(path.join(projectDirectory.path, 'pubspec.yaml'));
 
-      print('pubspecFile: $pubspecFile') ;
+      print('pubspecFile: $pubspecFile');
 
-      var pubSpec = await PubSpec.loadFile( pubspecFile.path ) ;
+      var pubSpec = await PubSpec.loadFile(pubspecFile.path);
 
-      print('PubSpec.name: ${ pubSpec.name }') ;
-      print('PubSpec.version: ${ pubSpec.version }') ;
+      print('PubSpec.name: ${pubSpec.name}');
+      print('PubSpec.version: ${pubSpec.version}');
 
-      var srcFile = File( path.join(projectDirectory.path , 'lib/src/chart_engine_base.dart') ) ;
+      var srcFile = File(
+          path.join(projectDirectory.path, 'lib/src/chart_engine_base.dart'));
 
       print(srcFile);
 
-      var src = await catFile(srcFile) ;
+      var src = await catFile(srcFile);
 
-      var versionMatch = RegExp(r"VERSION\s*=\s*'(.*?)'").firstMatch(src) ;
+      var versionMatch = RegExp(r"VERSION\s*=\s*'(.*?)'").firstMatch(src);
 
-      var srcVersion = versionMatch.group(1) ;
+      var srcVersion = versionMatch.group(1);
 
       print('srcVersion: $srcVersion');
 
-      expect( pubSpec.version.toString() , equals(srcVersion) , reason: 'ChartEngine.VERSION[$srcVersion] != PubSpec.version[${ pubSpec.version }]');
-
+      expect(pubSpec.version.toString(), equals(srcVersion),
+          reason:
+              'ChartEngine.VERSION[$srcVersion] != PubSpec.version[${pubSpec.version}]');
     });
   });
 }

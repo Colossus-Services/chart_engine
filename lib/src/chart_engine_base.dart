@@ -60,10 +60,10 @@ abstract class ChartEngine {
   }
 
   void _checkOutput(Element output) {
-    var parent = output.parent ;
+    var parent = output.parent;
 
     if (parent == null) {
-      print('WARNING: Chart output has no parent: $output') ;
+      print('WARNING: Chart output has no parent: $output');
     }
   }
 

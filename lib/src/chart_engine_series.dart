@@ -648,7 +648,7 @@ class ChartTimeSeries<C, Y> extends ChartSeriesPair<C, DateTime, Y, dynamic> {
         }
       }
 
-      _sortValuesPairs(values) ;
+      _sortValuesPairs(values);
     }
   }
 
@@ -656,18 +656,18 @@ class ChartTimeSeries<C, Y> extends ChartSeriesPair<C, DateTime, Y, dynamic> {
     var returnXY1 = <dynamic>[null, null];
     var returnXY2 = <dynamic>[null, null];
 
-    values.sort( (p1,p2) {
+    values.sort((p1, p2) {
       getPairXY(p1, returnXY1);
       getPairXY(p2, returnXY2);
 
-      var x1 = returnXY1[0] ;
-      var x2 = returnXY2[0] ;
+      var x1 = returnXY1[0];
+      var x2 = returnXY2[0];
 
-      if ( x1 is DateTime && x2 is DateTime ) {
-        return x1.compareTo(x2) ;
+      if (x1 is DateTime && x2 is DateTime) {
+        return x1.compareTo(x2);
       }
 
-      return 0 ;
+      return 0;
     });
   }
 }

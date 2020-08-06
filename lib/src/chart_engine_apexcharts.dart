@@ -50,7 +50,6 @@ class ChartEngineApexCharts extends ChartEngine {
     });
   }
 
-
   ChartEngineApexCharts() {
     Future.microtask(load);
   }

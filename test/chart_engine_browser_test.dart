@@ -4,7 +4,6 @@ import 'package:chart_engine/chart_engine_all.dart';
 import 'package:test/test.dart';
 
 @TestOn('browser')
-
 void _sleep(int sleepMs) async {
   if (sleepMs <= 0) return;
   print('SLEEP> ${sleepMs}ms');
@@ -22,16 +21,15 @@ void _createLineChart(ChartEngine charEngine) async {
     'C': [100, 130, 140]
   });
 
-  var output = document.body.append( DivElement()..style.width = '100%' );
+  var output = document.body.append(DivElement()..style.width = '100%');
 
-  expect( output.nodes.isEmpty , isTrue );
+  expect(output.nodes.isEmpty, isTrue);
 
   charEngine.renderLineChart(output, series);
 
   await _sleep(500);
 
-  expect( output.nodes.isEmpty , isFalse );
-
+  expect(output.nodes.isEmpty, isFalse);
 }
 
 void main() {
@@ -41,13 +39,13 @@ void main() {
     test('ChartJS', () async {
       var engine = ChartEngineChartJS();
 
-      expect( engine.isLoaded , isFalse );
+      expect(engine.isLoaded, isFalse);
 
-      var loadOK = await engine.load() ;
+      var loadOK = await engine.load();
 
-      expect( loadOK , isTrue );
+      expect(loadOK, isTrue);
 
-      expect( engine.isLoaded , isTrue );
+      expect(engine.isLoaded, isTrue);
 
       _createLineChart(engine);
     });
@@ -55,16 +53,15 @@ void main() {
     test('Apexcharts', () async {
       var engine = ChartEngineApexCharts();
 
-      expect( engine.isLoaded , isFalse );
+      expect(engine.isLoaded, isFalse);
 
-      var loadOK = await engine.load() ;
+      var loadOK = await engine.load();
 
-      expect( loadOK , isTrue );
+      expect(loadOK, isTrue);
 
-      expect( engine.isLoaded , isTrue );
+      expect(engine.isLoaded, isTrue);
 
       _createLineChart(engine);
     });
-
   });
 }

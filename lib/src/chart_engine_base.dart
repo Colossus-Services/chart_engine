@@ -11,7 +11,7 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
   /// `chart_engine` package version.
-  static final String VERSION = '1.1.3';
+  static final String VERSION = '1.1.4';
 
   /// Ensures that engine and dependencies are loaded.
   Future<bool> load();
@@ -42,6 +42,8 @@ abstract class ChartEngine {
   bool render(Element output, ChartData chartData) {
     if (chartData == null) return false;
 
+    _checkOutput(output);
+
     checkLoaded();
 
     if (chartData is ChartTimeSeries) {
@@ -55,6 +57,14 @@ abstract class ChartEngine {
     }
 
     return false;
+  }
+
+  void _checkOutput(Element output) {
+    var parent = output.parent ;
+
+    if (parent == null) {
+      print('WARNING: Chart output has no parent: $output') ;
+    }
   }
 
   ColorGenerator _colorGenerator = StandardColorGenerator();

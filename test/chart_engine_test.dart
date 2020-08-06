@@ -1,3 +1,5 @@
+@TestOn('vm')
+
 import 'package:pubspec/pubspec.dart';
 import 'package:swiss_knife/swiss_knife_vm.dart';
 import 'package:test/test.dart';

@@ -1,3 +1,9 @@
+## 1.1.4
+
+- ChartTimeSeries: always sort pairs by date, avoiding odd timelines.
+- ChartEngine.render: warns for an output Element without `parent`, that will break some engines.
+- CI: added browser test (firefox).
+
 ## 1.1.3
 
 - Fix ChartEngine.VERSION self reference.

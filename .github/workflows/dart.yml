@@ -36,4 +36,6 @@ jobs:
       - name: dartanalyzer
         run: su -c 'cd $(< /tmp/test-dir.txt) && dartanalyzer --fatal-infos --fatal-warnings .' tester
       - name: Run tests
+        run: su -c 'DISPLAY=:0 cd $(< /tmp/test-dir.txt) && pub run test' tester
+      - name: Run Browser tests (Firefox)
         run: su -c 'DISPLAY=:0 cd $(< /tmp/test-dir.txt) && pub run test -p firefox' tester

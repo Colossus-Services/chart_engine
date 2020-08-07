@@ -1,3 +1,9 @@
+## 1.1.5
+
+- dom_tools: ^1.3.6
+- swiss_knife: ^2.5.8
+- CI: VM + Browser tests 
+
 ## 1.1.4
 
 - ChartTimeSeries: always sort pairs by date, avoiding odd timelines.

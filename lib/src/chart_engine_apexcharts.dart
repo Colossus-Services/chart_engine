@@ -50,6 +50,10 @@ class ChartEngineApexCharts extends ChartEngine {
     });
   }
 
+  ChartEngineApexCharts() {
+    Future.microtask(load);
+  }
+
   /// Ensures that DOM element to render is a div. If not will insert a div
   /// inside the element and use it.
   DivElement asDivElement(Element element) {

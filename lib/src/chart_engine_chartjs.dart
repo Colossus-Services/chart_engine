@@ -80,6 +80,10 @@ class ChartEngineChartJS extends ChartEngine {
     _jsWrapper['_DateAdapter__create'] = ([a]) => DateAdapter.create(a);
   }
 
+  ChartEngineChartJS() {
+    Future.microtask(load);
+  }
+
   /// Ensures that DOM element to render is a canvas. If not will insert a canvas
   /// inside the element and use it.
   CanvasElement asCanvasElement(Element element) {

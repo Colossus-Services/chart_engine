@@ -17,4 +17,4 @@ define_platforms:
       executable:
         linux: firefox-esr
 
-platforms: [chrome]
+platforms: [vm, chrome]

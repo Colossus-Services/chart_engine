@@ -1,3 +1,12 @@
+## 1.1.6
+
+- swiss_knife: ^2.5.12
+- dom_tools: ^1.3.10
+- color_palette_generator: ^1.0.2
+- amdjs: ^1.0.6
+- pedantic: ^1.9.2
+- test: ^1.15.3
+
 ## 1.1.5
 
 - dom_tools: ^1.3.6

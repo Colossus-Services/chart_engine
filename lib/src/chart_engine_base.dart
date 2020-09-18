@@ -11,7 +11,9 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
   /// `chart_engine` package version.
-  static final String VERSION = '1.1.6';
+  static final String VERSION = '1.1.7';
+
+  String get version;
 
   /// Ensures that engine and dependencies are loaded.
   Future<bool> load();
@@ -165,6 +167,9 @@ abstract class ChartEngine {
 /// A ChartEngine wrapper with switchable internal engines:
 class ChartEngineSwitchable extends ChartEngine {
   final Set<ChartEngine> engines;
+
+  @override
+  String get version => mainEngine.version;
 
   ChartEngine _mainEngine;
 

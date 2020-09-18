@@ -34,6 +34,9 @@ class ChartEngineChartJS extends ChartEngine {
     _minified = value ?? false;
   }
 
+  @override
+  String get version => VERSION;
+
   static final LoadController _loadController =
       LoadController('ChartEngineChartJS');
 

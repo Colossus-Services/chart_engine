@@ -3,6 +3,9 @@ import 'dart:html';
 import 'package:chart_engine/chart_engine_all.dart';
 
 void main() async {
+  querySelector('#apexcharts_version').text = ChartEngineApexCharts().version;
+  querySelector('#chartjs_version').text = ChartEngineChartJS().version;
+
   await createLineChart();
   await createTimeSeriesChart();
 

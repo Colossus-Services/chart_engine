@@ -1,3 +1,9 @@
+## 1.1.7
+
+- Upgrade engine ApexCharts to v3.20.2.
+- swiss_knife: ^2.5.14
+- dom_tools: ^1.3.11
+
 ## 1.1.6
 
 - swiss_knife: ^2.5.12

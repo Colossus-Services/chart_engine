@@ -1,3 +1,11 @@
+## 1.1.8
+
+- ChartJS:
+  - Added Financial Chart: Candlestick and OHLC.
+- Added Candlestick and OHLC examples.
+- swiss_knife: ^2.5.15
+- dom_tools: ^1.3.12
+
 ## 1.1.7
 
 - Upgrade engine ApexCharts to v3.20.2.

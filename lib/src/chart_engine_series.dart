@@ -470,13 +470,16 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
     mapDateTimeToMillis ??= false;
 
     if (mapDateTimeToMillis) {
-      xMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o;
-      yMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o;
+      xMapper ??= _mapDateTimeToMillis;
+      yMapper ??= _mapDateTimeToMillis;
     }
 
     return series.map((key, value) => MapEntry(
         key, toListOfPairsAsList(value, xMapper: xMapper, yMapper: yMapper)));
   }
+
+  static dynamic _mapDateTimeToMillis(o) =>
+      o is DateTime ? o.millisecondsSinceEpoch : o;
 
   /// Returns [series] as pairs of [Map].
   Map<C, List<Map<String, dynamic>>> seriesAsPairsOfMap(
@@ -497,12 +500,48 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
     mapDateTimeToMillis ??= false;
 
     if (mapDateTimeToMillis) {
-      xMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o;
-      yMapper ??= (o) => o is DateTime ? o.millisecondsSinceEpoch : o;
+      xMapper ??= _mapDateTimeToMillis;
+      yMapper ??= _mapDateTimeToMillis;
     }
 
     return series.map((key, value) => MapEntry(
         key, toListOfPairsAsMap(value, xMapper: xMapper, yMapper: yMapper)));
+  }
+
+  /// Returns [series] as entries of TOHLC Maps.
+  Map<C, List<Map<String, dynamic>>> seriesAsEntriesOfTOHLC(
+      {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true}) {
+    sortSeriesByCategory ??= false;
+    var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
+    return seriesEntriesAsTOHLC(
+        series: series, mapDateTimeToMillis: mapDateTimeToMillis);
+  }
+
+  Map<C, List<Map<String, dynamic>>> seriesEntriesAsTOHLC(
+      {Map<C, List<P>> series,
+      TypeMapper tMapper,
+      TypeMapper oMapper,
+      TypeMapper hMapper,
+      TypeMapper lMapper,
+      TypeMapper cMapper,
+      bool mapDateTimeToMillis = false}) {
+    series ??= this.series;
+    mapDateTimeToMillis ??= false;
+
+    if (mapDateTimeToMillis) {
+      tMapper ??= (e) => _mapDateTimeToMillis(_getObjectValue(e, 0, 't', null));
+    }
+
+    var series2 = series.map((key, value) => MapEntry(
+        key,
+        toListOfTOHLC(value,
+            tMapper: tMapper,
+            oMapper: oMapper,
+            hMapper: hMapper,
+            lMapper: lMapper,
+            cMapper: cMapper)));
+
+    return series2;
   }
 
   List<List<dynamic>> toListOfPairsAsList(List<P> listOfPairs,
@@ -518,6 +557,32 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
         .map((e) => toPairAsMap(e, xMapper: xMapper, yMapper: yMapper))
         .toList()
         .cast();
+  }
+
+  List<Map<String, dynamic>> toListOfTOHLC(List<P> listOfPairs,
+      {TypeMapper tMapper,
+      TypeMapper oMapper,
+      TypeMapper hMapper,
+      TypeMapper lMapper,
+      TypeMapper cMapper}) {
+    return listOfPairs
+        .map((e) => {
+              't': _getObjectValue(e, 0, 't', tMapper),
+              'o': _getObjectValue(e, 1, 'o', oMapper),
+              'h': _getObjectValue(e, 2, 'h', hMapper),
+              'l': _getObjectValue(e, 3, 'l', lMapper),
+              'c': _getObjectValue(e, 4, 'c', cMapper),
+            })
+        .toList()
+        .cast();
+  }
+
+  dynamic _getObjectValue(dynamic o, int index, String key, TypeMapper mapper) {
+    if (mapper != null) return mapper(o);
+    if (o == null) return null;
+    if (o is List) return o[index];
+    if (o is Map) return o[key];
+    return o;
   }
 
   List<dynamic> toPairAsList(P pair, {TypeMapper xMapper, TypeMapper yMapper}) {

@@ -16,6 +16,8 @@ void main() async {
 
   await createGaugeChart();
 
+  await createFinancialChart();
+
   querySelector('#chart-version').text = '${ChartEngine.VERSION}';
 }
 
@@ -241,4 +243,39 @@ Future createGaugeChart() async {
 
   charEngine1.renderGaugeChart(querySelector('#apexcharts-gauge-output'), set);
   charEngine2.renderGaugeChart(querySelector('#chartjs-gauge-output'), set);
+}
+
+Future createFinancialChart() async {
+  var series = ChartTimeSeries({
+    'StockX': [
+      [DateTime(2020, 03, 30, 12), 10, 20, 10, 20],
+      [DateTime(2020, 03, 31, 12), 20, 20, 10, 5],
+      [DateTime(2020, 04, 01, 12), 5, 10, -10, -10],
+      [DateTime(2020, 04, 02, 12), -10, 5, -15, 1],
+      [DateTime(2020, 04, 03, 12), 1, 15, -1, 15],
+      [DateTime(2020, 04, 04, 12), 15, 25, 10, 25],
+      [DateTime(2020, 04, 05, 12), 25, 60, 25, 55],
+      [DateTime(2020, 04, 06, 12), 55, 55, 40, 30],
+      [DateTime(2020, 04, 07, 12), 30, 30, -10, -10],
+      [DateTime(2020, 04, 08, 12), -10, -10, 0, 0]
+    ],
+  });
+
+  series.xTitle = 'Months';
+  series.yTitle = 'Value';
+  series.options.straightLines = true;
+
+  var charEngine2 = ChartEngineChartJS();
+
+  await charEngine2.loadFinancial();
+
+  series.title = 'Financial Chart (OHLC) Example';
+  charEngine2.renderFinancialChart(
+      querySelector('#chartjs-financial-ohlc-output'), series,
+      ohlc: true);
+
+  series.title = 'Financial Chart (Candlestick) Example';
+  charEngine2.renderFinancialChart(
+      querySelector('#chartjs-financial-candle-output'), series,
+      candlestick: true);
 }

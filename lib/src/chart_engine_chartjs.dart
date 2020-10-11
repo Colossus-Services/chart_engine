@@ -20,6 +20,12 @@ class ChartEngineChartJS extends ChartEngine {
 
   static final String JS_PATH_MIN = '$PATH/Chart.min.js';
 
+  static final String FINANCIAL_JS_PATH =
+      '$PATH/financial/chartjs-chart-financial.js';
+
+  static final String FINANCIAL_JS_PATH_MIN =
+      '$PATH/financial/chartjs-chart-financial.min.js';
+
   static final String ENGINE_WRAPPER_PATH = '$PATH/chart_engine_wrapper.js';
 
   static final String JS_WRAPPER_GLOBAL_NAME =
@@ -81,6 +87,37 @@ class ChartEngineChartJS extends ChartEngine {
     _jsWrapper['_DateAdapter__add'] = ([a, b, c]) => DateAdapter.add(a, b, c);
     _jsWrapper['_DateAdapter__diff'] = ([a, b, c]) => DateAdapter.diff(a, b, c);
     _jsWrapper['_DateAdapter__create'] = ([a]) => DateAdapter.create(a);
+  }
+
+  static final LoadController _loadControllerFinancial =
+      LoadController('ChartEngineChartJS:financial');
+
+  /// Returns [true] if financial module is loaded.
+  bool get isLoadedFinancial =>
+      _loadControllerFinancial.isLoaded &&
+      _loadControllerFinancial.loadSuccessful;
+
+  void checkLoadedFinancial() {
+    checkLoaded();
+
+    if (!isLoadedFinancial) {
+      throw StateError(
+          'Trying to render before loadFinancial() of engine[${runtimeType}]!');
+    }
+  }
+
+  /// Loads ChartJS Financial module.
+  Future<bool> loadFinancial() {
+    return _loadControllerFinancial.load(() async {
+      var okChartJS = await load();
+      if (!okChartJS) return false;
+
+      var jsFullPath = minified ? FINANCIAL_JS_PATH_MIN : FINANCIAL_JS_PATH;
+      var okJS = await AMDJS.require('chartjs_financial',
+          jsFullPath: jsFullPath, globalJSVariableName: 'ChartFinancial');
+
+      return okChartJS && okJS;
+    });
   }
 
   ChartEngineChartJS() {
@@ -293,6 +330,48 @@ class ChartEngineChartJS extends ChartEngine {
     ];
 
     _jsWrapper.callMethod('renderScatter', renderArgs);
+
+    return true;
+  }
+
+  /// Renders financial chart.
+  ///
+  /// [ohlc] Renders a OHLC chart (default).
+  /// [candlestick] Renders a Candlestick chart.
+  bool renderFinancialChart(Element output, ChartTimeSeries chartSeries,
+      {bool ohlc, bool candlestick}) {
+    checkRenderParameters(output, chartSeries);
+    checkLoadedFinancial();
+
+    candlestick ??= false;
+    ohlc ??= !candlestick;
+
+    if (ohlc && candlestick) {
+      print(
+          'renderFinancialChart> Conflicting parameters: ohlc = $ohlc ; candlestick = $candlestick! Will use ohlc as primary.');
+    }
+
+    var canvas = asCanvasElement(output);
+
+    var seriesPairs = chartSeries.seriesAsEntriesOfTOHLC(
+        sortSeriesByCategory: chartSeries.options.sortCategories,
+        mapDateTimeToMillis: true);
+
+    chartSeries.ensureColors(colorGenerator);
+
+    var colors = chartSeries.colors;
+
+    var renderArgs = [
+      canvas,
+      chartSeries.title,
+      chartSeries.xTitle,
+      chartSeries.yTitle,
+      JsObject.jsify(seriesPairs),
+      JsObject.jsify(colors),
+      ohlc
+    ];
+
+    _jsWrapper.callMethod('renderFinancial', renderArgs);
 
     return true;
   }

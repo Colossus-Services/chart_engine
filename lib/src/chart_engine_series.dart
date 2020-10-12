@@ -147,12 +147,21 @@ abstract class ChartData<C, X, Y> {
         colorGenerator.buildDisabledColors(List.from(categories).cast());
   }
 
+  /// The options to render this data in the chart.
+  ChartOptions get options;
+
+  /// Returns a [X] value at [index].
+  X getXAxisValue(int index);
+
+  /// Returns all values of axis X.
   Iterable<X> get xAxisAllValues;
 
+  /// Returns all values of axis Y.
   Iterable<Y> get yAxisAllValues;
 
   Scale<X> _xAxisScale;
 
+  /// Returns the <Scale> of axis X.
   Scale<X> get xAxisScale {
     if (_xAxisScale == null) {
       var values = xAxisAllValues;
@@ -166,6 +175,7 @@ abstract class ChartData<C, X, Y> {
 
   Scale<Y> _yAxisScale;
 
+  /// Returns the <Scale> of axis Y.
   Scale<Y> get yAxisScale {
     if (_yAxisScale == null) {
       var values = yAxisAllValues;
@@ -177,8 +187,10 @@ abstract class ChartData<C, X, Y> {
     return _yAxisScale;
   }
 
+  /// Returns [true] if this is empty.
   bool get isEmpty;
 
+  /// ![isEmpty]
   bool get isNotEmpty => !isEmpty;
 }
 
@@ -197,6 +209,7 @@ class ChartSeries<C, X, Y, P> extends ChartData<C, X, Y> {
   bool get isEmpty => series.isEmpty;
 
   /// The options for series data: [ChartSeriesOptions]
+  @override
   ChartSeriesOptions get options => _options;
 
   set options(ChartSeriesOptions value) {
@@ -214,6 +227,11 @@ class ChartSeries<C, X, Y, P> extends ChartData<C, X, Y> {
 
   @override
   Iterable<X> get xAxisAllValues => UnmodifiableListView(xLabels);
+
+  @override
+  X getXAxisValue(int index) {
+    return xLabels[index];
+  }
 
   @override
   Iterable<Y> get yAxisAllValues => UnmodifiableListView(
@@ -268,6 +286,14 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
   @override
   Iterable<X> get xAxisAllValues => UnmodifiableListView(
       series.values.where((e) => e != null).expand((e) => e).map(getPairX));
+
+  @override
+  X getXAxisValue(int index) {
+    var seriesValues =
+        series.values.firstWhere((e) => index < e.length, orElse: () => <P>[]);
+    var value = seriesValues[index];
+    return getPairX(value);
+  }
 
   @override
   Iterable<Y> get yAxisAllValues => UnmodifiableListView(
@@ -520,6 +546,81 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
         key, toListOfPairsAsMap(value, xMapper: xMapper, yMapper: yMapper)));
   }
 
+  /// Returns the [DataTime] minimum and maximum value of all series.
+  List<DateTime> allSeriesDateTimeMinMax({bool sortSeriesByCategory = false}) {
+    var series = seriesDateTimeMinMax();
+    return _datesMinMax(
+        series.values.where((e) => e != null).expand((e) => e).toList());
+  }
+
+  /// Returns the [DataTime] minimum and maximum value for each series.
+  Map<C, List<DateTime>> seriesDateTimeMinMax(
+      {bool sortSeriesByCategory = false}) {
+    var seriesDates =
+        seriesDateTime(sortSeriesByCategory: sortSeriesByCategory);
+    return seriesDates.map((key, value) => MapEntry(key, _datesMinMax(value)));
+  }
+
+  List<DateTime> _datesMinMax(List<DateTime> dates) {
+    if (dates == null || dates.isEmpty) return null;
+
+    var datesSorted = List.from(dates);
+    datesSorted.sort();
+
+    var min = datesSorted.first;
+    var max = datesSorted.last;
+
+    return [min, max];
+  }
+
+  /// Returns series [DateTime] values.
+  Map<C, List<DateTime>> seriesDateTime({bool sortSeriesByCategory = false}) {
+    sortSeriesByCategory ??= false;
+    var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
+
+    var series2 =
+        series.map((key, value) => MapEntry(key, toListOfDateTime(value)));
+    return series2;
+  }
+
+  List<DateTime> toListOfDateTime(Iterable list) {
+    return list.map(_toDateTime).toList().cast();
+  }
+
+  DateTime _toDateTime(dynamic e) {
+    if (e is DateTime) {
+      return e;
+    } else if (e is int && isInUnixEpochRange(e)) {
+      return DateTime.fromMillisecondsSinceEpoch(e);
+    } else if (e is String) {
+      var s = e.trim();
+      if (isInt(s)) {
+        var n = parseInt(s);
+        if (isInUnixEpochRange(n)) {
+          return DateTime.fromMillisecondsSinceEpoch(n);
+        }
+      } else if (s.length >= 4) {
+        try {
+          return DateTime.parse(s);
+        } catch (e) {
+          return null;
+        }
+      }
+    } else if (e is Iterable) {
+      for (var v in e) {
+        var d = _toDateTime(v);
+        if (d != null) return d;
+      }
+      return null;
+    } else if (e is Map) {
+      var d = _toDateTime(e.values);
+      if (d != null) return d;
+      d = _toDateTime(e.keys);
+      if (d != null) return d;
+    }
+    return null;
+  }
+
   /// Returns [series] as entries of TOHLC Maps.
   Map<C, List<Map<String, dynamic>>> seriesAsEntriesOfTOHLC(
       {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true}) {
@@ -764,6 +865,7 @@ class ChartSet<X, Y> extends ChartData<X, X, Y> {
   bool get isEmpty => set.isEmpty;
 
   /// The options for set data: [ChartSetOptions]
+  @override
   ChartSetOptions get options => _options;
 
   set options(ChartSetOptions value) {
@@ -783,6 +885,13 @@ class ChartSet<X, Y> extends ChartData<X, X, Y> {
   Iterable<X> get xAxisAllValues => UnmodifiableListView(set.keys);
 
   @override
+  X getXAxisValue(int index) {
+    var seriesValues = set.keys.toList();
+    var value = seriesValues[index];
+    return value;
+  }
+
+  @override
   Iterable<Y> get yAxisAllValues => UnmodifiableListView(set.values);
 
   ChartSeries get asChartSeries {
@@ -790,6 +899,37 @@ class ChartSet<X, Y> extends ChartData<X, X, Y> {
   }
 }
 
+/// Represents a vertical line in the chart.
+class VerticalLine {
+  /// The index of the dataset value.
+  final int index;
+
+  /// Label for the line.
+  final String label;
+
+  /// Color of lien and label.
+  final String color;
+
+  /// Position (from 0 to 1) in the Y axis.
+  final double yPosition;
+
+  /// The text align with the vertical line: `center`, 'left', 'right'.
+  final String textAlign;
+
+  VerticalLine(this.index,
+      {this.label, this.color, this.yPosition, this.textAlign}) {
+    if (index == null || index < 0) {
+      throw ArgumentError('Invalid index: $index');
+    }
+  }
+
+  @override
+  String toString() {
+    return 'VerticalLine{index: $index, label: $label, color: $color, yPosition: $yPosition, textAlign: $textAlign}';
+  }
+}
+
+/// Base class for chart render options.
 abstract class ChartOptions {
   /// Sort Categories/Series.keys when showing them in the Chart.
   bool _sortCategories = false;
@@ -800,7 +940,49 @@ abstract class ChartOptions {
     _sortCategories = value ?? false;
   }
 
+  /// Minimum value for X axis.
+  num xAxisMin;
+
+  /// Maximum value for X axis.
+  num xAxisMax;
+
+  /// Minimum value for Y axis.
+  num yAxisMin;
+
+  /// Maximum value for Y axis.
+  num yAxisMax;
+
+  /// Returns X axis minimum and maximum values.
+  List<num> get xAxisMinMax =>
+      xAxisMin != null || xAxisMax != null ? [xAxisMin, xAxisMax] : null;
+
+  /// Returns Y axis minimum and maximum values.
+  List<num> get yAxisMinMax =>
+      yAxisMin != null || yAxisMax != null ? [yAxisMin, yAxisMax] : null;
+
+  /// The vertical lines of the chart.
+  List<VerticalLine> verticalLines;
+
+  /// The vertical lines default color.
+  String verticalLinesDefaultColor = '#ff0000';
+
+  /// Copies this instance.
   ChartOptions copy();
+
+  void _copyBase(ChartOptions copy) {
+    copy._sortCategories = _sortCategories;
+
+    copy.xAxisMin = xAxisMin;
+    copy.xAxisMax = xAxisMax;
+
+    copy.yAxisMin = yAxisMin;
+    copy.yAxisMax = yAxisMax;
+
+    copy.verticalLines =
+        verticalLines != null ? List<VerticalLine>.from(verticalLines) : null;
+
+    copy.verticalLinesDefaultColor = verticalLinesDefaultColor;
+  }
 }
 
 /// Possible options for Series Charts.
@@ -836,9 +1018,10 @@ class ChartSeriesOptions extends ChartOptions {
   ChartSeriesOptions copy() {
     var copy = ChartSeriesOptions();
 
+    _copyBase(copy);
+
     copy._straightLines = _straightLines;
     copy._fillLines = _fillLines;
-    copy._sortCategories = _sortCategories;
 
     return copy;
   }
@@ -849,6 +1032,7 @@ class ChartSetOptions extends ChartOptions {
   @override
   ChartSetOptions copy() {
     var copy = ChartSetOptions();
+    _copyBase(copy);
     return copy;
   }
 }

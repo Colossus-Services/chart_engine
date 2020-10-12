@@ -143,6 +143,46 @@ class ChartEngineChartJS extends ChartEngine {
     return canvas;
   }
 
+  static JsObject _xAxisMinMax(ChartData chartData) {
+    var minMax = chartData?.options?.xAxisMinMax;
+    return minMax != null ? JsObject.jsify(minMax) : null;
+  }
+
+  static JsObject _yAxisMinMax(ChartData chartData) {
+    var minMax = chartData?.options?.yAxisMinMax;
+    return minMax != null ? JsObject.jsify(minMax) : null;
+  }
+
+  static JsObject _verticalLinesConfig(ChartData chartData) {
+    var lines = chartData?.options?.verticalLines;
+
+    if (isNotEmptyObject(lines)) {
+      var defColor = chartData?.options?.verticalLinesDefaultColor ?? '#ff0000';
+
+      var verticalLinesConfig = <int, Map<String, dynamic>>{};
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        var idx = line.index;
+        var label = line.label ?? '';
+        var color = line.color ?? defColor;
+        var yPos = line.yPosition ?? 1.0;
+        var textAlign = line.textAlign ?? 'center';
+
+        verticalLinesConfig[idx] = {
+          'label': label,
+          'color': color,
+          'y': yPos,
+          'textAlign': textAlign
+        };
+      }
+
+      return JsObject.jsify(verticalLinesConfig);
+    }
+
+    return null;
+  }
+
   @override
   bool renderLineChart(Element output, ChartSeries chartSeries) {
     checkRenderParameters(output, chartSeries);
@@ -164,7 +204,10 @@ class ChartEngineChartJS extends ChartEngine {
       chartSeries.xTitle,
       chartSeries.yTitle,
       JsObject.jsify(chartSeries.xLabels),
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(series),
+      _verticalLinesConfig(chartSeries),
       JsObject.jsify(colors),
       chartSeries.options.fillLines,
       chartSeries.options.straightLines,
@@ -196,7 +239,10 @@ class ChartEngineChartJS extends ChartEngine {
       chartSeries.title,
       chartSeries.xTitle,
       chartSeries.yTitle,
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(timeSeries),
+      _verticalLinesConfig(chartSeries),
       JsObject.jsify(colors),
       chartSeries.options.fillLines,
       chartSeries.options.straightLines,
@@ -240,6 +286,8 @@ class ChartEngineChartJS extends ChartEngine {
       chartSeries.xTitle,
       chartSeries.yTitle,
       JsObject.jsify(chartSeries.xLabels),
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(series),
       JsObject.jsify(colors),
     ];
@@ -299,7 +347,10 @@ class ChartEngineChartJS extends ChartEngine {
       chartSeries.title,
       chartSeries.xTitle,
       chartSeries.yTitle,
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(seriesPairs),
+      _verticalLinesConfig(chartSeries),
       JsObject.jsify(colors)
     ];
 
@@ -328,7 +379,10 @@ class ChartEngineChartJS extends ChartEngine {
       chartSeries.title,
       chartSeries.xTitle,
       chartSeries.yTitle,
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(seriesPairs),
+      _verticalLinesConfig(chartSeries),
       JsObject.jsify(colors),
       true
     ];
@@ -373,7 +427,10 @@ class ChartEngineChartJS extends ChartEngine {
       chartSeries.title,
       chartSeries.xTitle,
       chartSeries.yTitle,
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(seriesPairs),
+      _verticalLinesConfig(chartSeries),
       JsObject.jsify(colors),
       JsObject.jsify(colorsUp),
       JsObject.jsify(colorsDown),

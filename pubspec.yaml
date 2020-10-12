@@ -1,6 +1,6 @@
 name: chart_engine
 description: Chart generator with interchangeable chart engines, like ChartJS and ApexCharts.
-version: 1.1.9
+version: 1.1.10
 homepage: https://github.com/Colossus-Services/chart_engine
 
 environment:

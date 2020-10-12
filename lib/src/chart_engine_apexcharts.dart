@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:js';
 
 import 'package:amdjs/amdjs.dart';
+import 'package:color_palette_generator/color_palette_generator.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
 import 'chart_engine_base.dart';
@@ -72,6 +73,58 @@ class ChartEngineApexCharts extends ChartEngine {
     return div;
   }
 
+  static JsObject _xAxisMinMax(ChartData chartData) {
+    var minMax = chartData?.options?.xAxisMinMax;
+    return minMax != null ? JsObject.jsify(minMax) : null;
+  }
+
+  static JsObject _yAxisMinMax(ChartData chartData) {
+    var minMax = chartData?.options?.yAxisMinMax;
+    return minMax != null ? JsObject.jsify(minMax) : null;
+  }
+
+  JsObject _verticalLines(ChartData chartData) {
+    var lines = chartData?.options?.verticalLines;
+
+    if (isNotEmptyObject(lines)) {
+      var defColor = chartData?.options?.verticalLinesDefaultColor ?? '#ff0000';
+
+      var verticalLinesConfig = <Map<String, dynamic>>[];
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        var idx = line.index;
+        var label = line.label ?? '';
+        var color = line.color ?? defColor;
+
+        var x = chartData.getXAxisValue(idx);
+
+        var textColor =
+            HTMLColor.from(color).greyScale().red > 64 ? '#ffffff' : '#000000';
+
+        verticalLinesConfig.add({
+          'x': (x is DateTime ? x.millisecondsSinceEpoch : x),
+          'strokeDashArray': 0,
+          'borderColor': color,
+          'fillColor': color,
+          'label': {
+            'borderColor': color,
+            'style': {
+              'background': color,
+              'color': textColor,
+              'borderColor': color,
+            },
+            'text': label,
+          }
+        });
+      }
+
+      return JsObject.jsify(verticalLinesConfig);
+    }
+
+    return null;
+  }
+
   @override
   bool renderLineChart(Element output, ChartSeries chartSeries) {
     checkRenderParameters(output, chartSeries);
@@ -83,6 +136,8 @@ class ChartEngineApexCharts extends ChartEngine {
         ? chartSeries.seriesSortedByCategory
         : chartSeries.series;
 
+    series = _reverseSeries(series);
+
     chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
@@ -93,7 +148,10 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.xTitle,
       chartSeries.yTitle,
       JsObject.jsify(chartSeries.xLabels),
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(series),
+      _verticalLines(chartSeries),
       JsObject.jsify(colors),
       chartSeries.options.fillLines,
       chartSeries.options.straightLines
@@ -103,6 +161,9 @@ class ChartEngineApexCharts extends ChartEngine {
 
     return true;
   }
+
+  Map<K, V> _reverseSeries<K, V>(Map<K, V> series) =>
+      Map<K, V>.fromEntries(series.entries.toList().reversed);
 
   @override
   bool renderTimeSeriesChart(Element output, ChartTimeSeries chartSeries) {
@@ -115,6 +176,8 @@ class ChartEngineApexCharts extends ChartEngine {
         sortSeriesByCategory: chartSeries.options.sortCategories,
         mapDateTimeToMillis: true);
 
+    timeSeries = _reverseSeries(timeSeries);
+
     chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
@@ -124,7 +187,10 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.title,
       chartSeries.xTitle,
       chartSeries.yTitle,
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(timeSeries),
+      _verticalLines(chartSeries),
       JsObject.jsify(colors),
       chartSeries.options.fillLines,
       chartSeries.options.straightLines
@@ -167,6 +233,8 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.xTitle,
       chartSeries.yTitle,
       JsObject.jsify(chartSeries.xLabels),
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(set),
       JsObject.jsify(colors),
     ];
@@ -196,6 +264,8 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSet.xTitle,
       chartSet.yTitle,
       JsObject.jsify(chartSet.xLabels),
+      _xAxisMinMax(chartSet),
+      _yAxisMinMax(chartSet),
       JsObject.jsify(set),
       JsObject.jsify(colors),
     ];
@@ -229,7 +299,10 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.title,
       chartSeries.xTitle,
       chartSeries.yTitle,
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(seriesPairs),
+      _verticalLines(chartSeries),
       JsObject.jsify(colors),
       yMin,
       yMax
@@ -265,7 +338,10 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.title,
       chartSeries.xTitle,
       chartSeries.yTitle,
+      _xAxisMinMax(chartSeries),
+      _yAxisMinMax(chartSeries),
       JsObject.jsify(timeSeries),
+      _verticalLines(chartSeries),
       JsObject.jsify(colors),
       yMin,
       yMax,

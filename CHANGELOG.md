@@ -1,3 +1,11 @@
+## 1.1.10
+
+- `ChartOptions`:
+  - Added: `xAxisMin`, `xAxisMax`, `yAxisMin`, `yAxisMax`.
+  - Added: `verticalLines`.
+- `ApexCharts`:
+  - Fix series order to be rendered in the same order of ChartJS.
+
 ## 1.1.9
 
 - Financial Chart with color scheme for each series,

@@ -60,7 +60,47 @@
         });
     }
 
-    exports.configure = function (type, title, xTitle, yTitle, xLabels, datasets, showLegend, showGridLines, showXAxis, showYAxis, timeSeries) {
+    const verticalLinePlugin = {
+        afterDatasetsDraw: function (chart, easing) {
+            if (chart.config == null) return ;
+            let verticalLines = chart.config.verticalLines ;
+            if (verticalLines != null) {
+                for ( let [idx, conf] of  Object.entries(verticalLines) ) {
+                    let label = conf['label'] ;
+                    let color = conf['color'] ;
+                    let yPos = conf['y'] ;
+                    let textAlign = conf['textAlign'] ;
+                    this.drawVerticalLine(chart, idx, label, color, yPos, textAlign);
+                }
+            }
+        },
+
+        drawVerticalLine: function (chart, valueIndex, label, color, yPos, textAlign) {
+            const meta = chart.getDatasetMeta(0);
+            const data = meta.data;
+            const scale = chart.scales['y-axis-0'];
+
+            const top = scale.top;
+            const bottom = scale.bottom;
+            const x = data[valueIndex]._model.x;
+            const y = ((bottom - top) * yPos) + top;
+
+            const context = chart.chart.ctx;
+            context.beginPath();
+            context.strokeStyle = color;
+            context.moveTo(x, top);
+            context.lineTo(x, bottom);
+            context.stroke();
+
+            context.fillStyle = color;
+            context.textAlign = textAlign;
+            context.fillText(label, x, y);
+        }
+    };
+
+    Chart.plugins.register(verticalLinePlugin);
+
+    exports.configure = function (type, title, xTitle, yTitle, xLabels, xAxisMinMax, yAxisMinMax, datasets, verticalLines, showLegend, showGridLines, showXAxis, showYAxis, timeSeries) {
 
         const config = {
             type: type,
@@ -98,6 +138,10 @@
         let configOptions = config['options'];
         const configScales = configOptions['scales'];
 
+        if (verticalLines != null) {
+            config['verticalLines'] = verticalLines ;
+        }
+
         if (xLabels != null) {
             configData['labels'] = xLabels ;
         }
@@ -124,6 +168,13 @@
             configScales['yAxes'].forEach( e => e['display'] = showYAxis);
         }
 
+        if (yAxisMinMax != null) {
+            let ticks = {} ;
+            if (yAxisMinMax[0] != null) ticks['suggestedMin'] = yAxisMinMax[0];
+            if (yAxisMinMax[1] != null) ticks['suggestedMax'] = yAxisMinMax[1];
+            configScales['yAxes'].forEach( e => e['ticks'] = ticks);
+        }
+
         if (timeSeries != null && timeSeries) {
             configScales['xAxes'].forEach( (e) => {
                 e['type'] = 'time';
@@ -141,13 +192,29 @@
                     }
                 };
             });
+
+            if (xAxisMinMax != null) {
+                if (xAxisMinMax[0] != null) {
+                    configScales['xAxes'].forEach( e => e['time']['min'] = xAxisMinMax[0]);
+                }
+                if (xAxisMinMax[1] != null) {
+                    configScales['xAxes'].forEach( e => e['time']['max'] = xAxisMinMax[1]+1);
+                }
+            }
+        }
+        else {
+            if (xAxisMinMax != null) {
+                let ticks = {} ;
+                if (xAxisMinMax[0] != null) ticks['suggestedMin'] = xAxisMinMax[0];
+                if (xAxisMinMax[1] != null) ticks['suggestedMax'] = xAxisMinMax[1];
+                configScales['xAxes'].forEach( e => e['ticks'] = ticks);
+            }
         }
 
         return config ;
     };
 
-
-    exports.renderLine = function (canvas, title, xTitle, yTitle, xLabels, series, colors, fillLines, straightLines, steppedLines) {
+    exports.renderLine = function (canvas, title, xTitle, yTitle, xLabels, xAxisMinMAx, yAxisMinMax, series, verticalLines, colors, fillLines, straightLines, steppedLines) {
         const ctx = canvas.getContext('2d');
 
         const datasets = [] ;
@@ -172,7 +239,7 @@
             datasets.push( entry ) ;
         }
 
-        const config = this.configure('line', title, xTitle, yTitle, xLabels, datasets) ;
+        const config = this.configure('line', title, xTitle, yTitle, xLabels, xAxisMinMAx, yAxisMinMax, datasets, verticalLines) ;
 
         const chart = new Chart(ctx, config);
 
@@ -180,7 +247,7 @@
     };
 
 
-    exports.renderTimeSeries = function (canvas, title, xTitle, yTitle, series, colors, fillLines, straightLines, steppedLines) {
+    exports.renderTimeSeries = function (canvas, title, xTitle, yTitle, xAxisMinMax, yAxisMinMax, series, verticalLines, colors, fillLines, straightLines, steppedLines) {
         const ctx = canvas.getContext('2d');
 
         const datasets = [] ;
@@ -205,14 +272,14 @@
             datasets.push( entry ) ;
         }
 
-        const config = this.configure('line', title, xTitle, yTitle, null, datasets, null,null,null,null, true) ;
+        const config = this.configure('line', title, xTitle, yTitle, null, xAxisMinMax, yAxisMinMax, datasets, verticalLines, null,null,null,null, true) ;
 
         const chart = new Chart(ctx, config);
 
         return chart ;
     };
 
-    exports.renderBar = function (horizontal, canvas, title, xTitle, yTitle, xLabels, series, colors) {
+    exports.renderBar = function (horizontal, canvas, title, xTitle, yTitle, xLabels, xAxisMinMax, yAxisMinMax, series, colors) {
         const ctx = canvas.getContext('2d');
 
         const datasets = [] ;
@@ -232,7 +299,7 @@
 
         const type = horizontal ? 'horizontalBar' : 'bar' ;
 
-        const config = this.configure(type, title, xTitle, yTitle, xLabels, datasets) ;
+        const config = this.configure(type, title, xTitle, yTitle, xLabels, xAxisMinMax, yAxisMinMax, datasets) ;
 
         const chart = new Chart(ctx, config);
 
@@ -269,7 +336,7 @@
 
         const type = 'doughnut' ;
 
-        const config = this.configure(type, title, xTitle, yTitle, xLabels, datasets, false, false, false, false) ;
+        const config = this.configure(type, title, xTitle, yTitle, xLabels, null, null, datasets, null, false, false, false, false) ;
 
         const configOptions = config['options'];
 
@@ -283,7 +350,7 @@
                     const label = data.datasets[tooltipItem.datasetIndex].label;
                     const val = data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem.index] ;
 
-                    if (tooltipItem.index == 0) {
+                    if (tooltipItem.index === 0) {
                         return label+': '+ val +'%' ;
                     }
                     else {
@@ -314,7 +381,7 @@
     };
 
 
-    exports.renderScatter = function (canvas, title, xTitle, yTitle, series, colors, timed) {
+    exports.renderScatter = function (canvas, title, xTitle, yTitle, xAxisMinMax, yAxisMinMax, series, verticalLines, colors, timed) {
         const ctx = canvas.getContext('2d');
 
         const datasets = [] ;
@@ -334,7 +401,7 @@
             datasets.push( entry ) ;
         }
 
-        const config = this.configure('scatter', title, xTitle, yTitle, null, datasets, null,null,null,null, timed) ;
+        const config = this.configure('scatter', title, xTitle, yTitle, null, xAxisMinMax, yAxisMinMax, datasets, verticalLines, null,null,null,null, timed) ;
 
         const configOptions = config['options'];
 
@@ -352,7 +419,7 @@
         return chart ;
     };
 
-    exports.renderFinancial = function (canvas, title, xTitle, yTitle, series, colors, colorsUp, colorsDown, colorsUnchanged, ohlc) {
+    exports.renderFinancial = function (canvas, title, xTitle, yTitle, xAxisMinMax, yAxisMinMax, series, verticalLines, colors, colorsUp, colorsDown, colorsUnchanged, ohlc) {
         const ctx = canvas.getContext('2d');
 
         const datasets = [] ;
@@ -381,7 +448,7 @@
 
         const type = ohlc ? 'ohlc' : 'candlestick' ;
 
-        const config = this.configure(type, title, xTitle, yTitle, null, datasets, null, null, null, null, true) ;
+        const config = this.configure(type, title, xTitle, yTitle, null, xAxisMinMax, yAxisMinMax, datasets, verticalLines, null, null, null, null, true) ;
 
         const chart = new Chart(ctx, config);
 

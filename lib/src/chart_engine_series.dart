@@ -112,6 +112,18 @@ abstract class ChartData<C, X, Y> {
   /// Colors of each category.
   Map<C, String> colors;
 
+  /// Lighter colors of each category.
+  Map<C, String> get colorsLighter => colors.map((key, color) {
+        var htmlColor = HTMLColor.from(color).brighter();
+        return MapEntry(key, htmlColor.toString());
+      });
+
+  /// Darker colors of each category.
+  Map<C, String> get colorsDarker => colors.map((key, color) {
+        var htmlColor = HTMLColor.from(color).darker();
+        return MapEntry(key, htmlColor.toString());
+      });
+
   /// Colors of each category when disabled.
   Map<C, String> disabledColors;
 

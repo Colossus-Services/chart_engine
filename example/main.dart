@@ -249,15 +249,27 @@ Future createFinancialChart() async {
   var series = ChartTimeSeries({
     'StockX': [
       [DateTime(2020, 03, 30, 12), 10, 20, 10, 20],
-      [DateTime(2020, 03, 31, 12), 20, 20, 10, 5],
+      [DateTime(2020, 03, 31, 12), 20, 20, 2, 5],
       [DateTime(2020, 04, 01, 12), 5, 10, -10, -10],
       [DateTime(2020, 04, 02, 12), -10, 5, -15, 1],
       [DateTime(2020, 04, 03, 12), 1, 15, -1, 15],
       [DateTime(2020, 04, 04, 12), 15, 25, 10, 25],
       [DateTime(2020, 04, 05, 12), 25, 60, 25, 55],
-      [DateTime(2020, 04, 06, 12), 55, 55, 40, 30],
-      [DateTime(2020, 04, 07, 12), 30, 30, -10, -10],
+      [DateTime(2020, 04, 06, 12), 55, 60, 40, 55],
+      [DateTime(2020, 04, 07, 12), 55, 60, -10, -10],
       [DateTime(2020, 04, 08, 12), -10, -10, 0, 0]
+    ],
+    'StockY': [
+      [DateTime(2020, 03, 30, 12), 100, 200, 100, 200],
+      [DateTime(2020, 03, 31, 12), 200, 200, 20, 50],
+      [DateTime(2020, 04, 01, 12), 50, 100, 30, 30],
+      [DateTime(2020, 04, 02, 12), 30, 50, 20, 25],
+      [DateTime(2020, 04, 03, 12), 30, 150, 10, 150],
+      [DateTime(2020, 04, 04, 12), 150, 250, 100, 250],
+      [DateTime(2020, 04, 05, 12), 250, 600, 250, 550],
+      [DateTime(2020, 04, 06, 12), 550, 550, 300, 300],
+      [DateTime(2020, 04, 07, 12), 300, 300, 20, 30],
+      [DateTime(2020, 04, 08, 12), 30, 40, 0, 20]
     ],
   });
 
@@ -266,6 +278,8 @@ Future createFinancialChart() async {
   series.options.straightLines = true;
 
   var charEngine2 = ChartEngineChartJS();
+
+  charEngine2.colorGenerator = StandardColorGenerator.scheme('Financial');
 
   await charEngine2.loadFinancial();
 

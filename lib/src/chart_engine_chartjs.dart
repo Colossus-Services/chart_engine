@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:js';
 
 import 'package:amdjs/amdjs.dart';
+import 'package:dom_tools/dom_tools.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
 import 'chart_engine_base.dart';
@@ -114,7 +115,7 @@ class ChartEngineChartJS extends ChartEngine {
 
       var jsFullPath = minified ? FINANCIAL_JS_PATH_MIN : FINANCIAL_JS_PATH;
       var okJS = await AMDJS.require('chartjs_financial',
-          jsFullPath: jsFullPath, globalJSVariableName: 'ChartFinancial');
+          jsFullPath: jsFullPath, globalJSVariableName: 'Chart.Financial');
 
       return okChartJS && okJS;
     });
@@ -133,7 +134,10 @@ class ChartEngineChartJS extends ChartEngine {
 
     if (element is CanvasElement) return element;
 
-    var canvas = CanvasElement(width: 640, height: 480);
+    var w = getElementWidth(element, 640);
+    var h = getElementHeight(element, 480);
+
+    var canvas = CanvasElement(width: w, height: h);
     element.children.add(canvas);
 
     return canvas;
@@ -360,6 +364,9 @@ class ChartEngineChartJS extends ChartEngine {
     chartSeries.ensureColors(colorGenerator);
 
     var colors = chartSeries.colors;
+    var colorsUp = chartSeries.colorsLighter;
+    var colorsDown = chartSeries.colorsDarker;
+    var colorsUnchanged = chartSeries.disabledColors;
 
     var renderArgs = [
       canvas,
@@ -368,6 +375,9 @@ class ChartEngineChartJS extends ChartEngine {
       chartSeries.yTitle,
       JsObject.jsify(seriesPairs),
       JsObject.jsify(colors),
+      JsObject.jsify(colorsUp),
+      JsObject.jsify(colorsDown),
+      JsObject.jsify(colorsUnchanged),
       ohlc
     ];
 

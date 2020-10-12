@@ -1,3 +1,11 @@
+## 1.1.9
+
+- Financial Chart with color scheme for each series,
+  allowing better multiple serias visualization.
+- ChartJS: better identification of output dimension and canvas size.
+- color_palette_generator: ^1.0.3
+- dom_tools: ^1.3.13
+
 ## 1.1.8
 
 - ChartJS:

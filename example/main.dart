@@ -50,9 +50,7 @@ Future createLineChart() async {
   charEngine2.renderLineChart(querySelector('#chartjs-line1-output'), series);
 
   series.options.fillLines = true;
-  series.options.verticalLines = [
-    VerticalLine(1, label: 'Mark', yPosition: 1)
-  ];
+  series.options.verticalLines = [VerticalLine(1, label: 'Mark', yPosition: 1)];
 
   charEngine1.renderLineChart(
       querySelector('#apexcharts-line2-output'), series);

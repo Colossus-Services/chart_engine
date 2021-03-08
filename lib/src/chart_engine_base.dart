@@ -12,7 +12,7 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
   /// `chart_engine` package version.
-  static final String VERSION = '1.1.11';
+  static final String VERSION = '2.0.0-nullsafety.1';
 
   String get version;
 
@@ -33,17 +33,10 @@ abstract class ChartEngine {
     }
   }
 
-  void checkRenderParameters(Element/*!*/ output, ChartData/*!*/ chartData) {
-    if (output == null) throw ArgumentError('Null output to render Chart');
-    if (chartData == null) {
-      throw ArgumentError('Null chartData to render Chart');
-    }
-  }
+  void checkRenderParameters(Element output, ChartData chartData) {}
 
   /// Renders at [output] a [chartData], selecting the correct render method.
-  RenderedChart render(Element output, ChartData chartData) {
-    if (chartData == null) return null;
-
+  RenderedChart? render(Element output, ChartData chartData) {
     _checkOutput(output);
 
     checkLoaded();
@@ -69,16 +62,10 @@ abstract class ChartEngine {
     }
   }
 
-  ColorGenerator _colorGenerator = StandardColorGenerator();
-
   /// The color generator for [ChartData] that doesn't set its own colors.
-  ColorGenerator get colorGenerator => _colorGenerator;
+  ColorGenerator colorGenerator = StandardColorGenerator();
 
-  G getColorGeneratorAs<G extends ColorGenerator>() => _colorGenerator;
-
-  set colorGenerator(ColorGenerator value) {
-    _colorGenerator = value ?? StandardColorGenerator();
-  }
+  G getColorGeneratorAs<G extends ColorGenerator>() => colorGenerator as G;
 
   /// Renders a Line Chart:
   RenderedChart renderLineChart(Element output, ChartSeries chartData);
@@ -107,9 +94,9 @@ abstract class ChartEngine {
   ///
   /// [ohlc] Renders a OHLC chart (default).
   /// [candlestick] Renders a Candlestick chart.
-  RenderedChart/*!*/ renderFinancialChart(
+  RenderedChart renderFinancialChart(
       Element output, ChartTimeSeries chartSeries,
-      {bool ohlc, bool candlestick});
+      {bool? ohlc, bool? candlestick});
 
   Future _ensureLoaded() async {
     if (!isLoaded) {
@@ -118,7 +105,8 @@ abstract class ChartEngine {
   }
 
   /// Same as [render], but [async].
-  Future<RenderedChart> renderAsync(Element output, ChartData chartData) async {
+  Future<RenderedChart?> renderAsync(
+      Element output, ChartData chartData) async {
     await _ensureLoaded();
     return render(output, chartData);
   }
@@ -178,12 +166,12 @@ class ChartEngineSwitchable extends ChartEngine {
   final Set<ChartEngine> engines;
 
   @override
-  String get version => mainEngine.version;
+  String get version => mainEngine!.version;
 
-  ChartEngine _mainEngine;
+  ChartEngine? _mainEngine;
 
   ChartEngineSwitchable(this.engines,
-      {Type mainEngineType, ChartEngine mainEngine}) {
+      {Type? mainEngineType, ChartEngine? mainEngine}) {
     if (engines.isEmpty) throw ArgumentError('Should have 1 or more engines');
 
     if (mainEngine != null) {
@@ -204,7 +192,7 @@ class ChartEngineSwitchable extends ChartEngine {
   }
 
   /// The current main ChartEngine/
-  ChartEngine get mainEngine => _mainEngine;
+  ChartEngine? get mainEngine => _mainEngine;
 
   /// Sets the main ChartEngine to use, selected by [engineType].
   ChartEngine setMainEngineByType(Type engineType) {
@@ -246,7 +234,7 @@ class ChartEngineSwitchable extends ChartEngine {
   EventStream<LoadController> get onLoad => EventStream();
 
   /// Renders using engine of [engineType].
-  RenderedChart renderWithEngineType(
+  RenderedChart? renderWithEngineType(
       Type engineType, Element output, ChartData chartData) {
     var prevMainEngine = _mainEngine;
     setMainEngineByType(engineType);
@@ -256,7 +244,7 @@ class ChartEngineSwitchable extends ChartEngine {
   }
 
   /// Renders using engine of type [T].
-  RenderedChart renderOfEngineType<T>(Element output, ChartData chartData) {
+  RenderedChart? renderOfEngineType<T>(Element output, ChartData chartData) {
     var prevMainEngine = _mainEngine;
     setMainEngineOfType<T>();
     var ok = render(output, chartData);
@@ -266,47 +254,48 @@ class ChartEngineSwitchable extends ChartEngine {
 
   @override
   RenderedChart renderLineChart(Element output, ChartSeries chartData) {
-    return mainEngine.renderLineChart(output, chartData);
+    return mainEngine!.renderLineChart(output, chartData);
   }
 
   @override
   RenderedChart renderTimeSeriesChart(Element output, ChartSeries chartData) {
-    return mainEngine.renderTimeSeriesChart(output, chartData);
+    return mainEngine!.renderTimeSeriesChart(
+        output, chartData as ChartTimeSeries<dynamic, dynamic>);
   }
 
   @override
   RenderedChart renderBarChart(Element output, ChartSeries chartData) {
-    return mainEngine.renderBarChart(output, chartData);
+    return mainEngine!.renderBarChart(output, chartData);
   }
 
   @override
   RenderedChart renderHorizontalBarChart(
       Element output, ChartSeries chartData) {
-    return mainEngine.renderHorizontalBarChart(output, chartData);
+    return mainEngine!.renderHorizontalBarChart(output, chartData);
   }
 
   @override
   RenderedChart renderGaugeChart(Element output, ChartSet chartData) {
-    return mainEngine.renderGaugeChart(output, chartData);
+    return mainEngine!.renderGaugeChart(output, chartData);
   }
 
   @override
   RenderedChart renderScatterChart(
       Element output, ChartSeriesPair chartSeries) {
-    return mainEngine.renderScatterChart(output, chartSeries);
+    return mainEngine!.renderScatterChart(output, chartSeries);
   }
 
   @override
   RenderedChart renderScatterTimedChart(
       Element output, ChartTimeSeries chartSeries) {
-    return mainEngine.renderScatterTimedChart(output, chartSeries);
+    return mainEngine!.renderScatterTimedChart(output, chartSeries);
   }
 
   @override
   RenderedChart renderFinancialChart(
       Element output, ChartTimeSeries chartSeries,
-      {bool ohlc, bool candlestick}) {
-    return mainEngine.renderFinancialChart(output, chartSeries,
+      {bool? ohlc, bool? candlestick}) {
+    return mainEngine!.renderFinancialChart(output, chartSeries,
         ohlc: ohlc, candlestick: candlestick);
   }
 }
@@ -318,19 +307,19 @@ abstract class RenderedChart {
   final dynamic chartObject;
   final ChartData chartData;
 
-  InteractionCompleter _interactionCompleter;
+  late InteractionCompleter _interactionCompleter;
 
   RenderedChart(this.engine, this.type, this.chartObject, this.chartData) {
     _interactionCompleter = InteractionCompleter('RenderedChart:refreshDelayed',
         triggerDelay: Duration(milliseconds: 200),
         functionToTrigger: () => refresh());
 
-    if (chartData.populateLastRenderedChart ?? false) {
+    if (chartData.populateLastRenderedChart) {
       chartData.lastRenderedChart = this;
     }
   }
 
-  JsObject get chartJsObject => chartObject is JsObject ? chartObject : null;
+  JsObject? get chartJsObject => chartObject is JsObject ? chartObject : null;
 
   bool get hasChartJsObject => chartJsObject != null;
 

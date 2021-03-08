@@ -31,12 +31,12 @@ class ChartEngineApexCharts extends ChartEngine {
 
   @override
   bool get isLoaded =>
-      _loadController.isLoaded && _loadController.loadSuccessful;
+      _loadController.isLoaded && _loadController.loadSuccessful!;
 
   @override
   EventStream<LoadController> get onLoad => _loadController.onLoad;
 
-  static JsObject _jsWrapper;
+  static JsObject? _jsWrapper;
 
   /// Loads ApexCharts (`apexcharts.amd.js`) and engine wrapper.
   @override
@@ -48,7 +48,7 @@ class ChartEngineApexCharts extends ChartEngine {
           jsFullPath: ENGINE_WRAPPER_PATH,
           globalJSVariableName: JS_WRAPPER_GLOBAL_NAME);
 
-      _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject;
+      _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject?;
 
       return okJS && okWrapper;
     });
@@ -61,10 +61,6 @@ class ChartEngineApexCharts extends ChartEngine {
   /// Ensures that DOM element to render is a div. If not will insert a div
   /// inside the element and use it.
   DivElement asDivElement(Element element) {
-    if (element == null) {
-      throw ArgumentError('Expected a DOM element, but was null!');
-    }
-
     if (element is DivElement) return element;
 
     var div = DivElement();
@@ -73,25 +69,25 @@ class ChartEngineApexCharts extends ChartEngine {
     return div;
   }
 
-  static JsObject _xAxisMinMax(ChartData chartData) {
-    var minMax = chartData?.options?.xAxisMinMax;
+  static JsObject? _xAxisMinMax(ChartData chartData) {
+    var minMax = chartData.options.xAxisMinMax;
     return minMax != null ? JsObject.jsify(minMax) : null;
   }
 
-  static JsObject _yAxisMinMax(ChartData chartData) {
-    var minMax = chartData?.options?.yAxisMinMax;
+  static JsObject? _yAxisMinMax(ChartData chartData) {
+    var minMax = chartData.options.yAxisMinMax;
     return minMax != null ? JsObject.jsify(minMax) : null;
   }
 
-  JsObject _verticalLines(ChartData chartData) {
-    var lines = chartData?.options?.verticalLines;
+  JsObject? _verticalLines(ChartData chartData) {
+    var lines = chartData.options.verticalLines;
 
     if (isNotEmptyObject(lines)) {
-      var defColor = chartData?.options?.verticalLinesDefaultColor ?? '#ff0000';
+      var defColor = chartData.options.verticalLinesDefaultColor;
 
       var verticalLinesConfig = <Map<String, dynamic>>[];
 
-      for (var i = 0; i < lines.length; i++) {
+      for (var i = 0; i < lines!.length; i++) {
         var line = lines[i];
         var idx = line.index;
         var label = line.label ?? '';
@@ -99,8 +95,9 @@ class ChartEngineApexCharts extends ChartEngine {
 
         var x = chartData.getXAxisValue(idx);
 
-        var textColor =
-            HTMLColor.from(color).greyScale().red > 100 ? '#000000' : '#ffffff';
+        var textColor = HTMLColor.from(color)!.greyScale().red > 100
+            ? '#000000'
+            : '#ffffff';
 
         verticalLinesConfig.add({
           'x': (x is DateTime ? x.millisecondsSinceEpoch : x),
@@ -140,7 +137,7 @@ class ChartEngineApexCharts extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
     var renderArgs = [
       div,
@@ -157,7 +154,7 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.options.straightLines
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderLine', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderLine', renderArgs);
 
     return RenderedApexCharts(this, 'line', chartObject, chartSeries);
   }
@@ -181,7 +178,7 @@ class ChartEngineApexCharts extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
     var renderArgs = [
       div,
@@ -197,7 +194,7 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.options.straightLines
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderTimeSeries', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderTimeSeries', renderArgs);
 
     return RenderedApexCharts(this, 'time-series', chartObject, chartSeries);
   }
@@ -226,7 +223,7 @@ class ChartEngineApexCharts extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
     var renderArgs = [
       horizontal,
@@ -241,7 +238,7 @@ class ChartEngineApexCharts extends ChartEngine {
       JsObject.jsify(colors),
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderBar', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderBar', renderArgs);
 
     return RenderedApexCharts(
         this,
@@ -262,7 +259,7 @@ class ChartEngineApexCharts extends ChartEngine {
 
     chartSet.ensureColors(colorGenerator);
 
-    var colors = chartSet.colors;
+    var colors = chartSet.colors!;
 
     var renderArgs = [
       div,
@@ -276,7 +273,7 @@ class ChartEngineApexCharts extends ChartEngine {
       JsObject.jsify(colors),
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderGauge', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderGauge', renderArgs);
 
     return RenderedApexCharts(this, 'gauge', chartObject, chartSet);
   }
@@ -294,9 +291,9 @@ class ChartEngineApexCharts extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
-    var yAxisScale = chartSeries.yAxisScale;
+    var yAxisScale = chartSeries.yAxisScale!;
 
     var yMin = yAxisScale.minimumNice;
     var yMax = yAxisScale.maximumNice;
@@ -315,7 +312,7 @@ class ChartEngineApexCharts extends ChartEngine {
       yMax
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderScatter', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderScatter', renderArgs);
 
     return RenderedApexCharts(this, 'scatter', chartObject, chartSeries);
   }
@@ -334,9 +331,9 @@ class ChartEngineApexCharts extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
-    var yAxisScale = chartSeries.yAxisScale;
+    var yAxisScale = chartSeries.yAxisScale!;
 
     var yMin = yAxisScale.minimumNice;
     var yMax = yAxisScale.maximumNice;
@@ -356,7 +353,7 @@ class ChartEngineApexCharts extends ChartEngine {
       true
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderScatter', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderScatter', renderArgs);
 
     return RenderedApexCharts(
         this, 'scatter-time-series', chartObject, chartSeries);
@@ -365,8 +362,8 @@ class ChartEngineApexCharts extends ChartEngine {
   @override
   RenderedApexCharts renderFinancialChart(
       Element output, ChartTimeSeries chartSeries,
-      {bool ohlc, bool candlestick}) {
-    return null;
+      {bool? ohlc, bool? candlestick}) {
+    throw UnsupportedError('Not supported: FinancialChart!');
   }
 }
 
@@ -378,6 +375,6 @@ class RenderedApexCharts extends RenderedChart {
   @override
   void refresh() {
     if (!hasChartJsObject) return;
-    chartJsObject.callMethod('render');
+    chartJsObject!.callMethod('render');
   }
 }

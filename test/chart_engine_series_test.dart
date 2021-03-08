@@ -156,12 +156,12 @@ void main() {
             {'x': 3000, 'y': 330}
           ]));
 
-      var xScale = chartSeries.xAxisScale;
+      var xScale = chartSeries.xAxisScale!;
       expect(xScale.minimum, equals(1000));
       expect(xScale.maximum, equals(3000));
       expect(xScale.length, equals(2000));
 
-      var yScale = chartSeries.yAxisScale;
+      var yScale = chartSeries.yAxisScale!;
       expect(yScale.minimum, equals(100));
       expect(yScale.maximum, equals(330));
       expect(yScale.length, equals(230));

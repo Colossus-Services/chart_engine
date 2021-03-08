@@ -1,19 +1,20 @@
 @TestOn('vm')
 
-import 'package:swiss_knife/swiss_knife_vm.dart';
-import 'package:test/test.dart';
 import 'dart:io';
 
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:path/path.dart' as path;
+import 'package:swiss_knife/swiss_knife_vm.dart';
+import 'package:test/test.dart';
 
 class _PubSpec {
-  final String name;
-  final String version;
+  final String? name;
+  final String? version;
 
   _PubSpec(this.name, this.version);
 }
 
-_PubSpec _readPubSpecVersion(File file) {
+_PubSpec? _readPubSpecVersion(File file) {
   var content = file.readAsStringSync();
   var lines = content.split(RegExp(r'[\r\n]+'));
 
@@ -29,15 +30,15 @@ _PubSpec _readPubSpecVersion(File file) {
   return _PubSpec(name, ver);
 }
 
-String _parseLineValue(String line) {
+String? _parseLineValue(String line) {
   var parts = line.split(':');
   if (parts.length < 2) return null;
   var value = parts[1].trim();
   return value;
 }
 
-String _findLine(List<String> lines, String key) =>
-    lines.firstWhere((line) => line.startsWith('$key:'), orElse: () => null);
+String? _findLine(List<String> lines, String key) =>
+    lines.firstWhereOrNull((line) => line.startsWith('$key:'));
 
 void main() {
   group('ChartEngine.VERSION', () {
@@ -52,7 +53,7 @@ void main() {
 
       print('pubspecFile: $pubspecFile');
 
-      var pubSpec = _readPubSpecVersion(pubspecFile);
+      var pubSpec = _readPubSpecVersion(pubspecFile)!;
 
       print('PubSpec.name: ${pubSpec.name}');
       print('PubSpec.version: ${pubSpec.version}');
@@ -64,7 +65,7 @@ void main() {
 
       var src = await catFile(srcFile);
 
-      var versionMatch = RegExp(r"VERSION\s*=\s*'(.*?)'").firstMatch(src);
+      var versionMatch = RegExp(r"VERSION\s*=\s*'(.*?)'").firstMatch(src)!;
 
       var srcVersion = versionMatch.group(1);
 

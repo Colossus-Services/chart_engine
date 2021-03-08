@@ -1,3 +1,16 @@
+## 2.0.0-nullsafety.1
+
+- Dart 2.12.0:
+  - Sound null safety compatibility.
+  - Update CI dart commands.
+  - sdk: '>=2.12.0 <3.0.0'
+- swiss_knife: ^3.0.1
+- dom_tools: ^2.0.0-nullsafety.1
+- color_palette_generator: ^2.0.0
+- amdjs: ^2.0.0-nullsafety.1
+- intl: ^0.17.0
+- collection: ^1.15.0-nullsafety.4
+
 ## 1.1.11
 
 - New `RenderedChart` class, returned by every render.

@@ -32,14 +32,8 @@ class ChartEngineChartJS extends ChartEngine {
   static final String JS_WRAPPER_GLOBAL_NAME =
       '__ChartEngine_Wrapper_ChartJS__';
 
-  static bool _minified = true;
-
-  static bool get minified => _minified;
-
   /// If true uses minified version of JS files. Should be set before call [load] method.
-  static set minified(bool value) {
-    _minified = value ?? false;
-  }
+  static bool minified = true;
 
   @override
   String get version => VERSION;
@@ -49,12 +43,12 @@ class ChartEngineChartJS extends ChartEngine {
 
   @override
   bool get isLoaded =>
-      _loadController.isLoaded && _loadController.loadSuccessful;
+      _loadController.isLoaded && _loadController.loadSuccessful!;
 
   @override
   EventStream<LoadController> get onLoad => _loadController.onLoad;
 
-  static JsObject _jsWrapper;
+  static JsObject? _jsWrapper;
 
   /// Loads ChartJS (`chart.js`) and engine wrapper.
   @override
@@ -67,7 +61,7 @@ class ChartEngineChartJS extends ChartEngine {
           jsFullPath: ENGINE_WRAPPER_PATH,
           globalJSVariableName: JS_WRAPPER_GLOBAL_NAME);
 
-      _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject;
+      _jsWrapper = context[JS_WRAPPER_GLOBAL_NAME] as JsObject?;
 
       _allowInterop();
 
@@ -80,14 +74,15 @@ class ChartEngineChartJS extends ChartEngine {
       throw StateError("Can't allowInterop _DateAdapter: null _jsWrapper");
     }
 
-    _jsWrapper['_DateAdapter__parse'] = ([a, b]) => DateAdapter.parse(a, b);
-    _jsWrapper['_DateAdapter__format'] = ([a, b]) => DateAdapter.format(a, b);
-    _jsWrapper['_DateAdapter__startOf'] =
+    _jsWrapper!['_DateAdapter__parse'] = ([a, b]) => DateAdapter.parse(a, b);
+    _jsWrapper!['_DateAdapter__format'] = ([a, b]) => DateAdapter.format(a, b);
+    _jsWrapper!['_DateAdapter__startOf'] =
         ([a, b, c]) => DateAdapter.startOf(a, b, c);
-    _jsWrapper['_DateAdapter__endOf'] = ([a, b]) => DateAdapter.endOf(a, b);
-    _jsWrapper['_DateAdapter__add'] = ([a, b, c]) => DateAdapter.add(a, b, c);
-    _jsWrapper['_DateAdapter__diff'] = ([a, b, c]) => DateAdapter.diff(a, b, c);
-    _jsWrapper['_DateAdapter__create'] = ([a]) => DateAdapter.create(a);
+    _jsWrapper!['_DateAdapter__endOf'] = ([a, b]) => DateAdapter.endOf(a, b);
+    _jsWrapper!['_DateAdapter__add'] = ([a, b, c]) => DateAdapter.add(a, b, c);
+    _jsWrapper!['_DateAdapter__diff'] =
+        ([a, b, c]) => DateAdapter.diff(a, b, c);
+    _jsWrapper!['_DateAdapter__create'] = ([a]) => DateAdapter.create(a);
   }
 
   static final LoadController _loadControllerFinancial =
@@ -96,7 +91,7 @@ class ChartEngineChartJS extends ChartEngine {
   /// Returns [true] if financial module is loaded.
   bool get isLoadedFinancial =>
       _loadControllerFinancial.isLoaded &&
-      _loadControllerFinancial.loadSuccessful;
+      _loadControllerFinancial.loadSuccessful!;
 
   void checkLoadedFinancial() {
     checkLoaded();
@@ -128,10 +123,6 @@ class ChartEngineChartJS extends ChartEngine {
   /// Ensures that DOM element to render is a canvas. If not will insert a canvas
   /// inside the element and use it.
   CanvasElement asCanvasElement(Element element) {
-    if (element == null) {
-      throw ArgumentError('Expected a DOM element, but was null!');
-    }
-
     if (element is CanvasElement) return element;
 
     var w = getElementWidth(element, 640);
@@ -143,33 +134,36 @@ class ChartEngineChartJS extends ChartEngine {
     return canvas;
   }
 
-  static JsObject _xAxisMinMax(ChartData chartData) {
-    var minMax = chartData?.options?.xAxisMinMax;
+  static JsObject? _xAxisMinMax(ChartData chartData) {
+    var minMax = chartData.options.xAxisMinMax;
     return minMax != null ? JsObject.jsify(minMax) : null;
   }
 
-  static JsObject _yAxisMinMax(ChartData chartData) {
-    var minMax = chartData?.options?.yAxisMinMax;
+  static JsObject? _yAxisMinMax(ChartData chartData) {
+    var minMax = chartData.options.yAxisMinMax;
     return minMax != null ? JsObject.jsify(minMax) : null;
   }
 
-  static Function _onClick(ChartData chartData) {
+  static Function? _onClick(ChartData chartData) {
     var onClick = chartData.options.onClick;
     if (onClick == null) return null;
     return (activeItems, xItems, yItems) {
-      onClick(jsToDart(activeItems), jsToDart(xItems), jsToDart(yItems));
+      onClick(
+          jsToDart(activeItems) as List<dynamic>?,
+          jsToDart(xItems) as List<dynamic>?,
+          jsToDart(yItems) as List<dynamic>?);
     };
   }
 
-  static JsObject _verticalLinesConfig(ChartData chartData) {
-    var lines = chartData?.options?.verticalLines;
+  static JsObject? _verticalLinesConfig(ChartData chartData) {
+    var lines = chartData.options.verticalLines;
 
     if (isNotEmptyObject(lines)) {
-      var defColor = chartData?.options?.verticalLinesDefaultColor ?? '#ff0000';
+      var defColor = chartData.options.verticalLinesDefaultColor;
 
       var verticalLinesConfig = <int, Map<String, dynamic>>{};
 
-      for (var i = 0; i < lines.length; i++) {
+      for (var i = 0; i < lines!.length; i++) {
         var line = lines[i];
         var idx = line.index;
         var label = line.label ?? '';
@@ -204,7 +198,7 @@ class ChartEngineChartJS extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
     var renderArgs = [
       canvas,
@@ -223,7 +217,7 @@ class ChartEngineChartJS extends ChartEngine {
       _onClick(chartSeries)
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderLine', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderLine', renderArgs);
 
     return RenderedChartJS(this, 'line', chartObject, chartSeries);
   }
@@ -242,7 +236,7 @@ class ChartEngineChartJS extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
     var renderArgs = [
       canvas,
@@ -260,7 +254,7 @@ class ChartEngineChartJS extends ChartEngine {
       _onClick(chartSeries)
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderTimeSeries', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderTimeSeries', renderArgs);
 
     return RenderedChartJS(this, 'time-series', chartObject, chartSeries);
   }
@@ -289,7 +283,7 @@ class ChartEngineChartJS extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
     var renderArgs = [
       horizontal,
@@ -305,7 +299,7 @@ class ChartEngineChartJS extends ChartEngine {
       _onClick(chartSeries)
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderBar', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderBar', renderArgs);
 
     return RenderedChartJS(
         this,
@@ -326,8 +320,8 @@ class ChartEngineChartJS extends ChartEngine {
 
     chartSet.ensureColors(colorGenerator);
 
-    var colors = chartSet.colors;
-    var disabledColors = chartSet.disabledColors;
+    var colors = chartSet.colors!;
+    var disabledColors = chartSet.disabledColors!;
 
     var renderArgs = [
       canvas,
@@ -341,7 +335,7 @@ class ChartEngineChartJS extends ChartEngine {
       _onClick(chartSet)
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderGauge', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderGauge', renderArgs);
 
     return RenderedChartJS(this, 'gauge', chartObject, chartSet);
   }
@@ -359,7 +353,7 @@ class ChartEngineChartJS extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
     var renderArgs = [
       canvas,
@@ -374,7 +368,7 @@ class ChartEngineChartJS extends ChartEngine {
       _onClick(chartSeries)
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderScatter', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderScatter', renderArgs);
 
     return RenderedChartJS(this, 'scatter', chartObject, chartSeries);
   }
@@ -393,7 +387,7 @@ class ChartEngineChartJS extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
 
     var renderArgs = [
       canvas,
@@ -409,7 +403,7 @@ class ChartEngineChartJS extends ChartEngine {
       _onClick(chartSeries)
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderScatter', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderScatter', renderArgs);
 
     return RenderedChartJS(
         this, 'scatter-time-series', chartObject, chartSeries);
@@ -422,7 +416,7 @@ class ChartEngineChartJS extends ChartEngine {
   @override
   RenderedChartJS renderFinancialChart(
       Element output, ChartTimeSeries chartSeries,
-      {bool ohlc, bool candlestick}) {
+      {bool? ohlc, bool? candlestick}) {
     checkRenderParameters(output, chartSeries);
     checkLoadedFinancial();
 
@@ -442,10 +436,10 @@ class ChartEngineChartJS extends ChartEngine {
 
     chartSeries.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors;
+    var colors = chartSeries.colors!;
     var colorsUp = chartSeries.colorsLighter;
     var colorsDown = chartSeries.colorsDarker;
-    var colorsUnchanged = chartSeries.disabledColors;
+    var colorsUnchanged = chartSeries.disabledColors!;
 
     var renderArgs = [
       canvas,
@@ -464,7 +458,7 @@ class ChartEngineChartJS extends ChartEngine {
       _onClick(chartSeries)
     ];
 
-    var chartObject = _jsWrapper.callMethod('renderFinancial', renderArgs);
+    var chartObject = _jsWrapper!.callMethod('renderFinancial', renderArgs);
 
     return RenderedChartJS(this, 'financial-${ohlc ? 'ohlc' : 'candlestick'}',
         chartObject, chartSeries);
@@ -479,21 +473,21 @@ class RenderedChartJS extends RenderedChart {
   @override
   void refresh() {
     if (!hasChartJsObject) return;
-    chartJsObject.callMethod('update');
+    chartJsObject!.callMethod('update');
   }
 
   void addDateValue(dynamic date, dynamic value) {
-    var dateTime = parseDateTime(date);
+    var dateTime = parseDateTime(date)!;
 
     var args = [chartObject, dateTime.millisecondsSinceEpoch, 0, value];
 
-    ChartEngineChartJS._jsWrapper.callMethod('addData_date_value', args);
+    ChartEngineChartJS._jsWrapper!.callMethod('addData_date_value', args);
   }
 
   void addOHLC(dynamic series, dynamic time, double open, double high,
       double lower, double close,
-      {int timeTolerance, preserveTimeOfOverwrittenValue}) {
-    var dateTime = parseDateTime(time);
+      {int? timeTolerance, preserveTimeOfOverwrittenValue}) {
+    var dateTime = parseDateTime(time)!;
 
     preserveTimeOfOverwrittenValue ??= false;
 
@@ -511,7 +505,7 @@ class RenderedChartJS extends RenderedChart {
       preserveTimeOfOverwrittenValue
     ];
 
-    ChartEngineChartJS._jsWrapper.callMethod('addData_tohlc', args);
+    ChartEngineChartJS._jsWrapper!.callMethod('addData_tohlc', args);
   }
 
   void addData(dynamic xVal, dynamic yVal) {}

@@ -22,11 +22,11 @@ void _createLineChart(ChartEngine charEngine) async {
     'C': [100, 130, 140]
   });
 
-  var output = document.body.append(DivElement()..style.width = '100%');
+  var output = document.body!.append(DivElement()..style.width = '100%');
 
   expect(output.nodes.isEmpty, isTrue);
 
-  charEngine.renderLineChart(output, series);
+  charEngine.renderLineChart(output as Element, series);
 
   await _sleep(500);
 

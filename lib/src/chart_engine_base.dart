@@ -33,7 +33,7 @@ abstract class ChartEngine {
     }
   }
 
-  void checkRenderParameters(Element output, ChartData chartData) {
+  void checkRenderParameters(Element/*!*/ output, ChartData/*!*/ chartData) {
     if (output == null) throw ArgumentError('Null output to render Chart');
     if (chartData == null) {
       throw ArgumentError('Null chartData to render Chart');
@@ -107,7 +107,7 @@ abstract class ChartEngine {
   ///
   /// [ohlc] Renders a OHLC chart (default).
   /// [candlestick] Renders a Candlestick chart.
-  RenderedChart renderFinancialChart(
+  RenderedChart/*!*/ renderFinancialChart(
       Element output, ChartTimeSeries chartSeries,
       {bool ohlc, bool candlestick});
 

@@ -4,10 +4,11 @@ import 'package:chart_engine/chart_engine.dart';
 import 'package:color_palette_generator/color_palette_generator.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
-void _sorteEntriesByKey(List<MapEntry> entries) {
+void _sorteEntriesByKey<K extends Comparable, V>(
+    List<MapEntry<K, V>> entries) {
   entries.sort((a, b) {
-    var c1 = a.key as Comparable;
-    var c2 = b.key as Comparable;
+    var c1 = a.key;
+    var c2 = b.key;
     return c1.compareTo(c2);
   });
 }
@@ -40,21 +41,21 @@ abstract class ChartData<C, X, Y> {
 
   /// Returns [true] if [list] is a [List] of paris.
   static bool isListOfPairs(Iterable list) {
-    if (list == null || list.isEmpty) return null;
+    if (list == null || list.isEmpty) return false;
     return listMatchesAll(list,
         (e) => e is List && e.length == 2 && listMatchesAll(e, isValidValue));
   }
 
   /// Returns [true] if [list] is a [List] of time pairs (X: DateTime, Y: value).
   static bool isListOfTimedPairs(Iterable list) {
-    if (list == null || list.isEmpty) return null;
+    if (list == null || list.isEmpty) return false;
     return listMatchesAll(list,
         (e) => e is List && e.length == 2 && isTimeValue(e[0]) && e[1] is num);
   }
 
   /// Returns [true] if [list] elements are valid values.
   static bool isListOfValidValues(Iterable list) {
-    if (list == null || list.isEmpty) return null;
+    if (list == null || list.isEmpty) return false;
     return listMatchesAll(
         list, (e) => e is List && listMatchesAll(e, isValidValue));
   }
@@ -160,28 +161,28 @@ abstract class ChartData<C, X, Y> {
   /// Returns all values of axis Y.
   Iterable<Y> get yAxisAllValues;
 
-  Scale<X> _xAxisScale;
+  Scale<X/*!*/> _xAxisScale;
 
   /// Returns the <Scale> of axis X.
   Scale<X> get xAxisScale {
     if (_xAxisScale == null) {
       var values = xAxisAllValues;
       _xAxisScale = isNumList(values)
-          ? ScaleNum<num>.from(values.cast<num>())
+          ? ScaleNum.from<num>(values.cast<num>())
           : Scale.from(values);
     }
 
     return _xAxisScale;
   }
 
-  Scale<Y> _yAxisScale;
+  Scale<Y/*!*/> _yAxisScale;
 
   /// Returns the <Scale> of axis Y.
   Scale<Y> get yAxisScale {
     if (_yAxisScale == null) {
       var values = yAxisAllValues;
       _yAxisScale = isNumList(values)
-          ? ScaleNum<num>.from(values.cast<num>())
+          ? ScaleNum.from<num>(values.cast<num>())
           : Scale.from(values);
     }
 
@@ -228,7 +229,7 @@ class ChartSeries<C, X, Y, P> extends ChartData<C, X, Y> {
   List<C> get categories => series.keys.toList().cast();
 
   Map<C, List<P>> get seriesSortedByCategory {
-    var l = series.entries.toList();
+    var l = series.entries.cast<MapEntry<Comparable,dynamic>>().toList();
     _sorteEntriesByKey(l);
     return Map.fromEntries(l).cast();
   }
@@ -292,7 +293,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
   ChartSeriesPair(Map<C, List<P>> series) : super([], series);
 
   @override
-  Iterable<X> get xAxisAllValues => UnmodifiableListView(
+  Iterable<X/*!*/> get xAxisAllValues => UnmodifiableListView(
       series.values.where((e) => e != null).expand((e) => e).map(getPairX));
 
   @override
@@ -304,7 +305,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
   }
 
   @override
-  Iterable<Y> get yAxisAllValues => UnmodifiableListView(
+  Iterable<Y/*!*/> get yAxisAllValues => UnmodifiableListView(
       series.values.where((e) => e != null).expand((e) => e).map(getPairY));
 
   /// Copies this series swapping the XY pairs.
@@ -498,7 +499,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
   }
 
   /// Returns [series] as pairs of [List].
-  Map<C, List<List<dynamic>>> seriesAsPairsOfList(
+  Map<C, List<List<dynamic>/*!*/>> seriesAsPairsOfList(
       {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true}) {
     sortSeriesByCategory ??= false;
     var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
@@ -891,7 +892,7 @@ class ChartSet<X, Y> extends ChartData<X, X, Y> {
   List<X> get categories => set.keys.toList().cast();
 
   Map<X, Y> get setSorted {
-    var l = set.entries.toList();
+    var l = set.entries.cast<MapEntry<Comparable,dynamic>>().toList();
     _sorteEntriesByKey(l);
     return Map.fromEntries(l).cast();
   }
@@ -968,11 +969,11 @@ abstract class ChartOptions {
   num yAxisMax;
 
   /// Returns X axis minimum and maximum values.
-  List<num> get xAxisMinMax =>
+  List<num/*!*/> get xAxisMinMax =>
       xAxisMin != null || xAxisMax != null ? [xAxisMin, xAxisMax] : null;
 
   /// Returns Y axis minimum and maximum values.
-  List<num> get yAxisMinMax =>
+  List<num/*!*/> get yAxisMinMax =>
       yAxisMin != null || yAxisMax != null ? [yAxisMin, yAxisMax] : null;
 
   /// The vertical lines of the chart.

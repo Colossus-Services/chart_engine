@@ -1,3 +1,12 @@
+## 1.1.11
+
+- New `RenderedChart` class, returned by every render.
+- `ChartOptions`: Added `onClick`.
+- swiss_knife: ^2.5.26
+- dom_tools: ^1.3.20
+- color_palette_generator: ^1.0.4
+- amdjs: ^1.0.7
+
 ## 1.1.10
 
 - `ChartOptions`:

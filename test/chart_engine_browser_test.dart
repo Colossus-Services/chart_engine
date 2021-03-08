@@ -5,7 +5,7 @@ import 'dart:html';
 import 'package:chart_engine/chart_engine_all.dart';
 import 'package:test/test.dart';
 
-void _sleep(int sleepMs) async {
+Future<void> _sleep(int sleepMs) async {
   if (sleepMs <= 0) return;
   print('SLEEP> ${sleepMs}ms');
   await Future.delayed(Duration(milliseconds: sleepMs), () {});

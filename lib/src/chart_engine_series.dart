@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:chart_engine/chart_engine.dart';
 import 'package:color_palette_generator/color_palette_generator.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
@@ -166,7 +167,7 @@ abstract class ChartData<C, X, Y> {
     if (_xAxisScale == null) {
       var values = xAxisAllValues;
       _xAxisScale = isNumList(values)
-          ? ScaleNum<num>.from(values.cast())
+          ? ScaleNum<num>.from(values.cast<num>())
           : Scale.from(values);
     }
 
@@ -180,7 +181,7 @@ abstract class ChartData<C, X, Y> {
     if (_yAxisScale == null) {
       var values = yAxisAllValues;
       _yAxisScale = isNumList(values)
-          ? ScaleNum<num>.from(values.cast())
+          ? ScaleNum<num>.from(values.cast<num>())
           : Scale.from(values);
     }
 
@@ -192,6 +193,13 @@ abstract class ChartData<C, X, Y> {
 
   /// ![isEmpty]
   bool get isNotEmpty => !isEmpty;
+
+  /// If [true] will populate [lastRenderedChart]
+  bool populateLastRenderedChart = false;
+
+  /// Last instance of [RenderedChart] for this [ChartData].
+  /// Only populated if [populateLastRenderedChart] is [true].
+  RenderedChart lastRenderedChart;
 }
 
 /// Data Series, usually for Line Charts.
@@ -517,7 +525,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
   }
 
   static dynamic _mapDateTimeToMillis(o) =>
-      o is DateTime ? o.millisecondsSinceEpoch : o;
+      o is DateTime ? o.millisecondsSinceEpoch : parseInt(o, 0);
 
   /// Returns [series] as pairs of [Map].
   Map<C, List<Map<String, dynamic>>> seriesAsPairsOfMap(
@@ -678,7 +686,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
       TypeMapper hMapper,
       TypeMapper lMapper,
       TypeMapper cMapper}) {
-    return listOfPairs
+    var list = listOfPairs
         .map((e) => {
               't': _getObjectValue(e, 0, 't', tMapper),
               'o': _getObjectValue(e, 1, 'o', oMapper),
@@ -686,8 +694,15 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X, Y, P> {
               'l': _getObjectValue(e, 3, 'l', lMapper),
               'c': _getObjectValue(e, 4, 'c', cMapper),
             })
-        .toList()
-        .cast();
+        .toList();
+
+    list.sort((a, b) {
+      var t1 = _mapDateTimeToMillis(a['t']);
+      var t2 = _mapDateTimeToMillis(b['t']);
+      return t1 < t2 ? -1 : (t1 == t2 ? 0 : 1);
+    });
+
+    return list.cast();
   }
 
   dynamic _getObjectValue(dynamic o, int index, String key, TypeMapper mapper) {
@@ -966,6 +981,9 @@ abstract class ChartOptions {
   /// The vertical lines default color.
   String verticalLinesDefaultColor = '#ff0000';
 
+  /// Callback for `click` events.
+  void Function(List activeItems, List xItems, List yItems) onClick;
+
   /// Copies this instance.
   ChartOptions copy();
 
@@ -982,6 +1000,8 @@ abstract class ChartOptions {
         verticalLines != null ? List<VerticalLine>.from(verticalLines) : null;
 
     copy.verticalLinesDefaultColor = verticalLinesDefaultColor;
+
+    copy.onClick = onClick;
   }
 }
 

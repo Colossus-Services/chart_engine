@@ -100,7 +100,7 @@ class ChartEngineApexCharts extends ChartEngine {
         var x = chartData.getXAxisValue(idx);
 
         var textColor =
-            HTMLColor.from(color).greyScale().red > 64 ? '#ffffff' : '#000000';
+            HTMLColor.from(color).greyScale().red > 100 ? '#000000' : '#ffffff';
 
         verticalLinesConfig.add({
           'x': (x is DateTime ? x.millisecondsSinceEpoch : x),
@@ -126,7 +126,7 @@ class ChartEngineApexCharts extends ChartEngine {
   }
 
   @override
-  bool renderLineChart(Element output, ChartSeries chartSeries) {
+  RenderedApexCharts renderLineChart(Element output, ChartSeries chartSeries) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
@@ -157,16 +157,17 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.options.straightLines
     ];
 
-    _jsWrapper.callMethod('renderLine', renderArgs);
+    var chartObject = _jsWrapper.callMethod('renderLine', renderArgs);
 
-    return true;
+    return RenderedApexCharts(this, 'line', chartObject, chartSeries);
   }
 
   Map<K, V> _reverseSeries<K, V>(Map<K, V> series) =>
       Map<K, V>.fromEntries(series.entries.toList().reversed);
 
   @override
-  bool renderTimeSeriesChart(Element output, ChartTimeSeries chartSeries) {
+  RenderedApexCharts renderTimeSeriesChart(
+      Element output, ChartTimeSeries chartSeries) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
@@ -196,22 +197,23 @@ class ChartEngineApexCharts extends ChartEngine {
       chartSeries.options.straightLines
     ];
 
-    _jsWrapper.callMethod('renderTimeSeries', renderArgs);
+    var chartObject = _jsWrapper.callMethod('renderTimeSeries', renderArgs);
 
-    return true;
+    return RenderedApexCharts(this, 'time-series', chartObject, chartSeries);
   }
 
   @override
-  bool renderBarChart(Element output, ChartSeries chartData) {
+  RenderedApexCharts renderBarChart(Element output, ChartSeries chartData) {
     return _renderBarChartImpl(false, output, chartData);
   }
 
   @override
-  bool renderHorizontalBarChart(Element output, ChartSeries chartData) {
+  RenderedApexCharts renderHorizontalBarChart(
+      Element output, ChartSeries chartData) {
     return _renderBarChartImpl(true, output, chartData);
   }
 
-  bool _renderBarChartImpl(
+  RenderedApexCharts _renderBarChartImpl(
       bool horizontal, Element output, ChartSeries chartSeries) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
@@ -239,13 +241,17 @@ class ChartEngineApexCharts extends ChartEngine {
       JsObject.jsify(colors),
     ];
 
-    _jsWrapper.callMethod('renderBar', renderArgs);
+    var chartObject = _jsWrapper.callMethod('renderBar', renderArgs);
 
-    return true;
+    return RenderedApexCharts(
+        this,
+        'bar-${horizontal ? 'horizontal' : 'vertical'}',
+        chartObject,
+        chartSeries);
   }
 
   @override
-  bool renderGaugeChart(Element output, ChartSet chartSet) {
+  RenderedApexCharts renderGaugeChart(Element output, ChartSet chartSet) {
     checkRenderParameters(output, chartSet);
     checkLoaded();
 
@@ -270,13 +276,14 @@ class ChartEngineApexCharts extends ChartEngine {
       JsObject.jsify(colors),
     ];
 
-    _jsWrapper.callMethod('renderGauge', renderArgs);
+    var chartObject = _jsWrapper.callMethod('renderGauge', renderArgs);
 
-    return true;
+    return RenderedApexCharts(this, 'gauge', chartObject, chartSet);
   }
 
   @override
-  bool renderScatterChart(Element output, ChartSeriesPair chartSeries) {
+  RenderedApexCharts renderScatterChart(
+      Element output, ChartSeriesPair chartSeries) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
@@ -308,13 +315,14 @@ class ChartEngineApexCharts extends ChartEngine {
       yMax
     ];
 
-    _jsWrapper.callMethod('renderScatter', renderArgs);
+    var chartObject = _jsWrapper.callMethod('renderScatter', renderArgs);
 
-    return true;
+    return RenderedApexCharts(this, 'scatter', chartObject, chartSeries);
   }
 
   @override
-  bool renderScatterTimedChart(Element output, ChartTimeSeries chartSeries) {
+  RenderedApexCharts renderScatterTimedChart(
+      Element output, ChartTimeSeries chartSeries) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
@@ -348,8 +356,28 @@ class ChartEngineApexCharts extends ChartEngine {
       true
     ];
 
-    _jsWrapper.callMethod('renderScatter', renderArgs);
+    var chartObject = _jsWrapper.callMethod('renderScatter', renderArgs);
 
-    return true;
+    return RenderedApexCharts(
+        this, 'scatter-time-series', chartObject, chartSeries);
+  }
+
+  @override
+  RenderedApexCharts renderFinancialChart(
+      Element output, ChartTimeSeries chartSeries,
+      {bool ohlc, bool candlestick}) {
+    return null;
+  }
+}
+
+class RenderedApexCharts extends RenderedChart {
+  RenderedApexCharts(
+      ChartEngine engine, String type, chartObject, ChartData chartData)
+      : super(engine, type, chartObject, chartData);
+
+  @override
+  void refresh() {
+    if (!hasChartJsObject) return;
+    chartJsObject.callMethod('render');
   }
 }

@@ -332,7 +332,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
       return pair[0];
     } else if (pair is Map) {
       var val = findKeyValue((pair as Map<String, dynamic>), xKeys, true);
-      return val;
+      return val as X?;
     } else if (pair is Pair) {
       return pair.a;
     } else if (pair is String) {
@@ -350,7 +350,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
       return pair[1];
     } else if (pair is Map) {
       var val = findKeyValue((pair as Map<String, dynamic>), yKeys, true);
-      return val;
+      return val as Y?;
     } else if (pair is Pair) {
       return pair.b;
     } else if (pair is String) {

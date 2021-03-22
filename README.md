@@ -1,6 +1,8 @@
 # chart_engine
 
 [![pub package](https://img.shields.io/pub/v/chart_engine.svg?logo=dart&logoColor=00b9fc)](https://pub.dartlang.org/packages/chart_engine)
+[![Null Safety](https://img.shields.io/badge/null-safety-brightgreen)](https://dart.dev/null-safety)
+
 [![CI](https://img.shields.io/github/workflow/status/Colossus-Services/chart_engine/Dart%20CI/master?logo=github-actions&logoColor=white)](https://github.com/Colossus-Services/chart_engine/actions)
 [![GitHub Tag](https://img.shields.io/github/v/tag/Colossus-Services/chart_engine?logo=git&logoColor=white)](https://github.com/Colossus-Services/chart_engine/releases)
 [![New Commits](https://img.shields.io/github/commits-since/Colossus-Services/chart_engine/latest?logo=git&logoColor=white)](https://github.com/Colossus-Services/chart_engine/network)

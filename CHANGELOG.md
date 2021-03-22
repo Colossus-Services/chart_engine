@@ -1,3 +1,10 @@
+## 2.0.1
+
+- Sound null safety compatibility.
+- swiss_knife: ^3.0.6
+- dom_tools: ^2.0.1
+- amdjs: ^2.0.1
+
 ## 2.0.0-nullsafety.2
 
 - Null Safety adjustments.

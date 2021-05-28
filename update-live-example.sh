@@ -9,8 +9,8 @@ git merge master -m "Merge master into gh-pages"
 rm -rf .dart_tool
 rm -rf example/www
 
-pub get
-pub global run webdev build -o example:example/www -r
+dart pub get
+dart pub global run webdev build -o example:example/www -r
 
 git add example/www/*
 
@@ -23,4 +23,4 @@ rm -rf doc
 
 git checkout master
 
-pub get
+dart pub get

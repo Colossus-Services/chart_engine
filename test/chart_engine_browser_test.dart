@@ -5,7 +5,7 @@ import 'dart:html';
 import 'package:chart_engine/chart_engine_all.dart';
 import 'package:test/test.dart';
 
-void _sleep(int sleepMs) async {
+Future<void> _sleep(int sleepMs) async {
   if (sleepMs <= 0) return;
   print('SLEEP> ${sleepMs}ms');
   await Future.delayed(Duration(milliseconds: sleepMs), () {});
@@ -22,11 +22,11 @@ void _createLineChart(ChartEngine charEngine) async {
     'C': [100, 130, 140]
   });
 
-  var output = document.body.append(DivElement()..style.width = '100%');
+  var output = document.body!.append(DivElement()..style.width = '100%');
 
   expect(output.nodes.isEmpty, isTrue);
 
-  charEngine.renderLineChart(output, series);
+  charEngine.renderLineChart(output as Element, series);
 
   await _sleep(500);
 

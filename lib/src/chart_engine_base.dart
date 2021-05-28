@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'dart:js';
 
 import 'package:color_palette_generator/color_palette_generator.dart';
 import 'package:swiss_knife/swiss_knife.dart';
@@ -11,7 +12,7 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
   /// `chart_engine` package version.
-  static final String VERSION = '1.1.10';
+  static final String VERSION = '2.0.2';
 
   String get version;
 
@@ -28,22 +29,14 @@ abstract class ChartEngine {
   /// Throws [StateError] if not loaded.
   void checkLoaded() {
     if (!isLoaded) {
-      throw StateError(
-          'Trying to render before load() engine[${runtimeType}]!');
+      throw StateError('Trying to render before load() engine[$runtimeType]!');
     }
   }
 
-  void checkRenderParameters(Element output, ChartData chartData) {
-    if (output == null) throw ArgumentError('Null output to render Chart');
-    if (chartData == null) {
-      throw ArgumentError('Null chartData to render Chart');
-    }
-  }
+  void checkRenderParameters(Element output, ChartData chartData) {}
 
   /// Renders at [output] a [chartData], selecting the correct render method.
-  bool render(Element output, ChartData chartData) {
-    if (chartData == null) return false;
-
+  RenderedChart? render(Element output, ChartData chartData) {
     _checkOutput(output);
 
     checkLoaded();
@@ -58,7 +51,7 @@ abstract class ChartEngine {
       return renderGaugeChart(output, chartData);
     }
 
-    return false;
+    return null;
   }
 
   void _checkOutput(Element output) {
@@ -69,39 +62,41 @@ abstract class ChartEngine {
     }
   }
 
-  ColorGenerator _colorGenerator = StandardColorGenerator();
-
   /// The color generator for [ChartData] that doesn't set its own colors.
-  ColorGenerator get colorGenerator => _colorGenerator;
+  ColorGenerator colorGenerator = StandardColorGenerator();
 
-  G getColorGeneratorAs<G extends ColorGenerator>() => _colorGenerator;
-
-  set colorGenerator(ColorGenerator value) {
-    _colorGenerator = value ?? StandardColorGenerator();
-  }
+  G getColorGeneratorAs<G extends ColorGenerator>() => colorGenerator as G;
 
   /// Renders a Line Chart:
-  bool renderLineChart(Element output, ChartSeries chartData);
+  RenderedChart renderLineChart(Element output, ChartSeries chartData);
 
   /// Renders a Time Series using Line Chart:
-  bool renderTimeSeriesChart(Element output, ChartTimeSeries chartData);
+  RenderedChart renderTimeSeriesChart(
+      Element output, ChartTimeSeries chartData);
 
   /// Renders a Bar Chart:
-  bool renderBarChart(Element output, ChartSeries chartData);
+  RenderedChart renderBarChart(Element output, ChartSeries chartData);
 
   /// Renders a Horizontal Bar Chart:
-  bool renderHorizontalBarChart(Element output, ChartSeries chartData);
+  RenderedChart renderHorizontalBarChart(Element output, ChartSeries chartData);
 
   /// Renders a Horizontal Bar Chart:
-  bool renderGaugeChart(Element output, ChartSet chartData);
+  RenderedChart renderGaugeChart(Element output, ChartSet chartData);
 
   /// Renders a Scatter Chart with X,Y pairs:
-  bool renderScatterChart(Element output, ChartSeriesPair chartSeries);
+  RenderedChart renderScatterChart(Element output, ChartSeriesPair chartSeries);
 
   /// Renders a Scatter Chart Timed with DateTime values in X axis:
-  bool renderScatterTimedChart(Element output, ChartTimeSeries chartSeries) {
-    return false;
-  }
+  RenderedChart renderScatterTimedChart(
+      Element output, ChartTimeSeries chartSeries);
+
+  /// Renders financial chart.
+  ///
+  /// [ohlc] Renders a OHLC chart (default).
+  /// [candlestick] Renders a Candlestick chart.
+  RenderedChart renderFinancialChart(
+      Element output, ChartTimeSeries chartSeries,
+      {bool? ohlc, bool? candlestick});
 
   Future _ensureLoaded() async {
     if (!isLoaded) {
@@ -110,54 +105,56 @@ abstract class ChartEngine {
   }
 
   /// Same as [render], but [async].
-  Future<bool> renderAsync(Element output, ChartData chartData) async {
+  Future<RenderedChart?> renderAsync(
+      Element output, ChartData chartData) async {
     await _ensureLoaded();
     return render(output, chartData);
   }
 
   /// Same as [renderLineChart], but [async].
-  Future<bool> renderLineChartAsync(
+  Future<RenderedChart> renderLineChartAsync(
       Element output, ChartSeries chartData) async {
     await _ensureLoaded();
     return renderLineChart(output, chartData);
   }
 
   /// Same as [renderTimeSeriesChart], but [async].
-  Future<bool> renderTimeSeriesChartAsync(
+  Future<RenderedChart> renderTimeSeriesChartAsync(
       Element output, ChartTimeSeries chartData) async {
     await _ensureLoaded();
     return renderTimeSeriesChart(output, chartData);
   }
 
   /// Same as [renderBarChart], but [async].
-  Future<bool> renderBarChartAsync(
+  Future<RenderedChart> renderBarChartAsync(
       Element output, ChartSeries chartData) async {
     await _ensureLoaded();
     return renderBarChart(output, chartData);
   }
 
   /// Same as [renderHorizontalBarChart], but [async].
-  Future<bool> renderHorizontalBarChartAsync(
+  Future<RenderedChart> renderHorizontalBarChartAsync(
       Element output, ChartSeries chartData) async {
     await _ensureLoaded();
     return renderHorizontalBarChart(output, chartData);
   }
 
   /// Same as [renderGaugeChart], but [async].
-  Future<bool> renderGaugeChartAsync(Element output, ChartSet chartData) async {
+  Future<RenderedChart> renderGaugeChartAsync(
+      Element output, ChartSet chartData) async {
     await _ensureLoaded();
     return renderGaugeChart(output, chartData);
   }
 
   /// Same as [renderScatterChart], but [async].
-  Future<bool> renderScatterChartAsync(
+  Future<RenderedChart> renderScatterChartAsync(
       Element output, ChartSeriesPair chartSeries) async {
     await _ensureLoaded();
     return renderScatterChart(output, chartSeries);
   }
 
   /// Same as [renderScatterTimedChart], but [async].
-  Future<bool> renderScatterTimedChartAsync(
+  Future<RenderedChart> renderScatterTimedChartAsync(
       Element output, ChartTimeSeries chartSeries) async {
     await _ensureLoaded();
     return renderScatterTimedChart(output, chartSeries);
@@ -169,12 +166,12 @@ class ChartEngineSwitchable extends ChartEngine {
   final Set<ChartEngine> engines;
 
   @override
-  String get version => mainEngine.version;
+  String get version => mainEngine!.version;
 
-  ChartEngine _mainEngine;
+  ChartEngine? _mainEngine;
 
   ChartEngineSwitchable(this.engines,
-      {Type mainEngineType, ChartEngine mainEngine}) {
+      {Type? mainEngineType, ChartEngine? mainEngine}) {
     if (engines.isEmpty) throw ArgumentError('Should have 1 or more engines');
 
     if (mainEngine != null) {
@@ -195,7 +192,7 @@ class ChartEngineSwitchable extends ChartEngine {
   }
 
   /// The current main ChartEngine/
-  ChartEngine get mainEngine => _mainEngine;
+  ChartEngine? get mainEngine => _mainEngine;
 
   /// Sets the main ChartEngine to use, selected by [engineType].
   ChartEngine setMainEngineByType(Type engineType) {
@@ -237,7 +234,7 @@ class ChartEngineSwitchable extends ChartEngine {
   EventStream<LoadController> get onLoad => EventStream();
 
   /// Renders using engine of [engineType].
-  bool renderWithEngineType(
+  RenderedChart? renderWithEngineType(
       Type engineType, Element output, ChartData chartData) {
     var prevMainEngine = _mainEngine;
     setMainEngineByType(engineType);
@@ -247,7 +244,7 @@ class ChartEngineSwitchable extends ChartEngine {
   }
 
   /// Renders using engine of type [T].
-  bool renderOfEngineType<T>(Element output, ChartData chartData) {
+  RenderedChart? renderOfEngineType<T>(Element output, ChartData chartData) {
     var prevMainEngine = _mainEngine;
     setMainEngineOfType<T>();
     var ok = render(output, chartData);
@@ -256,32 +253,86 @@ class ChartEngineSwitchable extends ChartEngine {
   }
 
   @override
-  bool renderLineChart(Element output, ChartSeries chartData) {
-    return mainEngine.renderLineChart(output, chartData);
+  RenderedChart renderLineChart(Element output, ChartSeries chartData) {
+    return mainEngine!.renderLineChart(output, chartData);
   }
 
   @override
-  bool renderTimeSeriesChart(Element output, ChartSeries chartData) {
-    return mainEngine.renderTimeSeriesChart(output, chartData);
+  RenderedChart renderTimeSeriesChart(Element output, ChartSeries chartData) {
+    return mainEngine!.renderTimeSeriesChart(
+        output, chartData as ChartTimeSeries<dynamic, dynamic>);
   }
 
   @override
-  bool renderBarChart(Element output, ChartSeries chartData) {
-    return mainEngine.renderBarChart(output, chartData);
+  RenderedChart renderBarChart(Element output, ChartSeries chartData) {
+    return mainEngine!.renderBarChart(output, chartData);
   }
 
   @override
-  bool renderHorizontalBarChart(Element output, ChartSeries chartData) {
-    return mainEngine.renderHorizontalBarChart(output, chartData);
+  RenderedChart renderHorizontalBarChart(
+      Element output, ChartSeries chartData) {
+    return mainEngine!.renderHorizontalBarChart(output, chartData);
   }
 
   @override
-  bool renderGaugeChart(Element output, ChartSet chartData) {
-    return mainEngine.renderGaugeChart(output, chartData);
+  RenderedChart renderGaugeChart(Element output, ChartSet chartData) {
+    return mainEngine!.renderGaugeChart(output, chartData);
   }
 
   @override
-  bool renderScatterChart(Element output, ChartSeriesPair chartSeries) {
-    return mainEngine.renderScatterChart(output, chartSeries);
+  RenderedChart renderScatterChart(
+      Element output, ChartSeriesPair chartSeries) {
+    return mainEngine!.renderScatterChart(output, chartSeries);
+  }
+
+  @override
+  RenderedChart renderScatterTimedChart(
+      Element output, ChartTimeSeries chartSeries) {
+    return mainEngine!.renderScatterTimedChart(output, chartSeries);
+  }
+
+  @override
+  RenderedChart renderFinancialChart(
+      Element output, ChartTimeSeries chartSeries,
+      {bool? ohlc, bool? candlestick}) {
+    return mainEngine!.renderFinancialChart(output, chartSeries,
+        ohlc: ohlc, candlestick: candlestick);
+  }
+}
+
+/// Represents a rendered chart.
+abstract class RenderedChart {
+  final ChartEngine engine;
+  final String type;
+  final dynamic chartObject;
+  final ChartData chartData;
+
+  late InteractionCompleter _interactionCompleter;
+
+  RenderedChart(this.engine, this.type, this.chartObject, this.chartData) {
+    _interactionCompleter = InteractionCompleter('RenderedChart:refreshDelayed',
+        triggerDelay: Duration(milliseconds: 200),
+        functionToTrigger: () => refresh());
+
+    if (chartData.populateLastRenderedChart) {
+      chartData.lastRenderedChart = this;
+    }
+  }
+
+  JsObject? get chartJsObject => chartObject is JsObject ? chartObject : null;
+
+  bool get hasChartJsObject => chartJsObject != null;
+
+  @override
+  String toString() {
+    return '$runtimeType{engine: $engine, type: $type, chartObject: $chartObject, chartData: $chartData}';
+  }
+
+  /// Refreshes the rendered chart.
+  void refresh();
+
+  /// Refreshes the rendered chart with a delay (consecutive calls are ignored).
+  void refreshDelayed() {
+    _interactionCompleter.interact();
   }
 }

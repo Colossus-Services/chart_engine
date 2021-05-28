@@ -2,27 +2,21 @@ import 'package:intl/intl.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
 abstract class DateAdapter {
-  static bool _VERBOSE = false;
-
-  static bool get VERBOSE => _VERBOSE;
-
-  static set VERBOSE(bool value) {
-    _VERBOSE = value ?? false;
-  }
+  static bool VERBOSE = false;
 
   static void _log(String method, String msg) {
-    if (!_VERBOSE) return;
+    if (!VERBOSE) return;
     print('DateAdapter.$method> $msg');
   }
 
   static int create(dynamic date) {
-    var dateTime = parseDateTime(date);
+    var dateTime = parseDateTime(date)!;
     _log('create', '$date >> $dateTime');
     return dateTime.millisecondsSinceEpoch;
   }
 
   static int parse(dynamic date, dynamic format) {
-    var dateTime = parseDateTime(date);
+    var dateTime = parseDateTime(date)!;
     _log('parse', '$date ; $format >> $dateTime');
     return dateTime.millisecondsSinceEpoch;
   }
@@ -36,13 +30,13 @@ abstract class DateAdapter {
         if (m[1] != null) {
           return "'${m[1]}'";
         } else if (m[2] != null) {
-          return m[2].toLowerCase();
+          return m[2]!.toLowerCase();
         } else if (m[3] != null) {
           return 'dd';
         } else if (m[4] != null) {
           return '';
         } else {
-          return m[0];
+          return m[0]!;
         }
       });
     }
@@ -51,7 +45,7 @@ abstract class DateAdapter {
         ? DateFormat(formatStr)
         : DateFormat.yMd().add_jm();
 
-    var dateTime = parseDateTime(time);
+    var dateTime = parseDateTime(time)!;
 
     var formatted = dateFormat.format(dateTime);
     _log('format', '$time ; $format >> $formatted');
@@ -59,16 +53,16 @@ abstract class DateAdapter {
     return formatted;
   }
 
-  static int startOf(dynamic time, dynamic unit, dynamic weekday) {
+  static int? startOf(dynamic time, dynamic unit, dynamic weekday) {
     var unitStr = '$unit'.toLowerCase().trim();
     var dateTime = parseDateTime(time);
 
-    DateTime start;
+    DateTime? start;
 
     if (unitStr == 'isoweek') {
-      DateTimeWeekDay weekFirstDay;
+      DateTimeWeekDay? weekFirstDay;
       if (weekday is num) {
-        weekFirstDay = getDateTimeWeekDay(weekday);
+        weekFirstDay = getDateTimeWeekDay(weekday.toInt());
       } else if (weekday is String) {
         weekFirstDay = getDateTimeWeekDayByName(weekday);
       }
@@ -76,18 +70,18 @@ abstract class DateAdapter {
       var dateTimeRange =
           getDateTimeRange(DateRangeType.THIS_WEEK, dateTime, weekFirstDay);
 
-      start = dateTimeRange != null ? dateTimeRange.a : null;
+      start = dateTimeRange.a;
     } else {
-      start = getDateTimeStartOf(dateTime, unitStr);
+      start = getDateTimeStartOf(dateTime!, unitStr);
     }
 
     _log('startOf', '$time ; $unit ; $weekday >> $start');
     return start != null ? start.millisecondsSinceEpoch : null;
   }
 
-  static int endOf(dynamic time, dynamic unit) {
+  static int? endOf(dynamic time, dynamic unit) {
     var unitStr = '$unit'.toLowerCase().trim();
-    var dateTime = parseDateTime(time);
+    var dateTime = parseDateTime(time)!;
 
     var end = getDateTimeEndOf(dateTime, unitStr);
 
@@ -97,16 +91,16 @@ abstract class DateAdapter {
 
   static int add(dynamic time, dynamic amount, dynamic unit) {
     var dateTime = parseDateTime(time);
-    var duration = parseDuration('$unit', parseInt(amount));
-    var added = duration != null ? dateTime.add(duration) : dateTime;
+    var duration = parseDuration('$unit', parseInt(amount)!);
+    var added = duration != null ? dateTime!.add(duration) : dateTime!;
 
     _log('endOf', '$time ; $amount ; $unit >> $added');
     return added.millisecondsSinceEpoch;
   }
 
   static double diff(dynamic max, dynamic min, dynamic unit) {
-    var dateTime1 = parseDateTime(max);
-    var dateTime2 = parseDateTime(min);
+    var dateTime1 = parseDateTime(max)!;
+    var dateTime2 = parseDateTime(min)!;
 
     var diff = dateTime1.difference(dateTime2);
 

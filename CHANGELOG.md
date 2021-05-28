@@ -1,3 +1,45 @@
+## 2.0.2
+
+- Upgrade Chart.js to `v2.9.4`.
+- Upgrade ApexCharts to `v3.26.0`.
+- sdk: '>=2.13.0 <3.0.0':
+  - Dart `2.13.0`+ is needed to use `build_runner` and
+    `build_web_compilers` with Null Safety.
+
+## 2.0.1
+
+- Sound null safety compatibility.
+- swiss_knife: ^3.0.6
+- dom_tools: ^2.0.1
+- amdjs: ^2.0.1
+
+## 2.0.0-nullsafety.2
+
+- Null Safety adjustments.
+- swiss_knife: ^3.0.5
+
+## 2.0.0-nullsafety.1
+
+- Dart 2.12.0:
+  - Sound null safety compatibility.
+  - Update CI dart commands.
+  - sdk: '>=2.12.0 <3.0.0'
+- swiss_knife: ^3.0.1
+- dom_tools: ^2.0.0-nullsafety.1
+- color_palette_generator: ^2.0.0
+- amdjs: ^2.0.0-nullsafety.1
+- intl: ^0.17.0
+- collection: ^1.15.0-nullsafety.4
+
+## 1.1.11
+
+- New `RenderedChart` class, returned by every render.
+- `ChartOptions`: Added `onClick`.
+- swiss_knife: ^2.5.26
+- dom_tools: ^1.3.20
+- color_palette_generator: ^1.0.4
+- amdjs: ^1.0.7
+
 ## 1.1.10
 
 - `ChartOptions`:

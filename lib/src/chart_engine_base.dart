@@ -12,7 +12,7 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
   /// `chart_engine` package version.
-  static final String VERSION = '2.0.1';
+  static final String VERSION = '2.0.2';
 
   String get version;
 

@@ -8,11 +8,11 @@ import 'package:swiss_knife/swiss_knife.dart';
 import 'chart_engine_base.dart';
 import 'chart_engine_series.dart';
 
-/// ApexCharts (v3.20.2) Engine.
+/// ApexCharts (v3.26.0) Engine.
 ///
 /// Automatically loads `apexcharts.js` using `AMDJS`.
 class ChartEngineApexCharts extends ChartEngine {
-  static final String VERSION = '3.20.2';
+  static final String VERSION = '3.26.0';
 
   static final String PATH = CHART_ENGINE_PACKAGE_PATH + '/apexcharts-$VERSION';
 

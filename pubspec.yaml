@@ -1,13 +1,13 @@
 name: chart_engine
 description: Chart generator with interchangeable chart engines, like ChartJS and ApexCharts.
-version: 2.0.1
+version: 2.0.2
 homepage: https://github.com/Colossus-Services/chart_engine
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.13.0 <3.0.0'
 
 dependencies:
-  swiss_knife: ^3.0.6
+  swiss_knife: ^3.0.7
   dom_tools: ^2.0.1
   color_palette_generator: ^2.0.0
   amdjs: ^2.0.1
@@ -18,6 +18,8 @@ dev_dependencies:
   pedantic: ^1.11.0
   test: ^1.16.5
   path: ^1.8.0
+  build_runner: ^2.0.4
+  build_web_compilers: ^3.0.0
 
 #dependency_overrides:
 #  swiss_knife:

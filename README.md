@@ -17,8 +17,8 @@ Chart generator with interchangeable chart engines, like ChartJS and ApexCharts.
 
 ## Engines
 
-- [ApexCharts (v3.20.2)](https://apexcharts.com/).
-- [ChartJS (v2.9.3)](https://www.chartjs.org/).
+- [ApexCharts (v3.26.0)](https://apexcharts.com/).
+- [ChartJS (v2.9.4)](https://www.chartjs.org/).
 
 NOTE: You don't need to read any specific documentation of any engine to use `chart_engine`,
 since any Chart configuration needed to generate your Chart will be

@@ -9,11 +9,11 @@ import 'chart_engine_base.dart';
 import 'chart_engine_date.dart';
 import 'chart_engine_series.dart';
 
-/// ChartJS (v2.9.3) Engine.
+/// ChartJS (v2.9.4) Engine.
 ///
 /// Automatically loads `chart.js` using `AMDJS`.
 class ChartEngineChartJS extends ChartEngine {
-  static final String VERSION = '2.9.3';
+  static final String VERSION = '2.9.4';
 
   static final String PATH = CHART_ENGINE_PACKAGE_PATH + '/chartjs-$VERSION';
 

@@ -1,3 +1,11 @@
+## 2.0.2
+
+- Upgrade Chart.js to `v2.9.4`.
+- Upgrade ApexCharts to `v3.26.0`.
+- sdk: '>=2.13.0 <3.0.0':
+  - Dart `2.13.0`+ is needed to use `build_runner` and
+    `build_web_compilers` with Null Safety.
+
 ## 2.0.1
 
 - Sound null safety compatibility.

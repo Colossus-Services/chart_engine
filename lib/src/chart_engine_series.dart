@@ -1,8 +1,9 @@
 import 'dart:collection';
 
-import 'package:chart_engine/chart_engine.dart';
 import 'package:color_palette_generator/color_palette_generator.dart';
 import 'package:swiss_knife/swiss_knife.dart';
+
+import 'chart_engine_base.dart';
 
 void _sorteEntriesByKey<K extends Comparable, V>(List<MapEntry<K, V>> entries) {
   entries.sort((a, b) {
@@ -466,10 +467,10 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
     return pair.swapAB();
   }
 
-  static final RegExp DEFAULT_STRING_PAIR_DELIMITER_PATTERN =
+  static final RegExp _defaultStringPairDelimiterPattern =
       RegExp(r'\s*[,;:\|]\s*');
 
-  RegExp stringPairDelimiterPattern = DEFAULT_STRING_PAIR_DELIMITER_PATTERN;
+  RegExp stringPairDelimiterPattern = _defaultStringPairDelimiterPattern;
 
   /// Swaps a Pair when is a [String].
   String swapPairAsString(String pair) {
@@ -732,8 +733,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
   R? toPair<R>(dynamic pair, PairMapper<R, X?, Y?> typeWrapper) {
     if (pair == null) return null;
 
-    var a;
-    var b;
+    dynamic a, b;
 
     if (pair is List) {
       a = pair[0];
@@ -802,7 +802,7 @@ class ChartTimeSeries<C, Y> extends ChartSeriesPair<C, DateTime, Y, dynamic> {
         }
 
         DateTime? date;
-        var val;
+        dynamic val;
 
         if (x is DateTime) {
           if (!modified) continue;

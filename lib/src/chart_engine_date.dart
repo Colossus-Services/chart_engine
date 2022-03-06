@@ -2,10 +2,10 @@ import 'package:intl/intl.dart';
 import 'package:swiss_knife/swiss_knife.dart';
 
 abstract class DateAdapter {
-  static bool VERBOSE = false;
+  static bool verbose = false;
 
   static void _log(String method, String msg) {
-    if (!VERBOSE) return;
+    if (!verbose) return;
     print('DateAdapter.$method> $msg');
   }
 
@@ -76,7 +76,7 @@ abstract class DateAdapter {
     }
 
     _log('startOf', '$time ; $unit ; $weekday >> $start');
-    return start != null ? start.millisecondsSinceEpoch : null;
+    return start?.millisecondsSinceEpoch;
   }
 
   static int? endOf(dynamic time, dynamic unit) {
@@ -86,7 +86,7 @@ abstract class DateAdapter {
     var end = getDateTimeEndOf(dateTime, unitStr);
 
     _log('endOf', '$time ; $unit >> $end');
-    return end != null ? end.millisecondsSinceEpoch : null;
+    return end?.millisecondsSinceEpoch;
   }
 
   static int add(dynamic time, dynamic amount, dynamic unit) {

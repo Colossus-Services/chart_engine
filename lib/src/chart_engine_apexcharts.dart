@@ -12,14 +12,19 @@ import 'chart_engine_series.dart';
 ///
 /// Automatically loads `apexcharts.js` using `AMDJS`.
 class ChartEngineApexCharts extends ChartEngine {
+  // ignore: non_constant_identifier_names
   static final String VERSION = '3.26.0';
 
+  // ignore: non_constant_identifier_names
   static final String PATH = CHART_ENGINE_PACKAGE_PATH + '/apexcharts-$VERSION';
 
+  // ignore: non_constant_identifier_names
   static final String JS_PATH = '$PATH/apexcharts.amd.js';
 
+  // ignore: non_constant_identifier_names
   static final String ENGINE_WRAPPER_PATH = '$PATH/chart_engine_wrapper.js';
 
+  // ignore: non_constant_identifier_names
   static final String JS_WRAPPER_GLOBAL_NAME =
       '__ChartEngine_Wrapper_ApexCharts__';
 
@@ -123,40 +128,40 @@ class ChartEngineApexCharts extends ChartEngine {
   }
 
   @override
-  RenderedApexCharts renderLineChart(Element output, ChartSeries chartSeries) {
-    checkRenderParameters(output, chartSeries);
+  RenderedApexCharts renderLineChart(Element output, ChartSeries chartData) {
+    checkRenderParameters(output, chartData);
     checkLoaded();
 
     var div = asDivElement(output);
 
-    var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSortedByCategory
-        : chartSeries.series;
+    var series = chartData.options.sortCategories
+        ? chartData.seriesSortedByCategory
+        : chartData.series;
 
     series = _reverseSeries(series);
 
-    chartSeries.ensureColors(colorGenerator);
+    chartData.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors!;
+    var colors = chartData.colors!;
 
     var renderArgs = [
       div,
-      chartSeries.title,
-      chartSeries.xTitle,
-      chartSeries.yTitle,
-      JsObject.jsify(chartSeries.xLabels),
-      _xAxisMinMax(chartSeries),
-      _yAxisMinMax(chartSeries),
+      chartData.title,
+      chartData.xTitle,
+      chartData.yTitle,
+      JsObject.jsify(chartData.xLabels),
+      _xAxisMinMax(chartData),
+      _yAxisMinMax(chartData),
       JsObject.jsify(series),
-      _verticalLines(chartSeries),
+      _verticalLines(chartData),
       JsObject.jsify(colors),
-      chartSeries.options.fillLines,
-      chartSeries.options.straightLines
+      chartData.options.fillLines,
+      chartData.options.straightLines
     ];
 
     var chartObject = _jsWrapper!.callMethod('renderLine', renderArgs);
 
-    return RenderedApexCharts(this, 'line', chartObject, chartSeries);
+    return RenderedApexCharts(this, 'line', chartObject, chartData);
   }
 
   Map<K, V> _reverseSeries<K, V>(Map<K, V> series) =>
@@ -164,39 +169,39 @@ class ChartEngineApexCharts extends ChartEngine {
 
   @override
   RenderedApexCharts renderTimeSeriesChart(
-      Element output, ChartTimeSeries chartSeries) {
-    checkRenderParameters(output, chartSeries);
+      Element output, ChartTimeSeries chartData) {
+    checkRenderParameters(output, chartData);
     checkLoaded();
 
     var div = asDivElement(output);
 
-    var timeSeries = chartSeries.seriesAsPairsOfList(
-        sortSeriesByCategory: chartSeries.options.sortCategories,
+    var timeSeries = chartData.seriesAsPairsOfList(
+        sortSeriesByCategory: chartData.options.sortCategories,
         mapDateTimeToMillis: true);
 
     timeSeries = _reverseSeries(timeSeries);
 
-    chartSeries.ensureColors(colorGenerator);
+    chartData.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors!;
+    var colors = chartData.colors!;
 
     var renderArgs = [
       div,
-      chartSeries.title,
-      chartSeries.xTitle,
-      chartSeries.yTitle,
-      _xAxisMinMax(chartSeries),
-      _yAxisMinMax(chartSeries),
+      chartData.title,
+      chartData.xTitle,
+      chartData.yTitle,
+      _xAxisMinMax(chartData),
+      _yAxisMinMax(chartData),
       JsObject.jsify(timeSeries),
-      _verticalLines(chartSeries),
+      _verticalLines(chartData),
       JsObject.jsify(colors),
-      chartSeries.options.fillLines,
-      chartSeries.options.straightLines
+      chartData.options.fillLines,
+      chartData.options.straightLines
     ];
 
     var chartObject = _jsWrapper!.callMethod('renderTimeSeries', renderArgs);
 
-    return RenderedApexCharts(this, 'time-series', chartObject, chartSeries);
+    return RenderedApexCharts(this, 'time-series', chartObject, chartData);
   }
 
   @override
@@ -248,34 +253,34 @@ class ChartEngineApexCharts extends ChartEngine {
   }
 
   @override
-  RenderedApexCharts renderGaugeChart(Element output, ChartSet chartSet) {
-    checkRenderParameters(output, chartSet);
+  RenderedApexCharts renderGaugeChart(Element output, ChartSet chartData) {
+    checkRenderParameters(output, chartData);
     checkLoaded();
 
     var div = asDivElement(output);
 
     var set =
-        chartSet.options.sortCategories ? chartSet.setSorted : chartSet.set;
+        chartData.options.sortCategories ? chartData.setSorted : chartData.set;
 
-    chartSet.ensureColors(colorGenerator);
+    chartData.ensureColors(colorGenerator);
 
-    var colors = chartSet.colors!;
+    var colors = chartData.colors!;
 
     var renderArgs = [
       div,
-      chartSet.title,
-      chartSet.xTitle,
-      chartSet.yTitle,
-      JsObject.jsify(chartSet.xLabels),
-      _xAxisMinMax(chartSet),
-      _yAxisMinMax(chartSet),
+      chartData.title,
+      chartData.xTitle,
+      chartData.yTitle,
+      JsObject.jsify(chartData.xLabels),
+      _xAxisMinMax(chartData),
+      _yAxisMinMax(chartData),
       JsObject.jsify(set),
       JsObject.jsify(colors),
     ];
 
     var chartObject = _jsWrapper!.callMethod('renderGauge', renderArgs);
 
-    return RenderedApexCharts(this, 'gauge', chartObject, chartSet);
+    return RenderedApexCharts(this, 'gauge', chartObject, chartData);
   }
 
   @override

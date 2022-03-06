@@ -18,7 +18,7 @@ void main() async {
 
   await createFinancialChart();
 
-  querySelector('#chart-version')!.text = '${ChartEngine.VERSION}';
+  querySelector('#chart-version')!.text = ChartEngine.VERSION;
 }
 
 Future createLineChart() async {

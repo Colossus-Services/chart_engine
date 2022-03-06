@@ -13,22 +13,30 @@ import 'chart_engine_series.dart';
 ///
 /// Automatically loads `chart.js` using `AMDJS`.
 class ChartEngineChartJS extends ChartEngine {
+  // ignore: non_constant_identifier_names
   static final String VERSION = '2.9.4';
 
+  // ignore: non_constant_identifier_names
   static final String PATH = CHART_ENGINE_PACKAGE_PATH + '/chartjs-$VERSION';
 
+  // ignore: non_constant_identifier_names
   static final String JS_PATH = '$PATH/Chart.js';
 
+  // ignore: non_constant_identifier_names
   static final String JS_PATH_MIN = '$PATH/Chart.min.js';
 
+  // ignore: non_constant_identifier_names
   static final String FINANCIAL_JS_PATH =
       '$PATH/financial/chartjs-chart-financial.js';
 
+  // ignore: non_constant_identifier_names
   static final String FINANCIAL_JS_PATH_MIN =
       '$PATH/financial/chartjs-chart-financial.min.js';
 
+  // ignore: non_constant_identifier_names
   static final String ENGINE_WRAPPER_PATH = '$PATH/chart_engine_wrapper.js';
 
+  // ignore: non_constant_identifier_names
   static final String JS_WRAPPER_GLOBAL_NAME =
       '__ChartEngine_Wrapper_ChartJS__';
 
@@ -186,88 +194,88 @@ class ChartEngineChartJS extends ChartEngine {
   }
 
   @override
-  RenderedChartJS renderLineChart(Element output, ChartSeries chartSeries) {
-    checkRenderParameters(output, chartSeries);
+  RenderedChartJS renderLineChart(Element output, ChartSeries chartData) {
+    checkRenderParameters(output, chartData);
     checkLoaded();
 
     var canvas = asCanvasElement(output);
 
-    var series = chartSeries.options.sortCategories
-        ? chartSeries.seriesSortedByCategory
-        : chartSeries.series;
+    var series = chartData.options.sortCategories
+        ? chartData.seriesSortedByCategory
+        : chartData.series;
 
-    chartSeries.ensureColors(colorGenerator);
+    chartData.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors!;
+    var colors = chartData.colors!;
 
     var renderArgs = [
       canvas,
-      chartSeries.title,
-      chartSeries.xTitle,
-      chartSeries.yTitle,
-      JsObject.jsify(chartSeries.xLabels),
-      _xAxisMinMax(chartSeries),
-      _yAxisMinMax(chartSeries),
+      chartData.title,
+      chartData.xTitle,
+      chartData.yTitle,
+      JsObject.jsify(chartData.xLabels),
+      _xAxisMinMax(chartData),
+      _yAxisMinMax(chartData),
       JsObject.jsify(series),
-      _verticalLinesConfig(chartSeries),
+      _verticalLinesConfig(chartData),
       JsObject.jsify(colors),
-      chartSeries.options.fillLines,
-      chartSeries.options.straightLines,
-      chartSeries.options.steppedLines,
-      _onClick(chartSeries)
+      chartData.options.fillLines,
+      chartData.options.straightLines,
+      chartData.options.steppedLines,
+      _onClick(chartData)
     ];
 
     var chartObject = _jsWrapper!.callMethod('renderLine', renderArgs);
 
-    return RenderedChartJS(this, 'line', chartObject, chartSeries);
+    return RenderedChartJS(this, 'line', chartObject, chartData);
   }
 
   @override
   RenderedChartJS renderTimeSeriesChart(
-      Element output, ChartTimeSeries chartSeries) {
-    checkRenderParameters(output, chartSeries);
+      Element output, ChartTimeSeries chartData) {
+    checkRenderParameters(output, chartData);
     checkLoaded();
 
     var canvas = asCanvasElement(output);
 
-    var timeSeries = chartSeries.seriesAsPairsOfMap(
-        sortSeriesByCategory: chartSeries.options.sortCategories,
+    var timeSeries = chartData.seriesAsPairsOfMap(
+        sortSeriesByCategory: chartData.options.sortCategories,
         mapDateTimeToMillis: true);
 
-    chartSeries.ensureColors(colorGenerator);
+    chartData.ensureColors(colorGenerator);
 
-    var colors = chartSeries.colors!;
+    var colors = chartData.colors!;
 
     var renderArgs = [
       canvas,
-      chartSeries.title,
-      chartSeries.xTitle,
-      chartSeries.yTitle,
-      _xAxisMinMax(chartSeries),
-      _yAxisMinMax(chartSeries),
+      chartData.title,
+      chartData.xTitle,
+      chartData.yTitle,
+      _xAxisMinMax(chartData),
+      _yAxisMinMax(chartData),
       JsObject.jsify(timeSeries),
-      _verticalLinesConfig(chartSeries),
+      _verticalLinesConfig(chartData),
       JsObject.jsify(colors),
-      chartSeries.options.fillLines,
-      chartSeries.options.straightLines,
-      chartSeries.options.steppedLines,
-      _onClick(chartSeries)
+      chartData.options.fillLines,
+      chartData.options.straightLines,
+      chartData.options.steppedLines,
+      _onClick(chartData)
     ];
 
     var chartObject = _jsWrapper!.callMethod('renderTimeSeries', renderArgs);
 
-    return RenderedChartJS(this, 'time-series', chartObject, chartSeries);
+    return RenderedChartJS(this, 'time-series', chartObject, chartData);
   }
 
   @override
-  RenderedChartJS renderBarChart(Element output, ChartSeries chartSeries) {
-    return _renderBarChartImpl(false, output, chartSeries);
+  RenderedChartJS renderBarChart(Element output, ChartSeries chartData) {
+    return _renderBarChartImpl(false, output, chartData);
   }
 
   @override
   RenderedChartJS renderHorizontalBarChart(
-      Element output, ChartSeries chartSeries) {
-    return _renderBarChartImpl(true, output, chartSeries);
+      Element output, ChartSeries chartData) {
+    return _renderBarChartImpl(true, output, chartData);
   }
 
   RenderedChartJS _renderBarChartImpl(
@@ -309,35 +317,35 @@ class ChartEngineChartJS extends ChartEngine {
   }
 
   @override
-  RenderedChartJS renderGaugeChart(Element output, ChartSet chartSet) {
-    checkRenderParameters(output, chartSet);
+  RenderedChartJS renderGaugeChart(Element output, ChartSet chartData) {
+    checkRenderParameters(output, chartData);
     checkLoaded();
 
     var canvas = asCanvasElement(output);
 
     var set =
-        chartSet.options.sortCategories ? chartSet.setSorted : chartSet.set;
+        chartData.options.sortCategories ? chartData.setSorted : chartData.set;
 
-    chartSet.ensureColors(colorGenerator);
+    chartData.ensureColors(colorGenerator);
 
-    var colors = chartSet.colors!;
-    var disabledColors = chartSet.disabledColors!;
+    var colors = chartData.colors!;
+    var disabledColors = chartData.disabledColors!;
 
     var renderArgs = [
       canvas,
-      chartSet.title,
-      chartSet.xTitle,
-      chartSet.yTitle,
-      JsObject.jsify(chartSet.xLabels),
+      chartData.title,
+      chartData.xTitle,
+      chartData.yTitle,
+      JsObject.jsify(chartData.xLabels),
       JsObject.jsify(set),
       JsObject.jsify(colors),
       JsObject.jsify(disabledColors),
-      _onClick(chartSet)
+      _onClick(chartData)
     ];
 
     var chartObject = _jsWrapper!.callMethod('renderGauge', renderArgs);
 
-    return RenderedChartJS(this, 'gauge', chartObject, chartSet);
+    return RenderedChartJS(this, 'gauge', chartObject, chartData);
   }
 
   @override

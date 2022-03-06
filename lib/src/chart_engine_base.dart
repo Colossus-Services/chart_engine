@@ -7,12 +7,14 @@ import 'package:swiss_knife/swiss_knife.dart';
 import 'chart_engine_series.dart';
 
 /// The browser path for package resources.
+// ignore: non_constant_identifier_names
 final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 
 /// Abstract Chart Engine definition.
 abstract class ChartEngine {
   /// `chart_engine` package version.
-  static final String VERSION = '2.0.2';
+  // ignore: non_constant_identifier_names
+  static final String VERSION = '2.0.3';
 
   String get version;
 

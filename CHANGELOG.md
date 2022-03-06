@@ -1,3 +1,14 @@
+## 2.0.3
+
+- Dart `2.16`:
+  - Organize imports.
+  - Fix new lints (breaks some enum names).
+- sdk: '>=2.13.0 <3.0.0'
+- swiss_knife: ^3.0.8
+- dom_tools: ^2.1.0
+- amdjs: ^2.0.2
+- lints: ^1.0.1
+
 ## 2.0.2
 
 - Upgrade Chart.js to `v2.9.4`.

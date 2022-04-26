@@ -68,7 +68,7 @@ abstract class DateAdapter {
       }
 
       var dateTimeRange =
-          getDateTimeRange(DateRangeType.THIS_WEEK, dateTime, weekFirstDay);
+          getDateTimeRange(DateRangeType.thisWeek, dateTime, weekFirstDay);
 
       start = dateTimeRange.a;
     } else {

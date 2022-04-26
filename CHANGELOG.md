@@ -1,3 +1,10 @@
+## 2.0.4
+
+- Improved GitHub CI.
+- swiss_knife: ^3.1.1
+- dom_tools: ^2.1.1
+- amdjs: ^2.0.3
+
 ## 2.0.3
 
 - Dart `2.16`:

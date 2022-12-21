@@ -17,7 +17,7 @@ class ChartEngineChartJS extends ChartEngine {
   static final String VERSION = '2.9.4';
 
   // ignore: non_constant_identifier_names
-  static final String PATH = CHART_ENGINE_PACKAGE_PATH + '/chartjs-$VERSION';
+  static final String PATH = '$CHART_ENGINE_PACKAGE_PATH/chartjs-$VERSION';
 
   // ignore: non_constant_identifier_names
   static final String JS_PATH = '$PATH/Chart.js';

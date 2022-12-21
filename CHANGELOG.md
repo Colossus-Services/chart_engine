@@ -1,3 +1,16 @@
+## 2.0.5
+
+- swiss_knife: ^3.1.3
+- dom_tools: ^2.1.9
+- intl: ^0.18.0
+- lints: ^2.0.1
+- test: ^1.22.1
+- path: ^1.8.3
+- dependency_validator: ^3.2.2
+- build_runner: ^2.3.3
+- build_web_compilers: ^3.2.7
+- collection: ^1.16.0
+
 ## 2.0.4
 
 - Improved GitHub CI.

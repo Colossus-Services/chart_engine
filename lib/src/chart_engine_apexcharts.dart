@@ -16,7 +16,7 @@ class ChartEngineApexCharts extends ChartEngine {
   static final String VERSION = '3.26.0';
 
   // ignore: non_constant_identifier_names
-  static final String PATH = CHART_ENGINE_PACKAGE_PATH + '/apexcharts-$VERSION';
+  static final String PATH = '$CHART_ENGINE_PACKAGE_PATH/apexcharts-$VERSION';
 
   // ignore: non_constant_identifier_names
   static final String JS_PATH = '$PATH/apexcharts.amd.js';

@@ -474,9 +474,7 @@ class ChartEngineChartJS extends ChartEngine {
 }
 
 class RenderedChartJS extends RenderedChart {
-  RenderedChartJS(
-      ChartEngine engine, String type, chartObject, ChartData chartData)
-      : super(engine, type, chartObject, chartData);
+  RenderedChartJS(super.engine, super.type, super.chartObject, super.chartData);
 
   @override
   void refresh() {

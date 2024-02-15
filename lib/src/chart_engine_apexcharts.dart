@@ -374,8 +374,7 @@ class ChartEngineApexCharts extends ChartEngine {
 
 class RenderedApexCharts extends RenderedChart {
   RenderedApexCharts(
-      ChartEngine engine, String type, chartObject, ChartData chartData)
-      : super(engine, type, chartObject, chartData);
+      super.engine, super.type, super.chartObject, super.chartData);
 
   @override
   void refresh() {

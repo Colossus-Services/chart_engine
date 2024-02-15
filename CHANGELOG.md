@@ -1,3 +1,20 @@
+## 2.1.0
+
+- sdk: '>=3.3.0 <4.0.0'
+
+- swiss_knife: ^3.2.0
+- dom_tools: ^2.3.0
+- color_palette_generator: ^2.0.1
+- intl: ^0.19.0
+
+- lints: ^3.0.0
+- test: ^1.25.2
+- path: ^1.9.0
+- dependency_validator: ^3.2.3
+- build_runner: ^2.4.8
+- build_web_compilers: ^4.0.9
+- collection: ^1.18.0
+
 ## 2.0.5
 
 - swiss_knife: ^3.1.3

@@ -1,11 +1,9 @@
 @TestOn('browser')
 library;
 
-// ignore: deprecated_member_use
-import 'dart:html';
-
 import 'package:chart_engine/chart_engine_all.dart';
 import 'package:test/test.dart';
+import 'package:web_utils/web_utils.dart';
 
 Future<void> _sleep(int sleepMs) async {
   if (sleepMs <= 0) return;
@@ -24,15 +22,16 @@ void _createLineChart(ChartEngine charEngine) async {
     'C': [100, 130, 140]
   });
 
-  var output = document.body!.append(DivElement()..style.width = '100%');
+  var output =
+      document.body!.appendChild(HTMLDivElement()..style.width = '100%');
 
-  expect(output.nodes.isEmpty, isTrue);
+  expect(output.childNodes.isEmpty, isTrue);
 
-  charEngine.renderLineChart(output as Element, series);
+  charEngine.renderLineChart(output as HTMLElement, series);
 
   await _sleep(500);
 
-  expect(output.nodes.isEmpty, isFalse);
+  expect(output.childNodes.isEmpty, isFalse);
 }
 
 void main() {

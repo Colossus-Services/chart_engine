@@ -1,4 +1,6 @@
+// ignore: deprecated_member_use
 import 'dart:html';
+// ignore: deprecated_member_use
 import 'dart:js';
 
 import 'package:amdjs/amdjs.dart';

@@ -1,6 +1,7 @@
 @TestOn('browser')
 library;
 
+// ignore: deprecated_member_use
 import 'dart:html';
 
 import 'package:chart_engine/chart_engine_all.dart';

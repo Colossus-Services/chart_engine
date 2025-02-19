@@ -1,3 +1,18 @@
+## 2.1.1
+
+- sdk: '>=3.5.0 <4.0.0'
+
+- swiss_knife: ^3.2.3
+- dom_tools: ^2.3.2
+- amdjs: ^2.0.4
+
+- lints: ^5.1.1
+- test: ^1.25.15
+- path: ^1.9.1
+- build_runner: ^2.4.15
+- build_web_compilers: ^4.1.1
+- collection: ^1.19.1
+
 ## 2.1.0
 
 - sdk: '>=3.3.0 <4.0.0'

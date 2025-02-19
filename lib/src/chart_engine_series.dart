@@ -170,7 +170,7 @@ abstract class ChartData<C, X, Y> {
 
   Scale<X>? _xAxisScale;
 
-  /// Returns the <Scale> of axis X.
+  /// Returns the [Scale] of axis X.
   Scale<X>? get xAxisScale {
     if (_xAxisScale == null) {
       var values = xAxisAllValues;
@@ -184,7 +184,7 @@ abstract class ChartData<C, X, Y> {
 
   Scale<Y>? _yAxisScale;
 
-  /// Returns the <Scale> of axis Y.
+  /// Returns the [Scale] of axis Y.
   Scale<Y>? get yAxisScale {
     if (_yAxisScale == null) {
       var values = yAxisAllValues;
@@ -468,7 +468,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
   }
 
   static final RegExp _defaultStringPairDelimiterPattern =
-      RegExp(r'\s*[,;:\|]\s*');
+      RegExp(r'\s*[,;:|]\s*');
 
   RegExp stringPairDelimiterPattern = _defaultStringPairDelimiterPattern;
 

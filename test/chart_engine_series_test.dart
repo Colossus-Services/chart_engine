@@ -1,4 +1,5 @@
 @TestOn('browser')
+library;
 
 import 'package:chart_engine/src/chart_engine_series.dart';
 import 'package:test/test.dart';

@@ -1,5 +1,5 @@
 /// Library with the engine framework.
-library chart_engine;
+library;
 
 export 'package:color_palette_generator/color_palette_generator.dart';
 

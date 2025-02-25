@@ -7,12 +7,12 @@ environment:
   sdk: '>=3.6.0 <4.0.0'
 
 dependencies:
-  swiss_knife: ^3.2.3
-  dom_tools: ^3.0.0-beta.4
+  swiss_knife: ^3.3.0
+  dom_tools: ^3.0.0-beta.6
   color_palette_generator: ^2.0.1
   amdjs: ^3.0.0-beta.2
-  intl: ^0.19.0
-  web_utils: ^1.0.6
+  intl: ^0.20.2
+  web_utils: ^1.0.9
 
 dev_dependencies:
   lints: ^5.1.1

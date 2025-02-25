@@ -4,11 +4,13 @@
 
 - sdk: '>=3.6.0 <4.0.0'
 
-- dom_tools: ^3.0.0-beta.4
+- swiss_knife: ^3.3.0
+- dom_tools: ^3.0.0-beta.6
 - amdjs: ^3.0.0-beta.2
 - web: ^1.1.0
-- web_utils: ^1.0.6
+- web_utils: ^1.0.9
 - js_interop_utils: ^1.0.5
+- intl: ^0.20.2
 
 ## 2.1.1
 

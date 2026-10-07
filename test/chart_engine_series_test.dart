@@ -9,15 +9,14 @@ void main() {
     setUp(() {});
 
     test('ChartSeries', () {
-      var chartSeries = ChartSeries([
-        'jan',
-        'feb',
-        'mar'
-      ], {
-        'spot1': [100, 200, 300],
-        'spot2': [110, 210, 310],
-        'spot3': [250, 150, 120]
-      });
+      var chartSeries = ChartSeries(
+        ['jan', 'feb', 'mar'],
+        {
+          'spot1': [100, 200, 300],
+          'spot2': [110, 210, 310],
+          'spot3': [250, 150, 120],
+        },
+      );
 
       expect(chartSeries.xLabels, equals(['jan', 'feb', 'mar']));
 
@@ -33,32 +32,34 @@ void main() {
         'spot1': [
           '100,${now + 1000}',
           '200,${now + 2000}',
-          '300,${now + 3000}'
+          '300,${now + 3000}',
         ],
         'spot2': [
           '${now + 1000},110',
           '${now + 2000},210',
-          '${now + 3000},310'
+          '${now + 3000},310',
         ],
       });
 
       expect(chartSeries.xLabels, equals([]));
 
       expect(
-          chartSeries.series['spot1'],
-          equals([
-            [DateTime.fromMillisecondsSinceEpoch(now + 1000), 100].join(','),
-            [DateTime.fromMillisecondsSinceEpoch(now + 2000), 200].join(','),
-            [DateTime.fromMillisecondsSinceEpoch(now + 3000), 300].join(','),
-          ]));
+        chartSeries.series['spot1'],
+        equals([
+          [DateTime.fromMillisecondsSinceEpoch(now + 1000), 100].join(','),
+          [DateTime.fromMillisecondsSinceEpoch(now + 2000), 200].join(','),
+          [DateTime.fromMillisecondsSinceEpoch(now + 3000), 300].join(','),
+        ]),
+      );
 
       expect(
-          chartSeries.series['spot2'],
-          equals([
-            [DateTime.fromMillisecondsSinceEpoch(now + 1000), 110].join(','),
-            [DateTime.fromMillisecondsSinceEpoch(now + 2000), 210].join(','),
-            [DateTime.fromMillisecondsSinceEpoch(now + 3000), 310].join(','),
-          ]));
+        chartSeries.series['spot2'],
+        equals([
+          [DateTime.fromMillisecondsSinceEpoch(now + 1000), 110].join(','),
+          [DateTime.fromMillisecondsSinceEpoch(now + 2000), 210].join(','),
+          [DateTime.fromMillisecondsSinceEpoch(now + 3000), 310].join(','),
+        ]),
+      );
     });
 
     test('ChartTimeSeries DateTime+int pair', () {
@@ -68,32 +69,34 @@ void main() {
         'spot1': [
           [100, DateTime.fromMillisecondsSinceEpoch(now + 1000)],
           [200, DateTime.fromMillisecondsSinceEpoch(now + 2000)],
-          [300, DateTime.fromMillisecondsSinceEpoch(now + 3000)]
+          [300, DateTime.fromMillisecondsSinceEpoch(now + 3000)],
         ],
         'spot2': [
           [DateTime.fromMillisecondsSinceEpoch(now + 1000), 110],
           [DateTime.fromMillisecondsSinceEpoch(now + 2000), 220],
-          [DateTime.fromMillisecondsSinceEpoch(now + 3000), 330]
+          [DateTime.fromMillisecondsSinceEpoch(now + 3000), 330],
         ],
       });
 
       expect(chartSeries.xLabels, equals([]));
 
       expect(
-          chartSeries.series['spot1'],
-          equals([
-            [DateTime.fromMillisecondsSinceEpoch(now + 1000), 100],
-            [DateTime.fromMillisecondsSinceEpoch(now + 2000), 200],
-            [DateTime.fromMillisecondsSinceEpoch(now + 3000), 300]
-          ]));
+        chartSeries.series['spot1'],
+        equals([
+          [DateTime.fromMillisecondsSinceEpoch(now + 1000), 100],
+          [DateTime.fromMillisecondsSinceEpoch(now + 2000), 200],
+          [DateTime.fromMillisecondsSinceEpoch(now + 3000), 300],
+        ]),
+      );
 
       expect(
-          chartSeries.series['spot2'],
-          equals([
-            [DateTime.fromMillisecondsSinceEpoch(now + 1000), 110],
-            [DateTime.fromMillisecondsSinceEpoch(now + 2000), 220],
-            [DateTime.fromMillisecondsSinceEpoch(now + 3000), 330]
-          ]));
+        chartSeries.series['spot2'],
+        equals([
+          [DateTime.fromMillisecondsSinceEpoch(now + 1000), 110],
+          [DateTime.fromMillisecondsSinceEpoch(now + 2000), 220],
+          [DateTime.fromMillisecondsSinceEpoch(now + 3000), 330],
+        ]),
+      );
     });
 
     test('ChartSeriesPair', () {
@@ -101,61 +104,67 @@ void main() {
         'spot1': [
           [1000, 100],
           [2000, 200],
-          [3000, 300]
+          [3000, 300],
         ],
         'spot2': [
           [1000, 110],
           [2000, 220],
-          [3000, 330]
+          [3000, 330],
         ],
       });
 
       expect(chartSeries.xLabels, equals([]));
 
       expect(
-          chartSeries.series['spot1'],
-          equals([
-            [1000, 100],
-            [2000, 200],
-            [3000, 300]
-          ]));
+        chartSeries.series['spot1'],
+        equals([
+          [1000, 100],
+          [2000, 200],
+          [3000, 300],
+        ]),
+      );
       expect(
-          chartSeries.series['spot2'],
-          equals([
-            [1000, 110],
-            [2000, 220],
-            [3000, 330]
-          ]));
+        chartSeries.series['spot2'],
+        equals([
+          [1000, 110],
+          [2000, 220],
+          [3000, 330],
+        ]),
+      );
 
       expect(
-          chartSeries.seriesAsPairsOfList()['spot1'],
-          equals([
-            [1000, 100],
-            [2000, 200],
-            [3000, 300]
-          ]));
+        chartSeries.seriesAsPairsOfList()['spot1'],
+        equals([
+          [1000, 100],
+          [2000, 200],
+          [3000, 300],
+        ]),
+      );
       expect(
-          chartSeries.seriesAsPairsOfList()['spot2'],
-          equals([
-            [1000, 110],
-            [2000, 220],
-            [3000, 330]
-          ]));
+        chartSeries.seriesAsPairsOfList()['spot2'],
+        equals([
+          [1000, 110],
+          [2000, 220],
+          [3000, 330],
+        ]),
+      );
 
       expect(
-          chartSeries.seriesAsPairsOfMap()['spot1'],
-          equals([
-            {'x': 1000, 'y': 100},
-            {'x': 2000, 'y': 200},
-            {'x': 3000, 'y': 300}
-          ]));
+        chartSeries.seriesAsPairsOfMap()['spot1'],
+        equals([
+          {'x': 1000, 'y': 100},
+          {'x': 2000, 'y': 200},
+          {'x': 3000, 'y': 300},
+        ]),
+      );
       expect(
-          chartSeries.seriesAsPairsOfMap()['spot2'],
-          equals([
-            {'x': 1000, 'y': 110},
-            {'x': 2000, 'y': 220},
-            {'x': 3000, 'y': 330}
-          ]));
+        chartSeries.seriesAsPairsOfMap()['spot2'],
+        equals([
+          {'x': 1000, 'y': 110},
+          {'x': 2000, 'y': 220},
+          {'x': 3000, 'y': 330},
+        ]),
+      );
 
       var xScale = chartSeries.xAxisScale!;
       expect(xScale.minimum, equals(1000));

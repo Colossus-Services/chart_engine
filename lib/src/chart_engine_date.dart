@@ -26,19 +26,21 @@ abstract class DateAdapter {
 
     if (formatStr.isNotEmpty) {
       formatStr = formatStr.replaceAllMapped(
-          RegExp(r'(?:\[(.*)\]|(YYYY|YY|DD|D)|(Do)|(SSS))'), (m) {
-        if (m[1] != null) {
-          return "'${m[1]}'";
-        } else if (m[2] != null) {
-          return m[2]!.toLowerCase();
-        } else if (m[3] != null) {
-          return 'dd';
-        } else if (m[4] != null) {
-          return '';
-        } else {
-          return m[0]!;
-        }
-      });
+        RegExp(r'(?:\[(.*?)\]|(Do)|(YYYY|YY|DD|D)|(SSS))'),
+        (m) {
+          if (m[1] != null) {
+            return "'${m[1]}'";
+          } else if (m[2] != null) {
+            return 'dd';
+          } else if (m[3] != null) {
+            return m[3]!.toLowerCase();
+          } else if (m[4] != null) {
+            return '';
+          } else {
+            return m[0]!;
+          }
+        },
+      );
     }
 
     var dateFormat = formatStr.isNotEmpty
@@ -67,8 +69,11 @@ abstract class DateAdapter {
         weekFirstDay = getDateTimeWeekDayByName(weekday);
       }
 
-      var dateTimeRange =
-          getDateTimeRange(DateRangeType.thisWeek, dateTime, weekFirstDay);
+      var dateTimeRange = getDateTimeRange(
+        DateRangeType.thisWeek,
+        dateTime,
+        weekFirstDay,
+      );
 
       start = dateTimeRange.a;
     } else {

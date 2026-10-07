@@ -1,3 +1,52 @@
+## 3.0.0
+
+- `RenderedChart`:
+  - Fix `chartJSObject`/`hasChartJSObject` (and therefore `refresh`), which
+    always threw: the `isJSObject` extension was called on a `dynamic`.
+- `ChartData`:
+  - Fix `xAxisScale`/`yAxisScale` for typed data (ex.: `ChartSet<String, int>`),
+    which failed casting `ScaleNum<num>` to `Scale<int>`.
+  - Fix `ChartData.from` with untyped map literals.
+  - Fix `matchesSeries`/`matchesTimeSeries`/`matchesSeriesPair` (and
+    `matchesChartData`) throwing for non-`Iterable` values.
+- `ChartSeries.seriesSortedByCategory`/`ChartSet.setSorted`: fix sorting of
+  untyped (`dynamic`) categories (`ChartOptions.sortCategories`).
+- `ChartSeriesOptions.copy`: also copy `steppedLines`.
+- `DateAdapter.format`: fix the `Do` token and multiple `[...]` literals.
+- Fix `ChartEngine.VERSION`.
+- Tests:
+  - New unit tests for `ChartData` implementations, options and `DateAdapter`.
+  - New browser integration tests rendering every chart type with ChartJS and
+    ApexCharts, plus `ChartEngineSwitchable` and ChartJS financial charts.
+- CI: run tests on VM and Chrome.
+
+- sdk: '>=3.10.0 <4.0.0'
+
+- swiss_knife: ^3.3.14
+- dom_tools: ^3.1.0
+- amdjs: ^3.0.0
+- intl: ^0.20.3
+- web_utils: ^1.1.0
+- lints: ^6.1.0
+- test: ^1.32.0
+- dependency_validator: ^5.1.0
+- build_runner: ^2.16.2
+- build_web_compilers: ^4.8.11
+
+## 3.0.0-beta.1
+
+- Migrate `dart:html` (deprecated) to package `web`.
+
+- sdk: '>=3.6.0 <4.0.0'
+
+- swiss_knife: ^3.3.0
+- dom_tools: ^3.0.0-beta.6
+- amdjs: ^3.0.0-beta.2
+- web: ^1.1.0
+- web_utils: ^1.0.9
+- js_interop_utils: ^1.0.5
+- intl: ^0.20.2
+
 ## 2.1.1
 
 - sdk: '>=3.5.0 <4.0.0'

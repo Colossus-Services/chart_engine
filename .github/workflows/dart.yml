@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
       - name: Dart version
         run: |
@@ -25,8 +25,8 @@ jobs:
         run: dart analyze --fatal-infos --fatal-warnings .
       - name: dependency_validator
         run: dart run dependency_validator
-      - name: Run tests (Chrome)
-        run: dart test --platform chrome
+      - name: Run tests (VM + Chrome)
+        run: dart test --platform vm,chrome
 #      - name: dartdoc
 #        run: dartdoc --no-generate-docs
       - name: dart pub publish --dry-run

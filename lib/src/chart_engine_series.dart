@@ -5,10 +5,10 @@ import 'package:swiss_knife/swiss_knife.dart';
 
 import 'chart_engine_base.dart';
 
-void _sorteEntriesByKey<K extends Comparable, V>(List<MapEntry<K, V>> entries) {
+void _sortEntriesByKey<K, V>(List<MapEntry<K, V>> entries) {
   entries.sort((a, b) {
-    var c1 = a.key;
-    var c2 = b.key;
+    var c1 = a.key as Comparable;
+    var c2 = b.key as Comparable;
     return c1.compareTo(c2);
   });
 }
@@ -43,25 +43,29 @@ abstract class ChartData<C, X, Y> {
   static bool isListOfPairs(Iterable list) {
     if (list.isEmpty) return false;
     return listMatchesAll(
-        list,
-        (dynamic e) =>
-            e is List && e.length == 2 && listMatchesAll(e, isValidValue));
+      list,
+      (dynamic e) =>
+          e is List && e.length == 2 && listMatchesAll(e, isValidValue),
+    );
   }
 
   /// Returns [true] if [list] is a [List] of time pairs (X: DateTime, Y: value).
   static bool isListOfTimedPairs(Iterable list) {
     if (list.isEmpty) return false;
     return listMatchesAll(
-        list,
-        (dynamic e) =>
-            e is List && e.length == 2 && isTimeValue(e[0]) && e[1] is num);
+      list,
+      (dynamic e) =>
+          e is List && e.length == 2 && isTimeValue(e[0]) && e[1] is num,
+    );
   }
 
   /// Returns [true] if [list] elements are valid values.
   static bool isListOfValidValues(Iterable list) {
     if (list.isEmpty) return false;
     return listMatchesAll(
-        list, (dynamic e) => e is List && listMatchesAll(e, isValidValue));
+      list,
+      (dynamic e) => e is List && listMatchesAll(e, isValidValue),
+    );
   }
 
   /// Returns [true] if [map] is valid for [ChartSet].
@@ -72,19 +76,25 @@ abstract class ChartData<C, X, Y> {
   /// Returns [true] if [map] is valid for [ChartSeries].
   static bool matchesSeries(Map map) {
     return listMatchesAll(
-        map.values, (dynamic values) => isListOfValidValues(values));
+      map.values,
+      (dynamic values) => values is Iterable && isListOfValidValues(values),
+    );
   }
 
   /// Returns [true] if [map] is valid for [ChartTimeSeries].
   static bool matchesTimeSeries(Map map) {
     return listMatchesAll(
-        map.values, (dynamic values) => isListOfTimedPairs(values));
+      map.values,
+      (dynamic values) => values is Iterable && isListOfTimedPairs(values),
+    );
   }
 
   /// Returns [true] if [map] is valid for [ChartSeriesPair].
   static bool matchesSeriesPair(Map map) {
     return listMatchesAll(
-        map.values, (dynamic values) => isListOfPairs(values));
+      map.values,
+      (dynamic values) => values is Iterable && isListOfPairs(values),
+    );
   }
 
   /// Returns [true] if [map] is valid for a [ChartData] implementation.
@@ -99,11 +109,11 @@ abstract class ChartData<C, X, Y> {
     if (matchesSet(map)) {
       return ChartSet(map);
     } else if (matchesTimeSeries(map)) {
-      return ChartTimeSeries(map as Map<dynamic, List<dynamic>>);
+      return ChartTimeSeries(Map<dynamic, List<dynamic>>.from(map));
     } else if (matchesSeriesPair(map)) {
-      return ChartSeriesPair(map as Map<dynamic, List<dynamic>>);
+      return ChartSeriesPair(Map<dynamic, List<dynamic>>.from(map));
     } else if (matchesSeries(map)) {
-      return ChartSeries([], map as Map<dynamic, List<dynamic>>);
+      return ChartSeries([], Map<dynamic, List<dynamic>>.from(map));
     } else {
       return null;
     }
@@ -123,15 +133,15 @@ abstract class ChartData<C, X, Y> {
 
   /// Lighter colors of each category.
   Map<C, String> get colorsLighter => colors!.map((key, color) {
-        var htmlColor = HTMLColor.from(color)!.brighter();
-        return MapEntry(key, htmlColor.toString());
-      });
+    var htmlColor = HTMLColor.from(color)!.brighter();
+    return MapEntry(key, htmlColor.toString());
+  });
 
   /// Darker colors of each category.
   Map<C, String> get colorsDarker => colors!.map((key, color) {
-        var htmlColor = HTMLColor.from(color)!.darker();
-        return MapEntry(key, htmlColor.toString());
-      });
+    var htmlColor = HTMLColor.from(color)!.darker();
+    return MapEntry(key, htmlColor.toString());
+  });
 
   /// Colors of each category when disabled.
   Map<C, String>? disabledColors;
@@ -145,15 +155,17 @@ abstract class ChartData<C, X, Y> {
   /// Set the Colors Map using a [colorGenerator].
   void setColors(ColorGenerator colorGenerator) {
     colors = colorGenerator.buildColors(List.from(categories).cast());
-    disabledColors =
-        colorGenerator.buildDisabledColors(List.from(categories).cast());
+    disabledColors = colorGenerator.buildDisabledColors(
+      List.from(categories).cast(),
+    );
   }
 
   /// Ensure that the Colors Map is set, using a [colorGenerator].
   void ensureColors(ColorGenerator colorGenerator) {
     colors ??= colorGenerator.buildColors(List.from(categories).cast());
-    disabledColors ??=
-        colorGenerator.buildDisabledColors(List.from(categories).cast());
+    disabledColors ??= colorGenerator.buildDisabledColors(
+      List.from(categories).cast(),
+    );
   }
 
   /// The options to render this data in the chart.
@@ -171,29 +183,36 @@ abstract class ChartData<C, X, Y> {
   Scale<X>? _xAxisScale;
 
   /// Returns the [Scale] of axis X.
-  Scale<X>? get xAxisScale {
-    if (_xAxisScale == null) {
-      var values = xAxisAllValues;
-      _xAxisScale = isNumList(values)
-          ? ScaleNum.from<num>(values.cast<num>()) as Scale<X>?
-          : Scale.from(values) as Scale<X>?;
-    }
-
-    return _xAxisScale;
-  }
+  Scale<X>? get xAxisScale => _xAxisScale ??= _scaleFrom<X>(xAxisAllValues);
 
   Scale<Y>? _yAxisScale;
 
   /// Returns the [Scale] of axis Y.
-  Scale<Y>? get yAxisScale {
-    if (_yAxisScale == null) {
-      var values = yAxisAllValues;
-      _yAxisScale = isNumList(values)
-          ? ScaleNum.from<num>(values.cast<num>()) as Scale<Y>?
-          : Scale.from(values) as Scale<Y>?;
+  Scale<Y>? get yAxisScale => _yAxisScale ??= _scaleFrom<Y>(yAxisAllValues);
+
+  /// Builds a [Scale] typed as [T] (`Scale.from`/`ScaleNum.from` return
+  /// `Scale<dynamic>`/`ScaleNum<num>`, which can't be cast to `Scale<int>`).
+  static Scale<T>? _scaleFrom<T>(Iterable<T> values) {
+    if (values.isEmpty) return null;
+
+    if (isNumList(values)) {
+      var nums = values.cast<num>();
+      var min = nums.reduce((a, b) => a < b ? a : b);
+      var max = nums.reduce((a, b) => a > b ? a : b);
+
+      Scale scale;
+      if (<T>[] is List<int?>) {
+        scale = ScaleNum<int>(min, max);
+      } else if (<T>[] is List<double?>) {
+        scale = ScaleNum<double>(min, max);
+      } else {
+        scale = ScaleNum<num>(min, max);
+      }
+      return scale as Scale<T>;
     }
 
-    return _yAxisScale;
+    var sorted = values.toList()..sort();
+    return Scale<T>(sorted.first, sorted.last);
   }
 
   /// Returns [true] if this is empty.
@@ -221,7 +240,7 @@ class ChartSeries<C, X, Y, P> extends ChartData<C, X, Y> {
   final List<X> xLabels;
 
   ChartSeries(this.xLabels, this.series, {ChartSeriesOptions? options})
-      : options = options ?? ChartSeriesOptions();
+    : options = options ?? ChartSeriesOptions();
 
   @override
   bool get isEmpty => series.isEmpty;
@@ -230,9 +249,9 @@ class ChartSeries<C, X, Y, P> extends ChartData<C, X, Y> {
   List<C> get categories => series.keys.toList().cast();
 
   Map<C, List<P>> get seriesSortedByCategory {
-    var l = series.entries.cast<MapEntry<Comparable, dynamic>>().toList();
-    _sorteEntriesByKey(l);
-    return Map.fromEntries(l).cast();
+    var l = series.entries.toList();
+    _sortEntriesByKey(l);
+    return Map.fromEntries(l);
   }
 
   @override
@@ -261,7 +280,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
     't',
     'date',
     'key',
-    'k'
+    'k',
   ];
 
   /// Default Y keys in Map.
@@ -295,24 +314,29 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
 
   @override
   Iterable<X> get xAxisAllValues => UnmodifiableListView(
-      series.values.expand((e) => e).map((e) => getPairX(e)).whereType<X>());
+    series.values.expand((e) => e).map((e) => getPairX(e)).whereType<X>(),
+  );
 
   @override
   X? getXAxisValue(int index) {
-    var seriesValues =
-        series.values.firstWhere((e) => index < e.length, orElse: () => <P>[]);
+    var seriesValues = series.values.firstWhere(
+      (e) => index < e.length,
+      orElse: () => <P>[],
+    );
     var value = seriesValues[index];
     return getPairX(value);
   }
 
   @override
   Iterable<Y> get yAxisAllValues => UnmodifiableListView(
-      series.values.expand((e) => e).map((e) => getPairY(e)).whereType<Y>());
+    series.values.expand((e) => e).map((e) => getPairY(e)).whereType<Y>(),
+  );
 
   /// Copies this series swapping the XY pairs.
   ChartSeriesPair<C, Y, X, dynamic> swapXY() {
-    var seriesSwapped =
-        series.map((key, value) => MapEntry(key, swapListOfPairs(value)));
+    var seriesSwapped = series.map(
+      (key, value) => MapEntry(key, swapListOfPairs(value)),
+    );
 
     var copy = ChartSeriesPair<C, Y, X, dynamic>(seriesSwapped);
 
@@ -340,7 +364,8 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
       return pair.split(stringPairDelimiterPattern)[0] as X;
     } else {
       throw UnsupportedError(
-          "Can't handle pair of type ${pair.runtimeType}: $pair");
+        "Can't handle pair of type ${pair.runtimeType}: $pair",
+      );
     }
   }
 
@@ -358,7 +383,8 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
       return pair.split(stringPairDelimiterPattern)[1] as Y;
     } else {
       throw UnsupportedError(
-          "Can't handle pair of type ${pair.runtimeType}: $pair");
+        "Can't handle pair of type ${pair.runtimeType}: $pair",
+      );
     }
   }
 
@@ -386,7 +412,8 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
       return;
     } else {
       throw UnsupportedError(
-          "Can't handle pair of type ${pair.runtimeType}: $pair");
+        "Can't handle pair of type ${pair.runtimeType}: $pair",
+      );
     }
   }
 
@@ -414,17 +441,20 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
 
       String? delimiter = '';
 
-      s.splitMapJoin(stringPairDelimiterPattern,
-          onNonMatch: (p) => '',
-          onMatch: (m) {
-            delimiter = m[0];
-            return '';
-          });
+      s.splitMapJoin(
+        stringPairDelimiterPattern,
+        onNonMatch: (p) => '',
+        onMatch: (m) {
+          delimiter = m[0];
+          return '';
+        },
+      );
 
       return '$x$delimiter$y' as P;
     } else {
       throw UnsupportedError(
-          "Can't handle pair of type ${pair.runtimeType}: $pair");
+        "Can't handle pair of type ${pair.runtimeType}: $pair",
+      );
     }
   }
 
@@ -446,7 +476,8 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
       return swapPairAsString(pair);
     } else {
       throw UnsupportedError(
-          "Can't swap pair of type ${pair.runtimeType}: $pair");
+        "Can't swap pair of type ${pair.runtimeType}: $pair",
+      );
     }
   }
 
@@ -467,8 +498,9 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
     return pair.swapAB();
   }
 
-  static final RegExp _defaultStringPairDelimiterPattern =
-      RegExp(r'\s*[,;:|]\s*');
+  static final RegExp _defaultStringPairDelimiterPattern = RegExp(
+    r'\s*[,;:|]\s*',
+  );
 
   RegExp stringPairDelimiterPattern = _defaultStringPairDelimiterPattern;
 
@@ -477,13 +509,17 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
     var parts = <String>[];
     String? delimiter = '';
 
-    pair.splitMapJoin(stringPairDelimiterPattern, onMatch: (m) {
-      delimiter = m.group(0);
-      return '';
-    }, onNonMatch: (s) {
-      parts.add(s);
-      return '';
-    });
+    pair.splitMapJoin(
+      stringPairDelimiterPattern,
+      onMatch: (m) {
+        delimiter = m.group(0);
+        return '';
+      },
+      onNonMatch: (s) {
+        parts.add(s);
+        return '';
+      },
+    );
 
     while (parts.length < 2) {
       parts.add('');
@@ -495,19 +531,24 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
   }
 
   /// Returns [series] as pairs of [List].
-  Map<C, List<List<dynamic>>> seriesAsPairsOfList(
-      {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true}) {
+  Map<C, List<List<dynamic>>> seriesAsPairsOfList({
+    bool sortSeriesByCategory = false,
+    bool mapDateTimeToMillis = true,
+  }) {
     var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
     return seriesPairsAsList(
-        series: series, mapDateTimeToMillis: mapDateTimeToMillis);
+      series: series,
+      mapDateTimeToMillis: mapDateTimeToMillis,
+    );
   }
 
   /// Used to normalize series for engines that requires a pair as List[a,b].
-  Map<C, List<List<dynamic>>> seriesPairsAsList(
-      {Map<C, List<P>>? series,
-      TypeMapper? xMapper,
-      TypeMapper? yMapper,
-      bool mapDateTimeToMillis = false}) {
+  Map<C, List<List<dynamic>>> seriesPairsAsList({
+    Map<C, List<P>>? series,
+    TypeMapper? xMapper,
+    TypeMapper? yMapper,
+    bool mapDateTimeToMillis = false,
+  }) {
     series ??= this.series;
 
     if (mapDateTimeToMillis) {
@@ -515,27 +556,36 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
       yMapper ??= _mapDateTimeToMillis;
     }
 
-    return series.map((key, value) => MapEntry(
-        key, toListOfPairsAsList(value, xMapper: xMapper, yMapper: yMapper)));
+    return series.map(
+      (key, value) => MapEntry(
+        key,
+        toListOfPairsAsList(value, xMapper: xMapper, yMapper: yMapper),
+      ),
+    );
   }
 
-  static dynamic _mapDateTimeToMillis(o) =>
+  static dynamic _mapDateTimeToMillis(Object? o) =>
       o is DateTime ? o.millisecondsSinceEpoch : parseInt(o, 0);
 
   /// Returns [series] as pairs of [Map].
-  Map<C, List<Map<String, dynamic>>> seriesAsPairsOfMap(
-      {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true}) {
+  Map<C, List<Map<String, dynamic>>> seriesAsPairsOfMap({
+    bool sortSeriesByCategory = false,
+    bool mapDateTimeToMillis = true,
+  }) {
     var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
     return seriesPairsAsMap(
-        series: series, mapDateTimeToMillis: mapDateTimeToMillis);
+      series: series,
+      mapDateTimeToMillis: mapDateTimeToMillis,
+    );
   }
 
   /// Used to normalize series for engines that requires a pair as Map{x,y}.
-  Map<C, List<Map<String, dynamic>>> seriesPairsAsMap(
-      {Map<C, List<P>>? series,
-      TypeMapper? xMapper,
-      TypeMapper? yMapper,
-      bool mapDateTimeToMillis = false}) {
+  Map<C, List<Map<String, dynamic>>> seriesPairsAsMap({
+    Map<C, List<P>>? series,
+    TypeMapper? xMapper,
+    TypeMapper? yMapper,
+    bool mapDateTimeToMillis = false,
+  }) {
     series ??= this.series;
 
     if (mapDateTimeToMillis) {
@@ -543,8 +593,12 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
       yMapper ??= _mapDateTimeToMillis;
     }
 
-    return series.map((key, value) => MapEntry(
-        key, toListOfPairsAsMap(value, xMapper: xMapper, yMapper: yMapper)));
+    return series.map(
+      (key, value) => MapEntry(
+        key,
+        toListOfPairsAsMap(value, xMapper: xMapper, yMapper: yMapper),
+      ),
+    );
   }
 
   /// Returns the [DataTime] minimum and maximum value of all series.
@@ -554,10 +608,12 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
   }
 
   /// Returns the [DataTime] minimum and maximum value for each series.
-  Map<C, List<DateTime>> seriesDateTimeMinMax(
-      {bool sortSeriesByCategory = false}) {
-    var seriesDates =
-        seriesDateTime(sortSeriesByCategory: sortSeriesByCategory);
+  Map<C, List<DateTime>> seriesDateTimeMinMax({
+    bool sortSeriesByCategory = false,
+  }) {
+    var seriesDates = seriesDateTime(
+      sortSeriesByCategory: sortSeriesByCategory,
+    );
     var entries = seriesDates.entries.map((e) {
       var datesMinMax = _datesMinMax(e.value);
       return datesMinMax != null ? MapEntry(e.key, datesMinMax) : null;
@@ -581,8 +637,9 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
   Map<C, List<DateTime>> seriesDateTime({bool sortSeriesByCategory = false}) {
     var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
 
-    var series2 =
-        series.map((key, value) => MapEntry(key, toListOfDateTime(value)));
+    var series2 = series.map(
+      (key, value) => MapEntry(key, toListOfDateTime(value)),
+    );
     return series2;
   }
 
@@ -625,69 +682,89 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
   }
 
   /// Returns [series] as entries of TOHLC Maps.
-  Map<C, List<Map<String, dynamic>>> seriesAsEntriesOfTOHLC(
-      {bool sortSeriesByCategory = false, bool mapDateTimeToMillis = true}) {
+  Map<C, List<Map<String, dynamic>>> seriesAsEntriesOfTOHLC({
+    bool sortSeriesByCategory = false,
+    bool mapDateTimeToMillis = true,
+  }) {
     var series = sortSeriesByCategory ? seriesSortedByCategory : this.series;
     return seriesEntriesAsTOHLC(
-        series: series, mapDateTimeToMillis: mapDateTimeToMillis);
+      series: series,
+      mapDateTimeToMillis: mapDateTimeToMillis,
+    );
   }
 
-  Map<C, List<Map<String, dynamic>>> seriesEntriesAsTOHLC(
-      {Map<C, List<P>>? series,
-      TypeMapper? tMapper,
-      TypeMapper? oMapper,
-      TypeMapper? hMapper,
-      TypeMapper? lMapper,
-      TypeMapper? cMapper,
-      bool mapDateTimeToMillis = false}) {
+  Map<C, List<Map<String, dynamic>>> seriesEntriesAsTOHLC({
+    Map<C, List<P>>? series,
+    TypeMapper? tMapper,
+    TypeMapper? oMapper,
+    TypeMapper? hMapper,
+    TypeMapper? lMapper,
+    TypeMapper? cMapper,
+    bool mapDateTimeToMillis = false,
+  }) {
     series ??= this.series;
 
     if (mapDateTimeToMillis) {
       tMapper ??= (e) => _mapDateTimeToMillis(_getObjectValue(e, 0, 't', null));
     }
 
-    var series2 = series.map((key, value) => MapEntry(
+    var series2 = series.map(
+      (key, value) => MapEntry(
         key,
-        toListOfTOHLC(value,
-            tMapper: tMapper,
-            oMapper: oMapper,
-            hMapper: hMapper,
-            lMapper: lMapper,
-            cMapper: cMapper)));
+        toListOfTOHLC(
+          value,
+          tMapper: tMapper,
+          oMapper: oMapper,
+          hMapper: hMapper,
+          lMapper: lMapper,
+          cMapper: cMapper,
+        ),
+      ),
+    );
 
     return series2;
   }
 
-  List<List<dynamic>> toListOfPairsAsList(List<P> listOfPairs,
-      {TypeMapper? xMapper, TypeMapper? yMapper}) {
+  List<List<dynamic>> toListOfPairsAsList(
+    List<P> listOfPairs, {
+    TypeMapper? xMapper,
+    TypeMapper? yMapper,
+  }) {
     return listOfPairs
         .map((e) => toPairAsList(e, xMapper: xMapper, yMapper: yMapper))
         .whereType<List<dynamic>>()
         .toList();
   }
 
-  List<Map<String, dynamic>> toListOfPairsAsMap(List<P> listOfPairs,
-      {TypeMapper? xMapper, TypeMapper? yMapper}) {
+  List<Map<String, dynamic>> toListOfPairsAsMap(
+    List<P> listOfPairs, {
+    TypeMapper? xMapper,
+    TypeMapper? yMapper,
+  }) {
     return listOfPairs
         .map((e) => toPairAsMap(e, xMapper: xMapper, yMapper: yMapper))
         .toList()
         .cast();
   }
 
-  List<Map<String, dynamic>> toListOfTOHLC(List<P> listOfPairs,
-      {TypeMapper? tMapper,
-      TypeMapper? oMapper,
-      TypeMapper? hMapper,
-      TypeMapper? lMapper,
-      TypeMapper? cMapper}) {
+  List<Map<String, dynamic>> toListOfTOHLC(
+    List<P> listOfPairs, {
+    TypeMapper? tMapper,
+    TypeMapper? oMapper,
+    TypeMapper? hMapper,
+    TypeMapper? lMapper,
+    TypeMapper? cMapper,
+  }) {
     var list = listOfPairs
-        .map((e) => {
-              't': _getObjectValue(e, 0, 't', tMapper),
-              'o': _getObjectValue(e, 1, 'o', oMapper),
-              'h': _getObjectValue(e, 2, 'h', hMapper),
-              'l': _getObjectValue(e, 3, 'l', lMapper),
-              'c': _getObjectValue(e, 4, 'c', cMapper),
-            })
+        .map(
+          (e) => {
+            't': _getObjectValue(e, 0, 't', tMapper),
+            'o': _getObjectValue(e, 1, 'o', oMapper),
+            'h': _getObjectValue(e, 2, 'h', hMapper),
+            'l': _getObjectValue(e, 3, 'l', lMapper),
+            'c': _getObjectValue(e, 4, 'c', cMapper),
+          },
+        )
         .toList();
 
     list.sort((a, b) {
@@ -700,7 +777,11 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
   }
 
   dynamic _getObjectValue(
-      dynamic o, int index, String key, TypeMapper? mapper) {
+    dynamic o,
+    int index,
+    String key,
+    TypeMapper? mapper,
+  ) {
     if (mapper != null) return mapper(o);
     if (o == null) return null;
     if (o is List) return o[index];
@@ -708,8 +789,11 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
     return o;
   }
 
-  List<dynamic>? toPairAsList(P pair,
-      {TypeMapper? xMapper, TypeMapper? yMapper}) {
+  List<dynamic>? toPairAsList(
+    P pair, {
+    TypeMapper? xMapper,
+    TypeMapper? yMapper,
+  }) {
     if (xMapper == null && yMapper == null) {
       return toPair(pair, (X? x, Y? y) => [x, y]);
     } else {
@@ -719,8 +803,11 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
     }
   }
 
-  Map<String, dynamic>? toPairAsMap(P pair,
-      {TypeMapper? xMapper, TypeMapper? yMapper}) {
+  Map<String, dynamic>? toPairAsMap(
+    P pair, {
+    TypeMapper? xMapper,
+    TypeMapper? yMapper,
+  }) {
     if (xMapper == null && yMapper == null) {
       return toPair(pair, (X? x, Y? y) => {'x': x, 'y': y});
     } else {
@@ -764,7 +851,7 @@ class ChartSeriesPair<C, X, Y, P> extends ChartSeries<C, X?, Y, P> {
 /// Time Series, for Time Series Charts. Each entry should be a pair of DateTime and Value.
 class ChartTimeSeries<C, Y> extends ChartSeriesPair<C, DateTime, Y, dynamic> {
   ChartTimeSeries(Map<C, List<dynamic>> series)
-      : super(series.map((key, value) => MapEntry<C, List>(key, value))) {
+    : super(series.map((key, value) => MapEntry<C, List>(key, value))) {
     _normalizePairs();
   }
 
@@ -871,7 +958,7 @@ class ChartSet<X, Y> extends ChartData<X, X, Y> {
   List<X> get xLabels => categories;
 
   ChartSet(this.set, {ChartSetOptions? options})
-      : options = options ?? ChartSetOptions();
+    : options = options ?? ChartSetOptions();
 
   @override
   bool get isEmpty => set.isEmpty;
@@ -880,9 +967,9 @@ class ChartSet<X, Y> extends ChartData<X, X, Y> {
   List<X> get categories => set.keys.toList().cast();
 
   Map<X, Y> get setSorted {
-    var l = set.entries.cast<MapEntry<Comparable, dynamic>>().toList();
-    _sorteEntriesByKey(l);
-    return Map.fromEntries(l).cast();
+    var l = set.entries.toList();
+    _sortEntriesByKey(l);
+    return Map.fromEntries(l);
   }
 
   @override
@@ -920,8 +1007,13 @@ class VerticalLine {
   /// The text align with the vertical line: `center`, 'left', 'right'.
   final String? textAlign;
 
-  VerticalLine(this.index,
-      {this.label, this.color, this.yPosition, this.textAlign}) {
+  VerticalLine(
+    this.index, {
+    this.label,
+    this.color,
+    this.yPosition,
+    this.textAlign,
+  }) {
     if (index < 0) {
       throw ArgumentError('Invalid index: $index');
     }
@@ -979,8 +1071,9 @@ abstract class ChartOptions {
     copy.yAxisMin = yAxisMin;
     copy.yAxisMax = yAxisMax;
 
-    copy.verticalLines =
-        verticalLines != null ? List<VerticalLine>.from(verticalLines!) : null;
+    copy.verticalLines = verticalLines != null
+        ? List<VerticalLine>.from(verticalLines!)
+        : null;
 
     copy.verticalLinesDefaultColor = verticalLinesDefaultColor;
 
@@ -1005,6 +1098,7 @@ class ChartSeriesOptions extends ChartOptions {
 
     _copyBase(copy);
 
+    copy.steppedLines = steppedLines;
     copy.straightLines = straightLines;
     copy.fillLines = fillLines;
 

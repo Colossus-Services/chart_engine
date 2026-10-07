@@ -60,7 +60,8 @@ void main() {
       print('PubSpec.version: ${pubSpec.version}');
 
       var srcFile = File(
-          path.join(projectDirectory.path, 'lib/src/chart_engine_base.dart'));
+        path.join(projectDirectory.path, 'lib/src/chart_engine_base.dart'),
+      );
 
       print(srcFile);
 
@@ -72,9 +73,12 @@ void main() {
 
       print('srcVersion: $srcVersion');
 
-      expect(pubSpec.version.toString(), equals(srcVersion),
-          reason:
-              'ChartEngine.VERSION[$srcVersion] != PubSpec.version[${pubSpec.version}]');
+      expect(
+        pubSpec.version.toString(),
+        equals(srcVersion),
+        reason:
+            'ChartEngine.VERSION[$srcVersion] != PubSpec.version[${pubSpec.version}]',
+      );
     });
   });
 }

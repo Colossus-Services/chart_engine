@@ -1,11 +1,11 @@
-// ignore: deprecated_member_use
-import 'dart:html';
-
 import 'package:chart_engine/chart_engine_all.dart';
+import 'package:web_utils/web_utils.dart';
 
 void main() async {
-  querySelector('#apexcharts_version')!.text = ChartEngineApexCharts().version;
-  querySelector('#chartjs_version')!.text = ChartEngineChartJS().version;
+  document.querySelector('#apexcharts_version')!.text =
+      ChartEngineApexCharts().version;
+  document.querySelector('#chartjs_version')!.text =
+      ChartEngineChartJS().version;
 
   await createLineChart();
   await createTimeSeriesChart();
@@ -19,19 +19,18 @@ void main() async {
 
   await createFinancialChart();
 
-  querySelector('#chart-version')!.text = ChartEngine.VERSION;
+  document.querySelector('#chart-version')!.text = ChartEngine.VERSION;
 }
 
 Future createLineChart() async {
-  var series = ChartSeries([
-    'Jan',
-    'Feb',
-    'Mar'
-  ], {
-    'A': [10, 20, 5],
-    'B': [15, 25, 55],
-    'C': [100, 130, 140]
-  });
+  var series = ChartSeries(
+    ['Jan', 'Feb', 'Mar'],
+    {
+      'A': [10, 20, 5],
+      'B': [15, 25, 55],
+      'C': [100, 130, 140],
+    },
+  );
 
   series.title = 'Line Chart Example';
   series.xTitle = 'Months';
@@ -47,15 +46,25 @@ Future createLineChart() async {
   await charEngine2.load();
 
   charEngine1.renderLineChart(
-      querySelector('#apexcharts-line1-output')!, series);
-  charEngine2.renderLineChart(querySelector('#chartjs-line1-output')!, series);
+    document.querySelector('#apexcharts-line1-output') as HTMLElement,
+    series,
+  );
+  charEngine2.renderLineChart(
+    document.querySelector('#chartjs-line1-output') as HTMLElement,
+    series,
+  );
 
   series.options.fillLines = true;
   series.options.verticalLines = [VerticalLine(1, label: 'Mark', yPosition: 1)];
 
   charEngine1.renderLineChart(
-      querySelector('#apexcharts-line2-output')!, series);
-  charEngine2.renderLineChart(querySelector('#chartjs-line2-output')!, series);
+    document.querySelector('#apexcharts-line2-output') as HTMLElement,
+    series,
+  );
+  charEngine2.renderLineChart(
+    document.querySelector('#chartjs-line2-output') as HTMLElement,
+    series,
+  );
 }
 
 Future createTimeSeriesChart() async {
@@ -66,21 +75,21 @@ Future createTimeSeriesChart() async {
       [DateTime(2020, 03, 31), 20],
       [DateTime(2020, 04, 01), 5],
       [DateTime(2020, 04, 02), -10],
-      [DateTime(2020, 04, 03), 1]
+      [DateTime(2020, 04, 03), 1],
     ],
     'B': [
       [DateTime(2020, 03, 30), 15],
       [DateTime(2020, 03, 31), 25],
       [DateTime(2020, 04, 01), 55],
       [DateTime(2020, 04, 02), 30],
-      [DateTime(2020, 04, 03), -10]
+      [DateTime(2020, 04, 03), -10],
     ],
     'C': [
       [100, DateTime(2020, 03, 30)],
       [DateTime(2020, 03, 31), 130],
       [DateTime(2020, 04, 01), 140],
       [DateTime(2020, 04, 02), -20],
-      [DateTime(2020, 04, 03), -55]
+      [DateTime(2020, 04, 03), -55],
     ],
   });
 
@@ -97,21 +106,24 @@ Future createTimeSeriesChart() async {
   await Future.wait([charEngine1.load(), charEngine2.load()]);
 
   charEngine1.renderTimeSeriesChart(
-      querySelector('#apexcharts-time_series-output')!, series);
+    document.querySelector('#apexcharts-time_series-output') as HTMLElement,
+    series,
+  );
   charEngine2.renderTimeSeriesChart(
-      querySelector('#chartjs-time_series-output')!, series);
+    document.querySelector('#chartjs-time_series-output') as HTMLElement,
+    series,
+  );
 }
 
 Future createBarChart() async {
-  var series = ChartSeries([
-    'Jan',
-    'Feb',
-    'Mar'
-  ], {
-    'A': [10, 20, 5],
-    'B': [15, 25, 55],
-    'C': [100, 130, 140],
-  });
+  var series = ChartSeries(
+    ['Jan', 'Feb', 'Mar'],
+    {
+      'A': [10, 20, 5],
+      'B': [15, 25, 55],
+      'C': [100, 130, 140],
+    },
+  );
 
   series.xTitle = 'Months';
   series.yTitle = 'Count';
@@ -125,14 +137,24 @@ Future createBarChart() async {
   await Future.wait([charEngine1.load(), charEngine2.load()]);
 
   series.title = 'Bar Chart Example';
-  charEngine1.renderBarChart(querySelector('#apexcharts-bar-output')!, series);
-  charEngine2.renderBarChart(querySelector('#chartjs-bar-output')!, series);
+  charEngine1.renderBarChart(
+    document.querySelector('#apexcharts-bar-output') as HTMLElement,
+    series,
+  );
+  charEngine2.renderBarChart(
+    document.querySelector('#chartjs-bar-output') as HTMLElement,
+    series,
+  );
 
   series.title = 'Horizontal Bar Chart Example';
   charEngine1.renderHorizontalBarChart(
-      querySelector('#apexcharts-horizontal-bar-output')!, series);
+    document.querySelector('#apexcharts-horizontal-bar-output') as HTMLElement,
+    series,
+  );
   charEngine2.renderHorizontalBarChart(
-      querySelector('#chartjs-horizontal-bar-output')!, series);
+    document.querySelector('#chartjs-horizontal-bar-output') as HTMLElement,
+    series,
+  );
 }
 
 Future createScatterChart() async {
@@ -143,21 +165,21 @@ Future createScatterChart() async {
       [171.75, 66.77],
       [174.96, 75.11],
       [175.79, 88.40],
-      [173.48, 78.86]
+      [173.48, 78.86],
     ],
     'B': [
       [175.77, 50.87],
       [174.98, 72.38],
       [166.27, 52.59],
       [172.75, 66.85],
-      [184.17, 90.71]
+      [184.17, 90.71],
     ],
     'C': [
       [180.59, 98.12],
       [165.89, 58.20],
       [166.42, 50.33],
       [181.33, 78.01],
-      [181.66, 101.91]
+      [181.66, 101.91],
     ],
   });
 
@@ -177,9 +199,13 @@ Future createScatterChart() async {
   await Future.wait([charEngine1.load(), charEngine2.load()]);
 
   charEngine1.renderScatterChart(
-      querySelector('#apexcharts-scatter-output')!, series2);
+    document.querySelector('#apexcharts-scatter-output') as HTMLElement,
+    series2,
+  );
   charEngine2.renderScatterChart(
-      querySelector('#chartjs-scatter-output')!, series2);
+    document.querySelector('#chartjs-scatter-output') as HTMLElement,
+    series2,
+  );
 }
 
 Future createScatterTimedChart() async {
@@ -190,21 +216,21 @@ Future createScatterTimedChart() async {
       [DateTime(2020, 03, 31), 20],
       [DateTime(2020, 04, 01, 10), 5],
       [DateTime(2020, 04, 02, 3), -10],
-      [DateTime(2020, 04, 03, 11), 1]
+      [DateTime(2020, 04, 03, 11), 1],
     ],
     'B': [
       [DateTime(2020, 03, 30, 2), 15],
       [DateTime(2020, 03, 31, 3), 25],
       [DateTime(2020, 04, 01, 12), 55],
       [DateTime(2020, 04, 02, 14), 30],
-      [DateTime(2020, 04, 03, 2), -10]
+      [DateTime(2020, 04, 03, 2), -10],
     ],
     'C': [
       [100, DateTime(2020, 03, 30, 5)],
       [DateTime(2020, 03, 31, 4), 130],
       [DateTime(2020, 04, 01, 20), 140],
       [DateTime(2020, 04, 02, 23), -20],
-      [DateTime(2020, 04, 03, 18), -55]
+      [DateTime(2020, 04, 03, 18), -55],
     ],
   });
 
@@ -221,19 +247,19 @@ Future createScatterTimedChart() async {
   await Future.wait([charEngine1.load(), charEngine2.load()]);
 
   charEngine1.renderScatterTimedChart(
-      querySelector('#apexcharts-scatter_timed-output')!, series);
+    document.querySelector('#apexcharts-scatter_timed-output') as HTMLElement,
+    series,
+  );
   charEngine2.renderScatterTimedChart(
-      querySelector('#chartjs-scatter_timed-output')!, series);
+    document.querySelector('#chartjs-scatter_timed-output') as HTMLElement,
+    series,
+  );
 }
 
 Future createGaugeChart() async {
   // Using Set: 1 value per category.
   // For Gauge needs to be in range of 0% to 100%.
-  var set = ChartSet({
-    'A': 60,
-    'B': 75,
-    'C': 50,
-  });
+  var set = ChartSet({'A': 60, 'B': 75, 'C': 50});
 
   set.title = 'Gauge Chart Example';
 
@@ -243,8 +269,14 @@ Future createGaugeChart() async {
   // Simultaneous load engines:
   await Future.wait([charEngine1.load(), charEngine2.load()]);
 
-  charEngine1.renderGaugeChart(querySelector('#apexcharts-gauge-output')!, set);
-  charEngine2.renderGaugeChart(querySelector('#chartjs-gauge-output')!, set);
+  charEngine1.renderGaugeChart(
+    document.querySelector('#apexcharts-gauge-output') as HTMLElement,
+    set,
+  );
+  charEngine2.renderGaugeChart(
+    document.querySelector('#chartjs-gauge-output') as HTMLElement,
+    set,
+  );
 }
 
 Future createFinancialChart() async {
@@ -259,7 +291,7 @@ Future createFinancialChart() async {
       [DateTime(2020, 04, 05, 12), 25, 60, 25, 55],
       [DateTime(2020, 04, 06, 12), 55, 60, 40, 55],
       [DateTime(2020, 04, 07, 12), 55, 60, -10, -10],
-      [DateTime(2020, 04, 08, 12), -10, -10, 0, 0]
+      [DateTime(2020, 04, 08, 12), -10, -10, 0, 0],
     ],
     'StockY': [
       [DateTime(2020, 03, 30, 12), 100, 200, 100, 200],
@@ -271,7 +303,7 @@ Future createFinancialChart() async {
       [DateTime(2020, 04, 05, 12), 250, 600, 250, 550],
       [DateTime(2020, 04, 06, 12), 550, 550, 300, 300],
       [DateTime(2020, 04, 07, 12), 300, 300, 20, 30],
-      [DateTime(2020, 04, 08, 12), 30, 40, 0, 20]
+      [DateTime(2020, 04, 08, 12), 30, 40, 0, 20],
     ],
   });
 
@@ -287,11 +319,15 @@ Future createFinancialChart() async {
 
   series.title = 'Financial Chart (OHLC) Example';
   charEngine2.renderFinancialChart(
-      querySelector('#chartjs-financial-ohlc-output')!, series,
-      ohlc: true);
+    document.querySelector('#chartjs-financial-ohlc-output') as HTMLElement,
+    series,
+    ohlc: true,
+  );
 
   series.title = 'Financial Chart (Candlestick) Example';
   charEngine2.renderFinancialChart(
-      querySelector('#chartjs-financial-candle-output')!, series,
-      candlestick: true);
+    document.querySelector('#chartjs-financial-candle-output') as HTMLElement,
+    series,
+    candlestick: true,
+  );
 }

@@ -46,8 +46,9 @@ class ChartEngineChartJS extends ChartEngine {
   @override
   String get version => VERSION;
 
-  static final LoadController _loadController =
-      LoadController('ChartEngineChartJS');
+  static final LoadController _loadController = LoadController(
+    'ChartEngineChartJS',
+  );
 
   @override
   bool get isLoaded =>
@@ -63,11 +64,16 @@ class ChartEngineChartJS extends ChartEngine {
   Future<bool> load() {
     return _loadController.load(() async {
       var jsFullPath = minified ? JS_PATH_MIN : JS_PATH;
-      var okJS = await AMDJS.require('chartjs',
-          jsFullPath: jsFullPath, globalJSVariableName: 'Chart');
-      var okWrapper = await AMDJS.require(JS_WRAPPER_GLOBAL_NAME,
-          jsFullPath: ENGINE_WRAPPER_PATH,
-          globalJSVariableName: JS_WRAPPER_GLOBAL_NAME);
+      var okJS = await AMDJS.require(
+        'chartjs',
+        jsFullPath: jsFullPath,
+        globalJSVariableName: 'Chart',
+      );
+      var okWrapper = await AMDJS.require(
+        JS_WRAPPER_GLOBAL_NAME,
+        jsFullPath: ENGINE_WRAPPER_PATH,
+        globalJSVariableName: JS_WRAPPER_GLOBAL_NAME,
+      );
 
       _jsWrapper = globalContext[JS_WRAPPER_GLOBAL_NAME] as JSObject?;
 
@@ -82,24 +88,47 @@ class ChartEngineChartJS extends ChartEngine {
       throw StateError("Can't allowInterop _DateAdapter: null _jsWrapper");
     }
 
-    _jsWrapper!['_DateAdapter__parse'] = (([JSAny? a, JSAny? b]) =>
-        DateAdapter.parse(a.dartify(), b.dartify())).toJS;
-    _jsWrapper!['_DateAdapter__format'] = (([JSAny? a, JSAny? b]) =>
-        DateAdapter.format(a.dartify(), b.dartify())).toJS;
-    _jsWrapper!['_DateAdapter__startOf'] = (([JSAny? a, JSAny? b, JSAny? c]) =>
-        DateAdapter.startOf(a.dartify(), b.dartify(), c.dartify())).toJS;
-    _jsWrapper!['_DateAdapter__endOf'] = (([JSAny? a, JSAny? b]) =>
-        DateAdapter.endOf(a.dartify(), b.dartify())).toJS;
-    _jsWrapper!['_DateAdapter__add'] = (([JSAny? a, JSAny? b, JSAny? c]) =>
-        DateAdapter.add(a.dartify(), b.dartify(), c.dartify())).toJS;
-    _jsWrapper!['_DateAdapter__diff'] = (([JSAny? a, JSAny? b, JSAny? c]) =>
-        DateAdapter.diff(a.dartify(), b.dartify(), c.dartify())).toJS;
-    _jsWrapper!['_DateAdapter__create'] =
-        (([JSAny? a]) => DateAdapter.create(a.dartify())).toJS;
+    _jsWrapper!['_DateAdapter__parse'] =
+        (([JSAny? a, JSAny? b]) => DateAdapter.parse(
+          a.dartify(),
+          b.dartify(),
+        )).toJS;
+    _jsWrapper!['_DateAdapter__format'] =
+        (([JSAny? a, JSAny? b]) => DateAdapter.format(
+          a.dartify(),
+          b.dartify(),
+        )).toJS;
+    _jsWrapper!['_DateAdapter__startOf'] =
+        (([JSAny? a, JSAny? b, JSAny? c]) => DateAdapter.startOf(
+          a.dartify(),
+          b.dartify(),
+          c.dartify(),
+        )).toJS;
+    _jsWrapper!['_DateAdapter__endOf'] =
+        (([JSAny? a, JSAny? b]) => DateAdapter.endOf(
+          a.dartify(),
+          b.dartify(),
+        )).toJS;
+    _jsWrapper!['_DateAdapter__add'] =
+        (([JSAny? a, JSAny? b, JSAny? c]) => DateAdapter.add(
+          a.dartify(),
+          b.dartify(),
+          c.dartify(),
+        )).toJS;
+    _jsWrapper!['_DateAdapter__diff'] =
+        (([JSAny? a, JSAny? b, JSAny? c]) => DateAdapter.diff(
+          a.dartify(),
+          b.dartify(),
+          c.dartify(),
+        )).toJS;
+    _jsWrapper!['_DateAdapter__create'] = (([JSAny? a]) => DateAdapter.create(
+      a.dartify(),
+    )).toJS;
   }
 
-  static final LoadController _loadControllerFinancial =
-      LoadController('ChartEngineChartJS:financial');
+  static final LoadController _loadControllerFinancial = LoadController(
+    'ChartEngineChartJS:financial',
+  );
 
   /// Returns [true] if financial module is loaded.
   bool get isLoadedFinancial =>
@@ -111,7 +140,8 @@ class ChartEngineChartJS extends ChartEngine {
 
     if (!isLoadedFinancial) {
       throw StateError(
-          'Trying to render before loadFinancial() of engine[$runtimeType]!');
+        'Trying to render before loadFinancial() of engine[$runtimeType]!',
+      );
     }
   }
 
@@ -122,8 +152,11 @@ class ChartEngineChartJS extends ChartEngine {
       if (!okChartJS) return false;
 
       var jsFullPath = minified ? FINANCIAL_JS_PATH_MIN : FINANCIAL_JS_PATH;
-      var okJS = await AMDJS.require('chartjs_financial',
-          jsFullPath: jsFullPath, globalJSVariableName: 'Chart.Financial');
+      var okJS = await AMDJS.require(
+        'chartjs_financial',
+        jsFullPath: jsFullPath,
+        globalJSVariableName: 'Chart.Financial',
+      );
 
       return okChartJS && okJS;
     });
@@ -192,7 +225,7 @@ class ChartEngineChartJS extends ChartEngine {
           'label': label,
           'color': color,
           'y': yPos,
-          'textAlign': textAlign
+          'textAlign': textAlign,
         };
       }
 
@@ -231,26 +264,31 @@ class ChartEngineChartJS extends ChartEngine {
       chartData.options.fillLines,
       chartData.options.straightLines,
       chartData.options.steppedLines,
-      _onClick(chartData)
+      _onClick(chartData),
     ];
 
     var chartObject = _jsWrapper!.callMethodVarArgs<JSObject>(
-        'renderLine'.toJS, renderArgs.map((e) => e.toJSDeep).toList());
+      'renderLine'.toJS,
+      renderArgs.map((e) => e.toJSDeep).toList(),
+    );
 
     return RenderedChartJS(this, 'line', chartObject, chartData);
   }
 
   @override
   RenderedChartJS renderTimeSeriesChart(
-      HTMLElement output, ChartTimeSeries chartData) {
+    HTMLElement output,
+    ChartTimeSeries chartData,
+  ) {
     checkRenderParameters(output, chartData);
     checkLoaded();
 
     var canvas = asCanvasElement(output);
 
     var timeSeries = chartData.seriesAsPairsOfMap(
-        sortSeriesByCategory: chartData.options.sortCategories,
-        mapDateTimeToMillis: true);
+      sortSeriesByCategory: chartData.options.sortCategories,
+      mapDateTimeToMillis: true,
+    );
 
     chartData.ensureColors(colorGenerator);
 
@@ -269,11 +307,13 @@ class ChartEngineChartJS extends ChartEngine {
       chartData.options.fillLines,
       chartData.options.straightLines,
       chartData.options.steppedLines,
-      _onClick(chartData)
+      _onClick(chartData),
     ];
 
     var chartObject = _jsWrapper!.callMethodVarArgs<JSObject>(
-        'renderTimeSeries'.toJS, renderArgs.map((e) => e.toJSDeep).toList());
+      'renderTimeSeries'.toJS,
+      renderArgs.map((e) => e.toJSDeep).toList(),
+    );
 
     return RenderedChartJS(this, 'time-series', chartObject, chartData);
   }
@@ -285,12 +325,17 @@ class ChartEngineChartJS extends ChartEngine {
 
   @override
   RenderedChartJS renderHorizontalBarChart(
-      HTMLElement output, ChartSeries chartData) {
+    HTMLElement output,
+    ChartSeries chartData,
+  ) {
     return _renderBarChartImpl(true, output, chartData);
   }
 
   RenderedChartJS _renderBarChartImpl(
-      bool horizontal, HTMLElement output, ChartSeries chartSeries) {
+    bool horizontal,
+    HTMLElement output,
+    ChartSeries chartSeries,
+  ) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
@@ -315,17 +360,20 @@ class ChartEngineChartJS extends ChartEngine {
       _yAxisMinMax(chartSeries),
       series.toJSDeep,
       colors.toJSDeep,
-      _onClick(chartSeries)
+      _onClick(chartSeries),
     ];
 
     var chartObject = _jsWrapper!.callMethodVarArgs<JSObject>(
-        'renderBar'.toJS, renderArgs.map((e) => e.toJSDeep).toList());
+      'renderBar'.toJS,
+      renderArgs.map((e) => e.toJSDeep).toList(),
+    );
 
     return RenderedChartJS(
-        this,
-        'bar-${horizontal ? 'horizontal' : 'vertical'}',
-        chartObject,
-        chartSeries);
+      this,
+      'bar-${horizontal ? 'horizontal' : 'vertical'}',
+      chartObject,
+      chartSeries,
+    );
   }
 
   @override
@@ -335,8 +383,9 @@ class ChartEngineChartJS extends ChartEngine {
 
     var canvas = asCanvasElement(output);
 
-    var set =
-        chartData.options.sortCategories ? chartData.setSorted : chartData.set;
+    var set = chartData.options.sortCategories
+        ? chartData.setSorted
+        : chartData.set;
 
     chartData.ensureColors(colorGenerator);
 
@@ -352,25 +401,30 @@ class ChartEngineChartJS extends ChartEngine {
       set.toJSDeep,
       colors.toJSDeep,
       disabledColors.toJSDeep,
-      _onClick(chartData)
+      _onClick(chartData),
     ];
 
     var chartObject = _jsWrapper!.callMethodVarArgs<JSObject>(
-        'renderGauge'.toJS, renderArgs.map((e) => e.toJSDeep).toList());
+      'renderGauge'.toJS,
+      renderArgs.map((e) => e.toJSDeep).toList(),
+    );
 
     return RenderedChartJS(this, 'gauge', chartObject, chartData);
   }
 
   @override
   RenderedChartJS renderScatterChart(
-      HTMLElement output, ChartSeriesPair chartSeries) {
+    HTMLElement output,
+    ChartSeriesPair chartSeries,
+  ) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
     var canvas = asCanvasElement(output);
 
     var seriesPairs = chartSeries.seriesAsPairsOfMap(
-        sortSeriesByCategory: chartSeries.options.sortCategories);
+      sortSeriesByCategory: chartSeries.options.sortCategories,
+    );
 
     chartSeries.ensureColors(colorGenerator);
 
@@ -386,26 +440,31 @@ class ChartEngineChartJS extends ChartEngine {
       seriesPairs.toJSDeep,
       _verticalLinesConfig(chartSeries),
       colors.toJSDeep,
-      _onClick(chartSeries)
+      _onClick(chartSeries),
     ];
 
     var chartObject = _jsWrapper!.callMethodVarArgs<JSObject>(
-        'renderScatter'.toJS, renderArgs.map((e) => e.toJSDeep).toList());
+      'renderScatter'.toJS,
+      renderArgs.map((e) => e.toJSDeep).toList(),
+    );
 
     return RenderedChartJS(this, 'scatter', chartObject, chartSeries);
   }
 
   @override
   RenderedChartJS renderScatterTimedChart(
-      HTMLElement output, ChartTimeSeries chartSeries) {
+    HTMLElement output,
+    ChartTimeSeries chartSeries,
+  ) {
     checkRenderParameters(output, chartSeries);
     checkLoaded();
 
     var canvas = asCanvasElement(output);
 
     var seriesPairs = chartSeries.seriesAsPairsOfMap(
-        sortSeriesByCategory: chartSeries.options.sortCategories,
-        mapDateTimeToMillis: true);
+      sortSeriesByCategory: chartSeries.options.sortCategories,
+      mapDateTimeToMillis: true,
+    );
 
     chartSeries.ensureColors(colorGenerator);
 
@@ -422,14 +481,20 @@ class ChartEngineChartJS extends ChartEngine {
       _verticalLinesConfig(chartSeries),
       colors.toJSDeep,
       true,
-      _onClick(chartSeries)
+      _onClick(chartSeries),
     ];
 
     var chartObject = _jsWrapper!.callMethodVarArgs<JSObject>(
-        'renderScatter'.toJS, renderArgs.map((e) => e.toJSDeep).toList());
+      'renderScatter'.toJS,
+      renderArgs.map((e) => e.toJSDeep).toList(),
+    );
 
     return RenderedChartJS(
-        this, 'scatter-time-series', chartObject, chartSeries);
+      this,
+      'scatter-time-series',
+      chartObject,
+      chartSeries,
+    );
   }
 
   /// Renders financial chart.
@@ -438,8 +503,11 @@ class ChartEngineChartJS extends ChartEngine {
   /// [candlestick] Renders a Candlestick chart.
   @override
   RenderedChartJS renderFinancialChart(
-      HTMLElement output, ChartTimeSeries chartSeries,
-      {bool? ohlc, bool? candlestick}) {
+    HTMLElement output,
+    ChartTimeSeries chartSeries, {
+    bool? ohlc,
+    bool? candlestick,
+  }) {
     checkRenderParameters(output, chartSeries);
     checkLoadedFinancial();
 
@@ -448,14 +516,16 @@ class ChartEngineChartJS extends ChartEngine {
 
     if (ohlc && candlestick) {
       print(
-          'renderFinancialChart> Conflicting parameters: ohlc = $ohlc ; candlestick = $candlestick! Will use ohlc as primary.');
+        'renderFinancialChart> Conflicting parameters: ohlc = $ohlc ; candlestick = $candlestick! Will use ohlc as primary.',
+      );
     }
 
     var canvas = asCanvasElement(output);
 
     var seriesPairs = chartSeries.seriesAsEntriesOfTOHLC(
-        sortSeriesByCategory: chartSeries.options.sortCategories,
-        mapDateTimeToMillis: true);
+      sortSeriesByCategory: chartSeries.options.sortCategories,
+      mapDateTimeToMillis: true,
+    );
 
     chartSeries.ensureColors(colorGenerator);
 
@@ -478,14 +548,20 @@ class ChartEngineChartJS extends ChartEngine {
       colorsDown.toJSDeep,
       colorsUnchanged.toJSDeep,
       ohlc,
-      _onClick(chartSeries)
+      _onClick(chartSeries),
     ];
 
     var chartObject = _jsWrapper!.callMethodVarArgs<JSObject>(
-        'renderFinancial'.toJS, renderArgs.map((e) => e.toJSDeep).toList());
+      'renderFinancial'.toJS,
+      renderArgs.map((e) => e.toJSDeep).toList(),
+    );
 
-    return RenderedChartJS(this, 'financial-${ohlc ? 'ohlc' : 'candlestick'}',
-        chartObject, chartSeries);
+    return RenderedChartJS(
+      this,
+      'financial-${ohlc ? 'ohlc' : 'candlestick'}',
+      chartObject,
+      chartSeries,
+    );
   }
 }
 
@@ -505,16 +581,25 @@ class RenderedChartJS extends RenderedChart {
       chartObject,
       dateTime.millisecondsSinceEpoch,
       0,
-      value
+      value,
     ];
 
     ChartEngineChartJS._jsWrapper!.callMethodVarArgs<JSAny?>(
-        'addData_date_value'.toJS, args.map((e) => e.toJSDeep).toList());
+      'addData_date_value'.toJS,
+      args.map((e) => e.toJSDeep).toList(),
+    );
   }
 
-  void addOHLC(dynamic series, dynamic time, double open, double high,
-      double lower, double close,
-      {int? timeTolerance, preserveTimeOfOverwrittenValue}) {
+  void addOHLC(
+    dynamic series,
+    dynamic time,
+    double open,
+    double high,
+    double lower,
+    double close, {
+    int? timeTolerance,
+    preserveTimeOfOverwrittenValue,
+  }) {
     var dateTime = parseDateTime(time)!;
 
     preserveTimeOfOverwrittenValue ??= false;
@@ -527,14 +612,16 @@ class RenderedChartJS extends RenderedChart {
         'o': open,
         'h': high,
         'l': lower,
-        'c': close
+        'c': close,
       }.toJSDeep,
       timeTolerance,
-      preserveTimeOfOverwrittenValue
+      preserveTimeOfOverwrittenValue,
     ];
 
     ChartEngineChartJS._jsWrapper!.callMethodVarArgs<JSAny?>(
-        'addData_tohlc'.toJS, args.map((e) => e.toJSDeep).toList());
+      'addData_tohlc'.toJS,
+      args.map((e) => e.toJSDeep).toList(),
+    );
   }
 
   void addData(dynamic xVal, dynamic yVal) {}

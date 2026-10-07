@@ -12,7 +12,7 @@ final String CHART_ENGINE_PACKAGE_PATH = 'packages/chart_engine';
 abstract class ChartEngine {
   /// `chart_engine` package version.
   // ignore: non_constant_identifier_names
-  static final String VERSION = '2.0.3';
+  static final String VERSION = '3.0.0';
 
   String get version;
 
@@ -72,33 +72,44 @@ abstract class ChartEngine {
 
   /// Renders a Time Series using Line Chart:
   RenderedChart renderTimeSeriesChart(
-      HTMLElement output, ChartTimeSeries chartData);
+    HTMLElement output,
+    ChartTimeSeries chartData,
+  );
 
   /// Renders a Bar Chart:
   RenderedChart renderBarChart(HTMLElement output, ChartSeries chartData);
 
   /// Renders a Horizontal Bar Chart:
   RenderedChart renderHorizontalBarChart(
-      HTMLElement output, ChartSeries chartData);
+    HTMLElement output,
+    ChartSeries chartData,
+  );
 
   /// Renders a Horizontal Bar Chart:
   RenderedChart renderGaugeChart(HTMLElement output, ChartSet chartData);
 
   /// Renders a Scatter Chart with X,Y pairs:
   RenderedChart renderScatterChart(
-      HTMLElement output, ChartSeriesPair chartSeries);
+    HTMLElement output,
+    ChartSeriesPair chartSeries,
+  );
 
   /// Renders a Scatter Chart Timed with DateTime values in X axis:
   RenderedChart renderScatterTimedChart(
-      HTMLElement output, ChartTimeSeries chartSeries);
+    HTMLElement output,
+    ChartTimeSeries chartSeries,
+  );
 
   /// Renders financial chart.
   ///
   /// [ohlc] Renders a OHLC chart (default).
   /// [candlestick] Renders a Candlestick chart.
   RenderedChart renderFinancialChart(
-      HTMLElement output, ChartTimeSeries chartSeries,
-      {bool? ohlc, bool? candlestick});
+    HTMLElement output,
+    ChartTimeSeries chartSeries, {
+    bool? ohlc,
+    bool? candlestick,
+  });
 
   Future _ensureLoaded() async {
     if (!isLoaded) {
@@ -108,56 +119,72 @@ abstract class ChartEngine {
 
   /// Same as [render], but [async].
   Future<RenderedChart?> renderAsync(
-      HTMLElement output, ChartData chartData) async {
+    HTMLElement output,
+    ChartData chartData,
+  ) async {
     await _ensureLoaded();
     return render(output, chartData);
   }
 
   /// Same as [renderLineChart], but [async].
   Future<RenderedChart> renderLineChartAsync(
-      HTMLElement output, ChartSeries chartData) async {
+    HTMLElement output,
+    ChartSeries chartData,
+  ) async {
     await _ensureLoaded();
     return renderLineChart(output, chartData);
   }
 
   /// Same as [renderTimeSeriesChart], but [async].
   Future<RenderedChart> renderTimeSeriesChartAsync(
-      HTMLElement output, ChartTimeSeries chartData) async {
+    HTMLElement output,
+    ChartTimeSeries chartData,
+  ) async {
     await _ensureLoaded();
     return renderTimeSeriesChart(output, chartData);
   }
 
   /// Same as [renderBarChart], but [async].
   Future<RenderedChart> renderBarChartAsync(
-      HTMLElement output, ChartSeries chartData) async {
+    HTMLElement output,
+    ChartSeries chartData,
+  ) async {
     await _ensureLoaded();
     return renderBarChart(output, chartData);
   }
 
   /// Same as [renderHorizontalBarChart], but [async].
   Future<RenderedChart> renderHorizontalBarChartAsync(
-      HTMLElement output, ChartSeries chartData) async {
+    HTMLElement output,
+    ChartSeries chartData,
+  ) async {
     await _ensureLoaded();
     return renderHorizontalBarChart(output, chartData);
   }
 
   /// Same as [renderGaugeChart], but [async].
   Future<RenderedChart> renderGaugeChartAsync(
-      HTMLElement output, ChartSet chartData) async {
+    HTMLElement output,
+    ChartSet chartData,
+  ) async {
     await _ensureLoaded();
     return renderGaugeChart(output, chartData);
   }
 
   /// Same as [renderScatterChart], but [async].
   Future<RenderedChart> renderScatterChartAsync(
-      HTMLElement output, ChartSeriesPair chartSeries) async {
+    HTMLElement output,
+    ChartSeriesPair chartSeries,
+  ) async {
     await _ensureLoaded();
     return renderScatterChart(output, chartSeries);
   }
 
   /// Same as [renderScatterTimedChart], but [async].
   Future<RenderedChart> renderScatterTimedChartAsync(
-      HTMLElement output, ChartTimeSeries chartSeries) async {
+    HTMLElement output,
+    ChartTimeSeries chartSeries,
+  ) async {
     await _ensureLoaded();
     return renderScatterTimedChart(output, chartSeries);
   }
@@ -172,8 +199,11 @@ class ChartEngineSwitchable extends ChartEngine {
 
   ChartEngine? _mainEngine;
 
-  ChartEngineSwitchable(this.engines,
-      {Type? mainEngineType, ChartEngine? mainEngine}) {
+  ChartEngineSwitchable(
+    this.engines, {
+    Type? mainEngineType,
+    ChartEngine? mainEngine,
+  }) {
     if (engines.isEmpty) throw ArgumentError('Should have 1 or more engines');
 
     if (mainEngine != null) {
@@ -237,7 +267,10 @@ class ChartEngineSwitchable extends ChartEngine {
 
   /// Renders using engine of [engineType].
   RenderedChart? renderWithEngineType(
-      Type engineType, HTMLElement output, ChartData chartData) {
+    Type engineType,
+    HTMLElement output,
+    ChartData chartData,
+  ) {
     var prevMainEngine = _mainEngine;
     setMainEngineByType(engineType);
     var ok = render(output, chartData);
@@ -247,7 +280,9 @@ class ChartEngineSwitchable extends ChartEngine {
 
   /// Renders using engine of type [T].
   RenderedChart? renderOfEngineType<T>(
-      HTMLElement output, ChartData chartData) {
+    HTMLElement output,
+    ChartData chartData,
+  ) {
     var prevMainEngine = _mainEngine;
     setMainEngineOfType<T>();
     var ok = render(output, chartData);
@@ -262,9 +297,13 @@ class ChartEngineSwitchable extends ChartEngine {
 
   @override
   RenderedChart renderTimeSeriesChart(
-      HTMLElement output, ChartSeries chartData) {
+    HTMLElement output,
+    ChartSeries chartData,
+  ) {
     return mainEngine!.renderTimeSeriesChart(
-        output, chartData as ChartTimeSeries<dynamic, dynamic>);
+      output,
+      chartData as ChartTimeSeries<dynamic, dynamic>,
+    );
   }
 
   @override
@@ -274,7 +313,9 @@ class ChartEngineSwitchable extends ChartEngine {
 
   @override
   RenderedChart renderHorizontalBarChart(
-      HTMLElement output, ChartSeries chartData) {
+    HTMLElement output,
+    ChartSeries chartData,
+  ) {
     return mainEngine!.renderHorizontalBarChart(output, chartData);
   }
 
@@ -285,22 +326,33 @@ class ChartEngineSwitchable extends ChartEngine {
 
   @override
   RenderedChart renderScatterChart(
-      HTMLElement output, ChartSeriesPair chartSeries) {
+    HTMLElement output,
+    ChartSeriesPair chartSeries,
+  ) {
     return mainEngine!.renderScatterChart(output, chartSeries);
   }
 
   @override
   RenderedChart renderScatterTimedChart(
-      HTMLElement output, ChartTimeSeries chartSeries) {
+    HTMLElement output,
+    ChartTimeSeries chartSeries,
+  ) {
     return mainEngine!.renderScatterTimedChart(output, chartSeries);
   }
 
   @override
   RenderedChart renderFinancialChart(
-      HTMLElement output, ChartTimeSeries chartSeries,
-      {bool? ohlc, bool? candlestick}) {
-    return mainEngine!.renderFinancialChart(output, chartSeries,
-        ohlc: ohlc, candlestick: candlestick);
+    HTMLElement output,
+    ChartTimeSeries chartSeries, {
+    bool? ohlc,
+    bool? candlestick,
+  }) {
+    return mainEngine!.renderFinancialChart(
+      output,
+      chartSeries,
+      ohlc: ohlc,
+      candlestick: candlestick,
+    );
   }
 }
 
@@ -314,16 +366,20 @@ abstract class RenderedChart {
   late InteractionCompleter _interactionCompleter;
 
   RenderedChart(this.engine, this.type, this.chartObject, this.chartData) {
-    _interactionCompleter = InteractionCompleter('RenderedChart:refreshDelayed',
-        triggerDelay: Duration(milliseconds: 200),
-        functionToTrigger: () => refresh());
+    _interactionCompleter = InteractionCompleter(
+      'RenderedChart:refreshDelayed',
+      triggerDelay: Duration(milliseconds: 200),
+      functionToTrigger: () => refresh(),
+    );
 
     if (chartData.populateLastRenderedChart) {
       chartData.lastRenderedChart = this;
     }
   }
 
-  JSObject? get chartJSObject => chartObject.isJSObject ? chartObject : null;
+  // `chartObject` is `dynamic`: cast it so the extension getter is resolved
+  // statically (extensions are not available through dynamic calls).
+  JSObject? get chartJSObject => (chartObject as Object?).asJSObject;
 
   bool get hasChartJSObject => chartJSObject != null;
 

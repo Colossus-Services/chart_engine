@@ -88,39 +88,33 @@ class ChartEngineChartJS extends ChartEngine {
       throw StateError("Can't allowInterop _DateAdapter: null _jsWrapper");
     }
 
-    _jsWrapper!['_DateAdapter__parse'] =
-        (([JSAny? a, JSAny? b]) => DateAdapter.parse(
-          a.dartify(),
-          b.dartify(),
-        )).toJS;
-    _jsWrapper!['_DateAdapter__format'] =
-        (([JSAny? a, JSAny? b]) => DateAdapter.format(
-          a.dartify(),
-          b.dartify(),
-        )).toJS;
-    _jsWrapper!['_DateAdapter__startOf'] =
-        (([JSAny? a, JSAny? b, JSAny? c]) => DateAdapter.startOf(
-          a.dartify(),
-          b.dartify(),
-          c.dartify(),
-        )).toJS;
-    _jsWrapper!['_DateAdapter__endOf'] =
-        (([JSAny? a, JSAny? b]) => DateAdapter.endOf(
-          a.dartify(),
-          b.dartify(),
-        )).toJS;
-    _jsWrapper!['_DateAdapter__add'] =
-        (([JSAny? a, JSAny? b, JSAny? c]) => DateAdapter.add(
-          a.dartify(),
-          b.dartify(),
-          c.dartify(),
-        )).toJS;
-    _jsWrapper!['_DateAdapter__diff'] =
-        (([JSAny? a, JSAny? b, JSAny? c]) => DateAdapter.diff(
-          a.dartify(),
-          b.dartify(),
-          c.dartify(),
-        )).toJS;
+    _jsWrapper!['_DateAdapter__parse'] = (([
+      JSAny? a,
+      JSAny? b,
+    ]) => DateAdapter.parse(a.dartify(), b.dartify())).toJS;
+    _jsWrapper!['_DateAdapter__format'] = (([
+      JSAny? a,
+      JSAny? b,
+    ]) => DateAdapter.format(a.dartify(), b.dartify())).toJS;
+    _jsWrapper!['_DateAdapter__startOf'] = (([
+      JSAny? a,
+      JSAny? b,
+      JSAny? c,
+    ]) => DateAdapter.startOf(a.dartify(), b.dartify(), c.dartify())).toJS;
+    _jsWrapper!['_DateAdapter__endOf'] = (([
+      JSAny? a,
+      JSAny? b,
+    ]) => DateAdapter.endOf(a.dartify(), b.dartify())).toJS;
+    _jsWrapper!['_DateAdapter__add'] = (([
+      JSAny? a,
+      JSAny? b,
+      JSAny? c,
+    ]) => DateAdapter.add(a.dartify(), b.dartify(), c.dartify())).toJS;
+    _jsWrapper!['_DateAdapter__diff'] = (([
+      JSAny? a,
+      JSAny? b,
+      JSAny? c,
+    ]) => DateAdapter.diff(a.dartify(), b.dartify(), c.dartify())).toJS;
     _jsWrapper!['_DateAdapter__create'] = (([JSAny? a]) => DateAdapter.create(
       a.dartify(),
     )).toJS;

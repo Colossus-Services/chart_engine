@@ -187,16 +187,20 @@ class ChartEngineChartJS extends ChartEngine {
     return minMax?.toJS;
   }
 
-  static Function? _onClick(ChartData chartData) {
+  /// Exports [ChartOptions.onClick] to JS with `Function.toJS`.
+  ///
+  /// A plain Dart closure can't flow into JS when compiled to Wasm
+  /// (`jsify` rejects it), so it must be exported explicitly.
+  static JSFunction? _onClick(ChartData chartData) {
     var onClick = chartData.options.onClick;
     if (onClick == null) return null;
-    return (Object? activeItems, Object? xItems, Object? yItems) {
+    return ((JSAny? activeItems, JSAny? xItems, JSAny? yItems) {
       onClick(
-        activeItems.objectDartify() as List?,
-        xItems.objectDartify() as List?,
-        yItems.objectDartify() as List?,
+        activeItems.dartify() as List?,
+        xItems.dartify() as List?,
+        yItems.dartify() as List?,
       );
-    };
+    }).toJS;
   }
 
   static JSObject? _verticalLinesConfig(ChartData chartData) {
@@ -434,6 +438,7 @@ class ChartEngineChartJS extends ChartEngine {
       seriesPairs.toJSDeep,
       _verticalLinesConfig(chartSeries),
       colors.toJSDeep,
+      false,
       _onClick(chartSeries),
     ];
 

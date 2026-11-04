@@ -1,3 +1,17 @@
+## 3.0.2
+
+- `ChartEngineChartJS`:
+  - Fix `ChartOptions.onClick` under `dart2wasm`: the callback is now exported
+    to JS with `Function.toJS` (`dart:js_interop`) instead of flowing into JS
+    as a plain Dart closure, which `dart2wasm` rejects.
+  - `renderScatterChart`: fix the argument order passed to the JS wrapper.
+    With an `onClick` set, the callback landed in the `timed` slot, turning
+    the X axis into a time scale and failing to render.
+  - `renderBarChart`/`renderHorizontalBarChart`: wire `onClick`, which was
+    silently ignored by the JS wrapper.
+- Tests: invoke the `onClick` handler of every ChartJS chart type.
+- CI: run the Chrome tests on `dart2wasm` too.
+
 ## 3.0.1
 
 - Apply the `dart format` style of the new SDK floor.

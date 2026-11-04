@@ -1057,6 +1057,8 @@ abstract class ChartOptions {
   String verticalLinesDefaultColor = '#ff0000';
 
   /// Callback for `click` events.
+  ///
+  /// Currently only called by the ChartJS engine.
   void Function(List? activeItems, List? xItems, List? yItems)? onClick;
 
   /// Copies this instance.

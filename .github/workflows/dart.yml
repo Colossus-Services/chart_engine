@@ -27,6 +27,8 @@ jobs:
         run: dart run dependency_validator
       - name: Run tests (VM + Chrome)
         run: dart test --platform vm,chrome
+      - name: Run tests (Chrome, dart2wasm)
+        run: dart test --platform chrome --compiler dart2wasm
 #      - name: dartdoc
 #        run: dartdoc --no-generate-docs
       - name: dart pub publish --dry-run

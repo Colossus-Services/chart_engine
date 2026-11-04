@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:js_interop_unsafe';
+
 import 'package:chart_engine/chart_engine_all.dart';
 import 'package:test/test.dart';
 import 'package:web_utils/web_utils.dart';
@@ -310,6 +312,100 @@ void main() {
       var output = _newOutput()..appendChild(canvas);
       engine.renderLineChart(canvas, _lineSeries());
       expect(output.querySelectorAll('canvas').length, equals(1));
+    });
+  });
+
+  group('ChartEngineChartJS onClick', () {
+    late ChartEngineChartJS engine;
+
+    setUpAll(() async {
+      engine = ChartEngineChartJS();
+      expect(await engine.loadFinancial(), isTrue);
+    });
+
+    /// Simulates a click by calling the `onClick` handler that the wrapper
+    /// set in the chart options, passing the first element of the first
+    /// dataset as the clicked item.
+    void click(RenderedChart chart) {
+      var chartObj = chart.chartJSObject!;
+      var options = chartObj['options'] as JSObject;
+      var handler = options['onClick'] as JSFunction?;
+      expect(handler, isNotNull, reason: 'No `onClick` in chart options');
+
+      var meta = chartObj.callMethod<JSObject>('getDatasetMeta'.toJS, 0.toJS);
+      var elements = meta['data'] as JSArray<JSAny?>;
+      var items = [elements.toDart.first].toJS;
+      var evt = {'offsetX': 100, 'offsetY': 100}.toJSDeep;
+
+      handler!.callAsFunction(chartObj, evt, items);
+    }
+
+    // Chart type -> (data factory, render function):
+    final cases =
+        <
+          String,
+          (ChartData Function(), RenderedChart Function(HTMLElement, ChartData))
+        >{
+          'line': (
+            _lineSeries,
+            (o, d) => engine.renderLineChart(o, d as ChartSeries),
+          ),
+          'time-series': (
+            _timeSeries,
+            (o, d) => engine.renderTimeSeriesChart(o, d as ChartTimeSeries),
+          ),
+          'bar-vertical': (
+            _lineSeries,
+            (o, d) => engine.renderBarChart(o, d as ChartSeries),
+          ),
+          'bar-horizontal': (
+            _lineSeries,
+            (o, d) => engine.renderHorizontalBarChart(o, d as ChartSeries),
+          ),
+          'gauge': (_set, (o, d) => engine.renderGaugeChart(o, d as ChartSet)),
+          'scatter': (
+            _pairSeries,
+            (o, d) => engine.renderScatterChart(o, d as ChartSeriesPair),
+          ),
+          'scatter-time-series': (
+            _timeSeries,
+            (o, d) => engine.renderScatterTimedChart(o, d as ChartTimeSeries),
+          ),
+          'financial-ohlc': (
+            _financialSeries,
+            (o, d) => engine.renderFinancialChart(o, d as ChartTimeSeries),
+          ),
+        };
+
+    for (var MapEntry(key: type, value: (newData, render)) in cases.entries) {
+      test('calls the Dart callback: $type', () {
+        var calls = <(List?, List?, List?)>[];
+        var chartData = newData();
+        chartData.options.onClick = (a, x, y) => calls.add((a, x, y));
+
+        var chart = render(_newOutput(), chartData);
+        expect(chart.type, equals(type));
+
+        click(chart);
+
+        expect(calls, hasLength(1));
+        var (activeItems, xItems, yItems) = calls.single;
+
+        expect(activeItems, hasLength(1));
+        var item = activeItems!.single as Map;
+        expect(item['datasetIndex'], equals(0));
+        expect(item['index'], equals(0));
+        expect(item.containsKey('value'), isTrue);
+
+        expect(xItems, isA<List>());
+        expect(yItems, isA<List>());
+      });
+    }
+
+    test('no onClick: no handler in options', () {
+      var chart = engine.renderLineChart(_newOutput(), _lineSeries());
+      var options = chart.chartJSObject!['options'] as JSObject;
+      expect(options['onClick'].isDefinedAndNotNull, isFalse);
     });
   });
 

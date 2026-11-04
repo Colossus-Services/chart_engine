@@ -340,36 +340,47 @@ void main() {
       handler!.callAsFunction(chartObj, evt, items);
     }
 
-    final renders = <String, RenderedChart Function(HTMLElement, ChartData)>{
-      'line': (o, d) => engine.renderLineChart(o, d as ChartSeries),
-      'time-series': (o, d) =>
-          engine.renderTimeSeriesChart(o, d as ChartTimeSeries),
-      'bar-vertical': (o, d) => engine.renderBarChart(o, d as ChartSeries),
-      'bar-horizontal': (o, d) =>
-          engine.renderHorizontalBarChart(o, d as ChartSeries),
-      'gauge': (o, d) => engine.renderGaugeChart(o, d as ChartSet),
-      'scatter': (o, d) => engine.renderScatterChart(o, d as ChartSeriesPair),
-      'scatter-time-series': (o, d) =>
-          engine.renderScatterTimedChart(o, d as ChartTimeSeries),
-      'financial-ohlc': (o, d) =>
-          engine.renderFinancialChart(o, d as ChartTimeSeries),
-    };
+    // Chart type -> (data factory, render function):
+    final cases =
+        <
+          String,
+          (ChartData Function(), RenderedChart Function(HTMLElement, ChartData))
+        >{
+          'line': (
+            _lineSeries,
+            (o, d) => engine.renderLineChart(o, d as ChartSeries),
+          ),
+          'time-series': (
+            _timeSeries,
+            (o, d) => engine.renderTimeSeriesChart(o, d as ChartTimeSeries),
+          ),
+          'bar-vertical': (
+            _lineSeries,
+            (o, d) => engine.renderBarChart(o, d as ChartSeries),
+          ),
+          'bar-horizontal': (
+            _lineSeries,
+            (o, d) => engine.renderHorizontalBarChart(o, d as ChartSeries),
+          ),
+          'gauge': (_set, (o, d) => engine.renderGaugeChart(o, d as ChartSet)),
+          'scatter': (
+            _pairSeries,
+            (o, d) => engine.renderScatterChart(o, d as ChartSeriesPair),
+          ),
+          'scatter-time-series': (
+            _timeSeries,
+            (o, d) => engine.renderScatterTimedChart(o, d as ChartTimeSeries),
+          ),
+          'financial-ohlc': (
+            _financialSeries,
+            (o, d) => engine.renderFinancialChart(o, d as ChartTimeSeries),
+          ),
+        };
 
-    final data = <String, ChartData Function()>{
-      'line': _lineSeries,
-      'time-series': _timeSeries,
-      'bar-vertical': _lineSeries,
-      'bar-horizontal': _lineSeries,
-      'gauge': _set,
-      'scatter': _pairSeries,
-      'scatter-time-series': _timeSeries,
-      'financial-ohlc': _financialSeries,
-    };
-
-    for (var MapEntry(key: type, value: render) in renders.entries) {
+    for (var MapEntry(key: type, value: (newData, render)) in cases.entries) {
       test('calls the Dart callback: $type', () {
         var calls = <(List?, List?, List?)>[];
-        var chartData = data[type]!();
+        var chartData = newData();
         chartData.options.onClick = (a, x, y) => calls.add((a, x, y));
 
         var chart = render(_newOutput(), chartData);

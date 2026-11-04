@@ -1,3 +1,15 @@
+## 3.0.1
+
+- Apply the `dart format` style of the new SDK floor.
+- CI: update `actions/checkout` to v7.
+
+- sdk: ^3.13.0
+
+- swiss_knife: ^3.4.2
+- dom_tools: ^3.1.1
+- test: ^1.33.0
+- build_web_compilers: ^4.8.12
+
 ## 3.0.0
 
 - `RenderedChart`:
